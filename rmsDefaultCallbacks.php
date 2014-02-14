@@ -23,65 +23,72 @@
  */
 class rmsDefaultCallbacks extends \Backend
 {
-	/**
+
+    /**
     * overwrite table-data and backup in tmp-table if current BackendUser a low-level-redakteur
-    * @var object
+    * @param object
+    * @param object
+    * @return string or object
     */
     public function onEditCallback(\DataContainer $dc, $liveDataObj)
     {
         $this->import("BackendUser");
+        $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
 
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
         $strTable = \Input::get("table");
-        $intId = \Input::get("id");
+        $contentId = \Input::get("id");
 
-        if(!$userID || !$strTable || !$intId) return;
+        // if (\Input::post('FORM_SUBMIT') == $strTable) return '';
 
-        //hole nicht freigegebene Daten von dem Redakteur für diesen Content
-        $objStoredData = $this->Database->prepare("SELECT data FROM tl_rms WHERE ref_id=? AND ref_table=? AND ref_author=?")
-        ->limit(1)
-        ->execute
+        if(!$userID || !$strTable || !$contentId) return;
+
+        //loesche evtl Leichen in tmp-table
+        $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?')
+                        ->execute
+                        (
+                            $contentId,
+                            $strTable,
+                            $userID
+                        );
+
+        //sichere live-daten
+        $set = array
         (
-            $intId,
-            $strTable,
-            $userID
+            'data' => serialize($liveDataObj->fetchAssoc()),
+            'ref_id' => $contentId,
+            'ref_table' => $strTable,
+            'ref_author' => $userID,
+            'tstamp' => time()
         );
 
+        $this->Database->prepare("INSERT INTO tl_rms_tmp %s")
+            ->set($set)
+            ->execute();
+
+        //hole nicht freigegebene Daten von dem Redakteur fuer diesen Content
+        $objStoredData = $this->Database->prepare("SELECT data FROM tl_rms WHERE ref_id=? AND ref_table=? AND ref_author=?")
+                                        ->limit(1)
+                                        ->execute
+                                        (
+                                            $contentId,
+                                            $strTable,
+                                            $userID
+                                        );
 
 
         //wenn bereits eine nicht freigegebene Bearbeitung vorliegt
         if ($objStoredData->numRows > 0)
         {
-
-            //loesche evtl Leichen in tmp-table
-            $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?')
-            ->execute
-            (
-                $intId,
-                $strTable,
-                $userID
-            );
-
-            //sichere live-daten
-            $set = array
-            (
-                'data' => $liveDataObj->fetchAssoc(),
-                'ref_id' => $intId,
-                'ref_table' => $strTable,
-                'ref_author' => $userID,
-                'tstamp' => time()
-            );
-
-            $this->Database->prepare("INSERT INTO tl_rms_tmp %s")
-            ->set($set)
-            ->execute();
-
-            return $objStoredData;
+            $rmsArr = unserialize($objStoredData->data);
+            return $rmsArr;
         }
+
+        return '';
     }
 
-   /**
-    * set / update a entry in rms-table
+    /**
+    * set or update a entry in rms-table
     * @param object
     */
     public function onSubmitCallback(\DataContainer $dc)
@@ -102,11 +109,11 @@ class rmsDefaultCallbacks extends \Backend
         foreach($arrFields as $fieldName => $colNum)
         {
             if(in_array($fieldName, array('PRIMARY','INDEX'))) continue;
-            $newData[$fieldName] = $dc->activeRecord->$fieldName;
+            $newData[$fieldName] = $dc->activeRecord->{$fieldName};
         }
 
         //hole gesicherte und freigegebene Daten von dem Redakteur für diesen Content
-        $tmpDateObj = $this->Database->prepare("SELECT data FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?")
+        $tmpDataObj = $this->Database->prepare("SELECT data FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?")
             ->limit(1)
             ->execute
             (
@@ -116,8 +123,9 @@ class rmsDefaultCallbacks extends \Backend
             );
 
         //wenn z.B. der Datensatz neu angelegt wurde
-        if($tmpDateObj->numRows > 0) $data = unserialize($tmpDateObj->data);
+        if($tmpDataObj->numRows > 0) $data = unserialize($tmpDataObj->data);
         else $data = $newData;
+
 
         // create / first-save
         $isNewEntryObj = $this->Database->prepare('SELECT count(*) c FROM `'.$strTable.'` WHERE `id`=? AND `tstamp`=?')
@@ -132,6 +140,7 @@ class rmsDefaultCallbacks extends \Backend
 
         //overwrite with live-data
         $data['rms_new_edit'] = 1;
+        $data['rms_notice'] = $newData['rms_notice'];
 
         $objUpdate = $this->Database->prepare("UPDATE ".$strTable." %s WHERE id=?")->set($data)->execute($intId);
 
@@ -139,7 +148,7 @@ class rmsDefaultCallbacks extends \Backend
         $status = $this->rmsHelper->isMemberOfMasters() ?  1 : 0;
 
         //overwrite with new-data
-        $newRmsData = array_merge($data, $newData);
+        $newRmsData = ($data['type'] == $newData['type']) ? array_merge($data, $newData) : $newData;
 
         $arrSubmitData = array
         (
@@ -147,7 +156,7 @@ class rmsDefaultCallbacks extends \Backend
             'ref_id' => $intId,
             'ref_table' =>  $strTable,
             'ref_author' => $userID,
-            'ref_notice' => $data['rms_notice'],
+            'ref_notice' => $newRmsData['rms_notice'],
             'status' => $status,
             'data'=> $newRmsData
         );
@@ -155,8 +164,8 @@ class rmsDefaultCallbacks extends \Backend
         //existiert schon eine Bearbeitung
         $objData = $this->Database->prepare("SELECT id FROM tl_rms WHERE ref_id=? AND ref_table=? AND ref_author=?")
                                     ->execute(
-                                        $intId,
-                                        $strTable,
+                                        $this->Input->get("id"),
+                                        $this->Input->get("table"),
                                         $userID );
 
         if ($objData->numRows == 1)
@@ -170,6 +179,7 @@ class rmsDefaultCallbacks extends \Backend
             $this->Database->prepare("INSERT INTO tl_rms %s")->set($arrSubmitData)->execute();
         }
     }
+
 
     /**
 	* delete from rms-table when item delete

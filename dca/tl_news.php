@@ -235,6 +235,8 @@ class tl_news_rms extends \Backend
 	    $strTable = \Input::get("table");
 		$contentId = \Input::get("id");
 
+		// if (\Input::post('FORM_SUBMIT') == $strTable) return '';
+
 		if(!$userID || !$strTable || !$contentId) return;
 
     	//loesche evtl Leichen in tmp-table
@@ -270,10 +272,12 @@ class tl_news_rms extends \Backend
 											$userID
 										);
 
+
     	//wenn bereits eine nicht freigegebene Bearbeitung vorliegt
 	    if ($objStoredData->numRows > 0)
 	    {
-			return $objStoredData;
+			$rmsArr = unserialize($objStoredData->data);
+			return $rmsArr;
 	    }
 
 	    return '';
@@ -301,11 +305,11 @@ class tl_news_rms extends \Backend
 		foreach($arrFields as $fieldName => $colNum)
 		{
 			if(in_array($fieldName, array('PRIMARY','INDEX'))) continue;
-			$newData[$fieldName] = $dc->activeRecord->$fieldName;
+			$newData[$fieldName] = $dc->activeRecord->{$fieldName};
 		}
 
 		//hole gesicherte und freigegebene Daten von dem Redakteur für diesen Content
-    	$tmpDateObj = $this->Database->prepare("SELECT data FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?")
+    	$tmpDataObj = $this->Database->prepare("SELECT data FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?")
 			->limit(1)
 			->execute
 			(
@@ -315,8 +319,9 @@ class tl_news_rms extends \Backend
 			);
 
 		//wenn z.B. der Datensatz neu angelegt wurde
-		if($tmpDateObj->numRows > 0) $data = unserialize($tmpDateObj->data);
+		if($tmpDataObj->numRows > 0) $data = unserialize($tmpDataObj->data);
 		else $data = $newData;
+
 
 		// create / first-save
 		$isNewEntryObj = $this->Database->prepare('SELECT count(*) c FROM `'.$strTable.'` WHERE `id`=? AND `tstamp`=?')
@@ -331,6 +336,7 @@ class tl_news_rms extends \Backend
 
 		//overwrite with live-data
 		$data['rms_new_edit'] = 1;
+		$data['rms_notice'] = $newData['rms_notice'];
 
 		$objUpdate = $this->Database->prepare("UPDATE ".$strTable." %s WHERE id=?")->set($data)->execute($intId);
 
@@ -338,7 +344,7 @@ class tl_news_rms extends \Backend
 		$status = $this->rmsHelper->isMemberOfMasters() ?  1 : 0;
 
 		//overwrite with new-data
-		$newRmsData = array_merge($data, $newData);
+		$newRmsData = ($data['type'] == $newData['type']) ? array_merge($data, $newData) : $newData;
 
 		$arrSubmitData = array
 		(
@@ -346,7 +352,7 @@ class tl_news_rms extends \Backend
 			'ref_id' => $intId,
 			'ref_table' =>  $strTable,
 			'ref_author' => $userID,
-			'ref_notice' => $data['rms_notice'],
+			'ref_notice' => $newRmsData['rms_notice'],
 			'status' => $status,
 			'data'=> $newRmsData
 		);
@@ -368,5 +374,6 @@ class tl_news_rms extends \Backend
 		{
 			$this->Database->prepare("INSERT INTO tl_rms %s")->set($arrSubmitData)->execute();
 		}
+
 	}
 }
