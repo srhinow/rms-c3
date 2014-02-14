@@ -195,88 +195,110 @@ class tl_rms extends Backend
 
 		$strUrl = false;
 
-		switch($row['ref_table'])
+		$rowDataArr = unserialize($row['data']);
+
+		// get the correct section for the preview
+		if($row['ref_table'] == 'tl_content' && $rowDataArr['ptable'] != '') $section = $rowDataArr['ptable'];
+		elseif($row['ref_table'] == 'tl_content' && $rowDataArr['ptable'] == '') $section = 'tl_content';
+		else $section = $row['ref_table'];
+
+		switch($section)
 		{
-		case 'tl_content':
-		    $bereich = 'Inhaltselement';
-		    $pageObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
-		    LEFT JOIN `tl_article` `a` ON `p`.`id`=`a`.`pid`
-		    LEFT JOIN `tl_content` `c` ON `a`.`id`=`c`.`pid`
-		    WHERE `c`.`id`=?')
-				    ->limit(1)
-				    ->execute($row['ref_id']);
+			case 'tl_content':
 
-		    if($pageObj->numRows > 0) $strUrl = $this->generateFrontendUrl($pageObj->row(),'/do/preview');
-		    $strPreviewLink = '<a href="'.$this->Environment->base.$strUrl.'" target="_blank">'.$pageObj->title.'</a>';
-		break;
-		case 'tl_newsletter':
+			    $bereich = 'Inhaltselement';
 
-		    $bereich = 'Newsletter';
-		    //get Preview-Link
-		    if($settings['prevjump_newsletter'])
-		    {
-			$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-										->limit(1)
-										->execute($settings['prevjump_newsletter']);
+			    $pageObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
+			    LEFT JOIN `tl_article` `a` ON `p`.`id`=`a`.`pid`
+			    LEFT JOIN `tl_content` `c` ON `a`.`id`=`c`.`pid`
+			    WHERE `c`.`id`=?')
+					    ->limit(1)
+					    ->execute($row['ref_id']);
 
-			if ($objJumpTo->numRows)
-			{
-				$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/items/%s'));
-			}
-		    }
+			    if($pageObj->numRows > 0) $strUrl = $this->generateFrontendUrl($pageObj->row(),'/do/preview');
 
-		    //get Link-Title
-		    $pageObj = $this->Database->prepare('SELECT * FROM `tl_newsletter` WHERE `id`=?')
-					      ->limit(1)
-					      ->execute($row['ref_id']);
+			    $strPreviewLink = '<a href="'.$this->Environment->base.$strUrl.'" target="_blank">'.$pageObj->title.'</a>';
 
-		    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->subject.'</a>';
-		    break;
+			break;
+			case 'tl_newsletter':
 
-		case 'tl_calendar_events':
+			    $bereich = 'Newsletter';
+			    //get Preview-Link
+			    if($settings['prevjump_newsletter'])
+			    {
+					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
+												->limit(1)
+												->execute($settings['prevjump_newsletter']);
 
-		    $bereich = 'Veranstaltung';
-		    if($settings['prevjump_calendar_events'])
-		    {
-			$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-										->limit(1)
-										->execute($settings['prevjump_calendar_events']);
+					if ($objJumpTo->numRows)
+					{
+						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
+					}
+			    }
 
-			if ($objJumpTo->numRows)
-			{
-				$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/events/%s'));
-			}
-		    }
+			    //if parent or chield-text
+			    $nlId = ($row['ref_table'] == 'tl_content') ? $rowDataArr['pid'] : $rowDataArr['id'];
 
-		    //get Link-Title
-		    $pageObj = $this->Database->prepare('SELECT * FROM `tl_calendar_events` WHERE `id`=?')
-					      ->limit(1)
-					      ->execute($row['ref_id']);
+			    //get Link-Title
+			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_newsletter` WHERE `id`=?')
+						      ->limit(1)
+						      ->execute($nlId);
 
-		    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->title.'</a>';
-		    break;
+			    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->subject.'</a>';
+			break;
+			case 'tl_calendar_events':
 
-		case 'tl_news':
+			    $bereich = 'Veranstaltung';
 
-		    $bereich = 'Nachrichten';
-		    if($settings['prevjump_news'])
-		    {
-			$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-										->limit(1)
-										->execute($settings['prevjump_news']);
+			    if($settings['prevjump_calendar_events'])
+			    {
+					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
+												->limit(1)
+												->execute($settings['prevjump_calendar_events']);
 
-			if ($objJumpTo->numRows)
-			{
-				$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/items/%s'));			}
-		    }
+					if ($objJumpTo->numRows)
+					{
+						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/events/%s/do/preview'));
+					}
+			    }
 
-		    //get Link-Title
-		    $pageObj = $this->Database->prepare('SELECT * FROM `tl_news` WHERE `id`=?')
-					      ->limit(1)
-					      ->execute($row['ref_id']);
+			    //if parent or chield-text
+			    $eventId = ($row['ref_table'] == 'tl_content') ? $rowDataArr['pid'] : $rowDataArr['id'];
 
-		    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->headline.'</a>';
-		    break;
+			    //get Link-Title
+			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_calendar_events` WHERE `id`=?')
+						      ->limit(1)
+						      ->execute($eventId);
+
+			    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->title.'</a>';
+			break;
+			case 'tl_news':
+
+			    $bereich = 'Nachrichten';
+
+			    if($settings['prevjump_news'])
+			    {
+					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
+												->limit(1)
+												->execute($settings['prevjump_news']);
+
+					if ($objJumpTo->numRows)
+					{
+						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
+					}
+			    }
+
+			    //if parent or chield-text
+			    $newsId = ($row['ref_table'] == 'tl_content') ? $rowDataArr['pid'] : $rowDataArr['id'];
+
+			    //get Link-Title
+			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_news` WHERE `id`=?')
+						      ->limit(1)
+						      ->execute($newsId);
+
+			    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->headline.'</a>';
+
+			break;
 		}
 
 		$label  = '<strong>Status:</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span><br>';
