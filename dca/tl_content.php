@@ -295,6 +295,27 @@ class tl_content_rms extends \Backend
 	}
 
 	/**
+	 * Return the group of a content element
+	 * @param string
+	 * @return string
+	 */
+	public function getContentElementGroup($element)
+	{
+		foreach ($GLOBALS['TL_CTE'] as $k=>$v)
+		{
+			foreach (array_keys($v) as $kk)
+			{
+				if ($kk == $element)
+				{
+					return $k;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	* overwrite table-data and backup in tmp-table if current BackendUser a low-level-redakteur
 	* @param object
 	* @param object
