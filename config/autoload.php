@@ -26,12 +26,10 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
 	// Modules
-	'SvenRhinow\rms\ModuleEventReaderRMS'      => 'system/modules/rms/modules/ModuleEventReaderRMS.php',
-	'Contao\ModuleNewsReaderRMS'               => 'system/modules/rms/modules/ModuleNewsReaderRMS.php',
-	'SvenRhinow\rms\ModuleNewsletterReaderRMS' => 'system/modules/rms/modules/ModuleNewsletterReaderRMS.php',
-	'SvenRhinow\rms\rmsHelper'                 => 'system/modules/rms/rmsHelper.php',
-	'SvenRhinow\rms\rmsDefaultCallbacks'       => 'system/modules/rms/rmsDefaultCallbacks.php',
+	'Contao\ModuleNewsReaderRMS'         => 'system/modules/rms/modules/ModuleNewsReaderRMS.php',
+	'SvenRhinow\rms\rmsHelper'           => 'system/modules/rms/rmsHelper.php',
+	'SvenRhinow\rms\rmsDefaultCallbacks' => 'system/modules/rms/rmsDefaultCallbacks.php',
 
 	// Drivers
-	'Contao\DC_rmsTable'                       => 'system/modules/rms/drivers/DC_rmsTable.php',
+	'Contao\DC_rmsTable'                 => 'system/modules/rms/drivers/DC_rmsTable.php',
 ));

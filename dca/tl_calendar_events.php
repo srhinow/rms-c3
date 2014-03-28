@@ -18,7 +18,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
     /**
     * change dca from tl_calendar_events
     */
-    $GLOBALS['TL_DCA']['tl_calendar_events']['config']['onload_callback'][] = array('rmsHelper','addRMFields');
+    $GLOBALS['TL_DCA']['tl_calendar_events']['config']['onload_callback'][] = array('tl_calendar_events_rms','addRmsFields');
     $GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations']['toggle']['button_callback'] = array('tl_calendar_events_rms','toggleIcon');
 
     /**
@@ -62,7 +62,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'sql'					  => "char(1) NOT NULL default ''",
 		'save_callback' => array
 		(
-			array('rmsHelper', 'sendEmailInfo')
+			array('SvenRhinow\rms\rmsHelper', 'sendEmailInfo')
 		)
 	);
 
@@ -190,7 +190,7 @@ class tl_calendar_events_rms extends Backend
     public function checkPreviewIcon($row, $href, $label, $title, $icon, $attributes)
     {
         $this->import('Database');
-        $this->import('rmsHelper');
+        $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
         $previewLink = $this->rmsHelper->getPreviewLink($row['id'],'tl_calendar_events');
 
         //test rms
@@ -202,6 +202,26 @@ class tl_calendar_events_rms extends Backend
 
     }
 
+	/**
+	* add RMS-Fields in menny content-elements (DCA)
+	* @var object
+	*/
+	public function addRmsFields(\DataContainer $dc)
+	{
+	    $strTable = $this->Input->get("table");
+
+	    //defined blacklist palettes
+		$rm_palettes_blacklist = array('__selector__');
+
+	    //add Field in meny content-elements
+		foreach($GLOBALS['TL_DCA'][$strTable]['palettes'] as $name => $field)
+        {
+			if(in_array($name,$rm_palettes_blacklist)) continue;
+
+			$GLOBALS['TL_DCA'][$strTable]['palettes'][$name] .=  ';{rms_legend:hide},rms_notice,rms_release_info';
+        }
+
+	}
     /**
 	* overwrite table-data and backup in tmp-table if current BackendUser a low-level-redakteur
 	* @param object
