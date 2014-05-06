@@ -9,7 +9,7 @@ Die Freigabe ist im Moment für die Bereiche Inhalte unterhalb von Artikeln, New
 finanziert durch
 ---------------------------
 
-Die Umsetzung der rms-Erweiterung für Contao 3 und die Erweitrung um eine "Unterschiede anzeigen" - Funktion, wurde durch Cyrill Weiss (http://www.cyrillweiss.ch/) in Auftrag gegeben und finanziert.
+Die Umsetzung der rms-Erweiterung für Contao 3 und die Erweiterung um eine "Unterschiede anzeigen" - Funktion, wurde durch Cyrill Weiss (http://www.cyrillweiss.ch/) in Auftrag gegeben und finanziert.
 
 ---------------------------
 Versionshinweis
