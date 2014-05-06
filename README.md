@@ -5,6 +5,11 @@ rms (Release Management System)
 rms-c3 ist eine Contao3-Erweiterung, welches es bestimmten Benutzergruppen erlaubt Freigaben zu verwalten. Alle Redakteur-Zugänge die nicht als Super-Redakteurgruppe in dem Freigabeeinstellungen zugewiesen wurden, können zwar Änderungen an Inhalten vornehmen, diese werden aber nach dem speichern nicht Live angezeigt sondern stehen in der Freigabeliste. Außerdem sind Inhalte die auf Freigabe warten, in der Listenansicht im jeweiligen Bereich mit einem roten Hinweis gekennzeichnet. 
 Die Freigabe ist im Moment für die Bereiche Inhalte unterhalb von Artikeln, News, Newsletter und Calender-Events umgesetzt worden.
 
+---------------------------
+finanziert durch
+---------------------------
+
+Die Umsetzung der rms-Erweiterung für Contao 3 und die Erweitrung um eine "Unterschiede anzeigen" - Funktion, wurde durch Cyrill Weiss (http://www.cyrillweiss.ch/) in Auftrag gegeben und finanziert.
 
 ---------------------------
 Versionshinweis
