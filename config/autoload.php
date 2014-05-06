@@ -25,6 +25,7 @@ ClassLoader::addNamespaces(array
  */
 ClassLoader::addClasses(array
 (
+	'SvenRhinow\rms\rmsVersions'         => 'system/modules/rms/rmsVersions.php',
 	// Modules
 	'Contao\ModuleNewsReaderRMS'         => 'system/modules/rms/modules/ModuleNewsReaderRMS.php',
 	'SvenRhinow\rms\rmsHelper'           => 'system/modules/rms/rmsHelper.php',
@@ -32,4 +33,13 @@ ClassLoader::addClasses(array
 
 	// Drivers
 	'Contao\DC_rmsTable'                 => 'system/modules/rms/drivers/DC_rmsTable.php',
+));
+
+
+/**
+ * Register the templates
+ */
+TemplateLoader::addFiles(array
+(
+	'be_rmsdiff' => 'system/modules/rms/templates',
 ));

@@ -35,6 +35,8 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 
     $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('\SvenRhinow\rms\rmsHelper', 'handleBackendUserAccessControlls');
     $GLOBALS['TL_HOOKS']['getContentElement'][] = array('\SvenRhinow\rms\rmsHelper', 'previewContentElement');
+
+    
 }
 
 $GLOBALS['FE_MOD']['news']['newsreader_rms'] = 'ModuleNewsReaderRMS';

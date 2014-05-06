@@ -69,12 +69,20 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 		(
 			'edit' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_article']['edit'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_rms']['edit'],
 				'href'                => 'act=edit',
 				'icon'                => 'edit.gif',
 				'button_callback'     => array('tl_rms', 'editArticle'),
 				'attributes'          => 'class="contextmenu"'
 			),
+			'show_diff' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_rms']['show_diff'],
+				'href'                => 'key=show_diff&popup=1',
+				'attributes'		  => 'onclick="Backend.openModalIframe({\'width\':765,\'title\':\'Unterschiede anzeigen\',\'url\':this.href});return false"',
+				'icon'                => 'diff.gif',
+				'button_callback'     => array('tl_rms', 'showDiff')
+			),			
 			'delete' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_rms']['delete'],
@@ -195,6 +203,9 @@ class tl_rms extends Backend
 
 		$strUrl = false;
 
+		//get referenz
+		$refObj = $this->Database->prepare('SELECT * FROM '.$row['ref_table'].' WHERE `id`=? ')->limit(1)->execute($row['ref_id']);
+
 		$rowDataArr = unserialize($row['data']);
 
 		// get the correct section for the preview
@@ -202,12 +213,12 @@ class tl_rms extends Backend
 		elseif($row['ref_table'] == 'tl_content' && $rowDataArr['ptable'] == '') $section = 'tl_content';
 		else $section = $row['ref_table'];
 
+		$sectionName = $GLOBALS['TL_LANG']['tl_rms']['sessions'][$section];
+
 		switch($section)
 		{
+			case 'tl_article':
 			case 'tl_content':
-
-			    $bereich = 'Inhaltselement';
-
 			    $pageObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
 			    LEFT JOIN `tl_article` `a` ON `p`.`id`=`a`.`pid`
 			    LEFT JOIN `tl_content` `c` ON `a`.`id`=`c`.`pid`
@@ -222,7 +233,6 @@ class tl_rms extends Backend
 			break;
 			case 'tl_newsletter':
 
-			    $bereich = 'Newsletter';
 			    //get Preview-Link
 			    if($settings['prevjump_newsletter'])
 			    {
@@ -248,8 +258,6 @@ class tl_rms extends Backend
 			break;
 			case 'tl_calendar_events':
 
-			    $bereich = 'Veranstaltung';
-
 			    if($settings['prevjump_calendar_events'])
 			    {
 					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
@@ -273,8 +281,6 @@ class tl_rms extends Backend
 			    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->title.'</a>';
 			break;
 			case 'tl_news':
-
-			    $bereich = 'Nachrichten';
 
 			    if($settings['prevjump_news'])
 			    {
@@ -300,9 +306,10 @@ class tl_rms extends Backend
 
 			break;
 		}
+		$ifFirstSave = ($refObj->rms_first_save == 1) ? '<span style="padding:0 10px; font-weight:bold;">*neu erstellt*</span>': '';
 
-		$label  = '<strong>Status:</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span><br>';
-		$label .= '<strong>Bereich:</strong> '.$bereich.'<br>';
+		$label  = '<strong>Status:</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span>'.$ifFirstSave.'<br>';
+		$label .= '<strong>Bereich:</strong> '.$sectionName.'<br>';
 		$label .= '<strong>Vorchau-Link: </strong>'.$strPreviewLink.'<br>';
 		$label .= '<strong>Author:</strong> '.$userObj->name.' ('.$userObj->email.')<br>';
 		$label .= '<strong>letzte Bearbeitung:</strong> '.date($GLOBALS['TL_CONFIG']['datimFormat'],$row['tstamp']).'<br>';
@@ -357,4 +364,31 @@ class tl_rms extends Backend
 							->execute($ref_id);
 		}
 	}
+
+	 /**
+     * show diff between preview and active version
+     * @param array
+     * @param string
+     * @param string
+     * @param string
+     * @param string
+     * @param string
+     * @return string
+     */
+    public function showDiff($row, $href, $label, $title, $icon, $attributes)
+    {
+       	// print_r($row);
+
+       	if ($this->Input->get('key') == 'show_diff')
+		{
+	        $this->import('Database');
+
+	        $objVersions = new \SvenRhinow\rms\rmsVersions($row);
+
+	        $previewLink = $objVersions->compare();
+
+    	}
+    	$href .= "&ref_id=".$row['ref_id'];
+    	return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+    }
 }

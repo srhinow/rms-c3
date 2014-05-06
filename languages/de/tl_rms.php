@@ -52,10 +52,26 @@ $GLOBALS['TL_LANG']['tl_rms']['settings']     = array('Freigabe-Einstellungen', 
 $GLOBALS['TL_LANG']['tl_rms']['acknowledge']     = array('Änderung freigeben', 'diese Änderung freigeben.');
 $GLOBALS['TL_LANG']['tl_rms']['delete']     = array('Änderung löschen', 'diese Änderung löschen.');
 $GLOBALS['TL_LANG']['tl_rms']['edit']       = array('Inhalt bearbeiten', 'Inhalt bearbeiten');
+$GLOBALS['TL_LANG']['tl_rms']['show_diff']       = array('Unterschied anzeigen', 'Den bearbeiteten Unterschied anzeigen.');
+
 
 /**
  * Legends
  */
 $GLOBALS['TL_LANG']['tl_content']['rm_legend']      = 'Freigabe';
+
+/**
+* Bereiche
+*/
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_article'] = 'Artikel :: Inhaltselement';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_content'] = 'Artikel :: Inhaltselement';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_newsletter'] = 'Newsletter :: Element';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_calendar_events'] = 'Event :: Element';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_news'] = 'Nachrichten :: Inhaltselement';
+
+/**
+* Other Text
+*/
+$GLOBALS['TL_LANG']['tl_rms']['diff_new_content'] = '<h5>Der Inhalt wurde neu erstellt.</h5> <p>Es gibt daher keine Version zum Vergleich.</p>';
 
 ?>

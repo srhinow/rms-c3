@@ -37,13 +37,17 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	/**
 	* Fields
 	*/
+    $GLOBALS['TL_DCA']['tl_newsletter']['fields']['ptable']['ignoreDiff'] = true;
+
 	$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['rms_first_save'] = array
 	(
-		'sql'					  => "char(1) NOT NULL default ''"
+		'sql'					  => "char(1) NOT NULL default ''",
+        'ignoreDiff'            => true,		
 	);
     $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['rms_new_edit'] = array
     (
-        'sql'                     => "char(1) NOT NULL default ''"
+        'sql'                     => "char(1) NOT NULL default ''",
+        'ignoreDiff'            => true,        
     );
     $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['rms_notice'] = array
 	(
@@ -51,7 +55,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'exclude'                 => true,
 		'search'                  => true,
 		'inputType'               => 'textarea',
-		'eval'                    => array('mandatory'=>false, 'rte'=>FALSE),
+		'eval'                    => array('mandatory'=>false, 'rte'=>false),
 		'sql'					  => "longtext NULL"
 	);
     $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['rms_release_info'] = array
@@ -60,6 +64,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'exclude'                 => true,
 		'inputType'               => 'checkbox',
 		'sql'					  => "char(1) NOT NULL default ''",
+        'ignoreDiff'            => true,		
 		'save_callback' => array
 		(
 			array('SvenRhinow\rms\rmsHelper', 'sendEmailInfo')

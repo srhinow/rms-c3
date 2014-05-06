@@ -39,14 +39,18 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	/**
 	* Fields
 	*/
+	$GLOBALS['TL_DCA']['tl_content']['fields']['ptable']['ignoreDiff'] = true;
+	
 	$GLOBALS['TL_DCA']['tl_content']['fields']['rms_first_save'] = array
 	(
-		'sql'					  => "char(1) NOT NULL default ''"
+		'sql'					  => "char(1) NOT NULL default ''",
+		'ignoreDiff'			=> true,
 	);
 
 	$GLOBALS['TL_DCA']['tl_content']['fields']['rms_new_edit'] = array
 	(
-		'sql'					  => "char(1) NOT NULL default ''"
+		'sql'					  => "char(1) NOT NULL default ''",
+		'ignoreDiff'			=> true,
 	);
 
     $GLOBALS['TL_DCA']['tl_content']['fields']['rms_notice'] = array
@@ -64,6 +68,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'exclude'                 => true,
 		'inputType'               => 'checkbox',
 		'sql'					  => "char(1) NOT NULL default ''",
+		'ignoreDiff'			=> true,
 		'save_callback' => array
 		(
 			array('SvenRhinow\rms\rmsHelper', 'sendEmailInfo')
