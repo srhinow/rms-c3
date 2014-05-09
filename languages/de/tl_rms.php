@@ -39,11 +39,15 @@ $GLOBALS['TL_LANG']['tl_rms']['show_preview'] = array('Export','Rechnungen und d
  */
 $GLOBALS['TL_LANG']['tl_rms']['tstamp']     = array('Freigabe-Datum', 'Datum der Freigabe-Anfrage.');
 $GLOBALS['TL_LANG']['tl_rms']['ref_table']     = array('geänderte Tabelle', 'referenzierte Tabelle der Änderung.');
-$GLOBALS['TL_LANG']['tl_rms']['ref_author']     = array('Author der Änderung', '');
+$GLOBALS['TL_LANG']['tl_rms']['ref_author']     = array('Autor der Änderung', '');
 $GLOBALS['TL_LANG']['tl_rms']['ref_id']     = array('ID', 'Eindeutige Datenbank-ID des geänderten Datensatzes');
 $GLOBALS['TL_LANG']['tl_rms']['ref_notice']     = array('Freigabe-Anmerkung', 'Die Anmerkung dient dem Verantwortlichen als Hilfestellung der Änderungen.');
 $GLOBALS['TL_LANG']['tl_rms']['data']     = array('geänderte Daten', 'serialisierte Daten des Datensatzes');
 $GLOBALS['TL_LANG']['tl_rms']['status']     = array('Status', 'zeigt an ob diese Freigabe bereits beantwortet wurde.');
+$GLOBALS['TL_LANG']['tl_rms']['region'][0]   =  'Bereich';
+$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0]   =  'Vorschau-Link';
+$GLOBALS['TL_LANG']['tl_rms']['last_edit'][0]   =  'letzte Bearbeitung';
+
 $GLOBALS['TL_LANG']['tl_rms']['status_options'] = array('0'=>'unbearbeitet','1'=>'bearbeitet');
 /**
  * Buttons
@@ -73,5 +77,6 @@ $GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_news'] = 'Nachrichten :: Inhaltsel
 * Other Text
 */
 $GLOBALS['TL_LANG']['tl_rms']['diff_new_content'] = '<h5>Der Inhalt wurde neu erstellt.</h5> <p>Es gibt daher keine Version zum Vergleich.</p>';
+$GLOBALS['TL_LANG']['tl_rms']['info_new_edit'] = '*neu erstellt*';
 
 ?>

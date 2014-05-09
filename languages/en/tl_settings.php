@@ -1,8 +1,8 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
+ * Copyright (C) 2005-2010 Leo Feyer
  *
  * Formerly known as TYPOlight Open Source CMS.
  *
@@ -26,13 +26,17 @@
  * @author     Sven Rhinow <kservice@sr-tag.de> 
  * @package    rms (Release Management System)
  * @license    LGPL 
- * @filesource
  */
 
 
 /**
- * Back end modules
+ * Fields
  */
-$GLOBALS['TL_LANG']['MOD']['rms'] = array('Freigabe-Anfragen', 'Dieses Modul erlaubt es Ihnen neue bzw. geänderte Inhalte frei zugeben.');
+ $GLOBALS['TL_LANG']['tl_settings']['rms_active']     = array('Enable release mode', 'Only when the select-field is set, the release management is active.');
+ 
+/**
+ * Legends
+ */
+$GLOBALS['TL_LANG']['tl_settings']['rms_legend']      = 'Release Management System (rms)';
 
 ?>

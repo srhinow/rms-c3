@@ -50,3 +50,8 @@ $GLOBALS['rms_extension']['tables'][] = 'tl_content';
 $GLOBALS['rms_extension']['tables'][] = 'tl_newsletter';
 $GLOBALS['rms_extension']['tables'][] = 'tl_calendar_events';
 $GLOBALS['rms_extension']['tables'][] = 'tl_news';
+
+/**
+* einige Felder wie Spaltensets können ignoriert werden
+*/
+$GLOBALS['rms_extension']['ignoredFields'] = array('colsetStart','colsetPart','colsetEnd');

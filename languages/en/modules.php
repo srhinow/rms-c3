@@ -33,6 +33,5 @@
 /**
  * Back end modules
  */
-$GLOBALS['TL_LANG']['MOD']['rms'] = array('Freigabe-Anfragen', 'Dieses Modul erlaubt es Ihnen neue bzw. geänderte Inhalte frei zugeben.');
+$GLOBALS['TL_LANG']['MOD']['rms'] = array('Release requests', 'This module allows you to release new or changed content.');
 
-?>

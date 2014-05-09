@@ -93,7 +93,7 @@ class rmsHelper extends \Backend
 	 }
 
 	 /**
-	 * ueberprueft ob der Benutzer ohne Freigaberechte ist
+	 * ueberprueft ob der Benutzer mit Freigaberechte ist
 	 */
 	 public function isMemberOfMasters()
 	 {
@@ -148,6 +148,9 @@ class rmsHelper extends \Backend
 	{
 	    $arrTables = deserialize($this->settings['release_tables']);
 
+	    // return if this ignored field
+	    if(in_array($objElement->type, $GLOBALS['rms_extension']['ignoredFields']) ) return $strBuffer;
+
 	    if($this->Input->get('do') == 'preview' || in_array(\Input::get('table'),$arrTables))
 	    {
 			$id = false;
@@ -163,6 +166,7 @@ class rmsHelper extends \Backend
 				default:
 				    $typePrefix = 'ce_';
         	}
+
         	$objStoredData = $this->Database->prepare("SELECT `data` FROM `tl_rms` WHERE `ref_id`=? AND `ref_table`=?")
 									->execute($objElement->id, 'tl_content');
 

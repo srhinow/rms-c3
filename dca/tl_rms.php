@@ -306,14 +306,14 @@ class tl_rms extends Backend
 
 			break;
 		}
-		$ifFirstSave = ($refObj->rms_first_save == 1) ? '<span style="padding:0 10px; font-weight:bold;">*neu erstellt*</span>': '';
+		$ifFirstSave = ($refObj->rms_first_save == 1) ? '<span style="padding:0 10px; font-weight:bold;">'.$GLOBALS['TL_LANG']['tl_rms']['info_new_edit'].'</span>': '';
 
-		$label  = '<strong>Status:</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span>'.$ifFirstSave.'<br>';
-		$label .= '<strong>Bereich:</strong> '.$sectionName.'<br>';
-		$label .= '<strong>Vorchau-Link: </strong>'.$strPreviewLink.'<br>';
-		$label .= '<strong>Author:</strong> '.$userObj->name.' ('.$userObj->email.')<br>';
-		$label .= '<strong>letzte Bearbeitung:</strong> '.date($GLOBALS['TL_CONFIG']['datimFormat'],$row['tstamp']).'<br>';
-		$label .= '<strong>Änderungs-Notiz:</strong> '.nl2br($row['ref_notice']);
+		$label  = '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['status'][0].':</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span>'.$ifFirstSave.'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$sectionName.'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0].': </strong>'.$strPreviewLink.'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_author'][0].':</strong> '.$userObj->name.' ('.$userObj->email.')<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['last_edit'][0].':</strong> '.date($GLOBALS['TL_CONFIG']['datimFormat'],$row['tstamp']).'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_notice'][0].':</strong> '.nl2br($row['ref_notice']);
 
 
 
