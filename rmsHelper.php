@@ -117,9 +117,9 @@ class rmsHelper extends \Backend
 
 	    if(!$GLOBALS['TL_CONFIG']['rms_active']) $GLOBALS['TL_CONFIG']['rms_active'] = false;
 
-	    $protectedContent = ($strTable == 'tl_content') ? $this->isContentRmsProtected() : true;
+	    $protectedContent = ($strTable == 'tl_content' ) ? $this->isContentRmsProtected() : true;
 
-	    if (!$this->isMemberOfMasters() && $protectedContent  || \Input::get("author") && ($GLOBALS['TL_CONFIG']['rms_active']))
+	    if (!$this->isMemberOfMasters() && $protectedContent && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author")) // 
 	    {
 
 			$GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] = 'rmsTable';
