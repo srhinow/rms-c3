@@ -18,7 +18,7 @@ namespace Contao;
 
 
 /**
- * Class DC_Table
+ * Class DC_rmsTable
  *
  * Provide methods to modify the database.
  * @copyright  Leo Feyer 2005-2014
@@ -157,15 +157,15 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 		// Set IDs and redirect
 		if (\Input::post('FORM_SUBMIT') == 'tl_select')
 		{
-			$ids = deserialize(\Input::post('IDS'));
+			$ids = \Input::post('IDS');
 
-			if (!is_array($ids) || empty($ids))
+			if (empty($ids) || !is_array($ids))
 			{
 				$this->reload();
 			}
 
 			$session = $this->Session->getData();
-			$session['CURRENT']['IDS'] = deserialize(\Input::post('IDS'));
+			$session['CURRENT']['IDS'] = $ids;
 			$this->Session->setData($session);
 
 			if (isset($_POST['edit']))
@@ -1789,7 +1789,6 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 
 		// Build an array from boxes and rows
 		$this->strPalette = $this->getPalette();
-		// print_r($this->strPalette);
 		$boxes = trimsplit(';', $this->strPalette);
 		$legends = array();
 
@@ -2077,16 +2076,16 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 			{
 				\Message::reset();
 				\System::setCookie('BE_PAGE_OFFSET', 0, 0);
+
 				$this->redirect($this->getReferer());
 			}
 			elseif (isset($_POST['saveNedit']))
 			{
 				\Message::reset();
 				\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-				$strUrl = $this->addToUrl($GLOBALS['TL_DCA'][$this->strTable]['list']['operations']['edit']['href']);
 
-				$strUrl = preg_replace('/(&amp;)?s2e=[^&]*/i', '', $strUrl);
-				$strUrl = preg_replace('/(&amp;)?act=[^&]*/i', '', $strUrl);
+				$strUrl = $this->addToUrl($GLOBALS['TL_DCA'][$this->strTable]['list']['operations']['edit']['href'], false);
+				$strUrl = preg_replace('/(&amp;)?(s2e|act)=[^&]*/i', '', $strUrl);
 
 				$this->redirect($strUrl);
 			}
@@ -2113,6 +2112,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 			{
 				\Message::reset();
 				\System::setCookie('BE_PAGE_OFFSET', 0, 0);
+
 				$strUrl = \Environment::get('script') . '?do=' . \Input::get('do');
 
 				if (isset($_GET['table']))
@@ -2189,7 +2189,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 		// Save field selection in session
 		if (\Input::post('FORM_SUBMIT') == $this->strTable.'_all' && \Input::get('fields'))
 		{
-			$session['CURRENT'][$this->strTable] = deserialize(\Input::post('all_fields'));
+			$session['CURRENT'][$this->strTable] = \Input::post('all_fields');
 			$this->Session->setData($session);
 		}
 
@@ -2591,7 +2591,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 		// Save field selection in session
 		if (\Input::post('FORM_SUBMIT') == $this->strTable.'_all' && \Input::get('fields'))
 		{
-			$session['CURRENT'][$this->strTable] = deserialize(\Input::post('all_fields'));
+			$session['CURRENT'][$this->strTable] = \Input::post('all_fields');
 			$this->Session->setData($session);
 		}
 
@@ -2982,10 +2982,18 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 		// Save the value if there was no error
 		if (($varValue != '' || !$arrData['eval']['doNotSaveEmpty']) && ($this->varValue !== $varValue || $arrData['eval']['alwaysSave']))
 		{
-			// If the field is a fallback field, empty all other columns
+			// If the field is a fallback field, empty all other columns (see #6498)
 			if ($arrData['eval']['fallback'] && $varValue != '')
 			{
-				$this->Database->execute("UPDATE " . $this->strTable . " SET " . $this->strField . "=''");
+				if ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 4)
+				{
+					$this->Database->prepare("UPDATE " . $this->strTable . " SET " . $this->strField . "='' WHERE pid=?")
+								   ->execute($this->activeRecord->pid);
+				}
+				else
+				{
+					$this->Database->execute("UPDATE " . $this->strTable . " SET " . $this->strField . "=''");
+				}
 			}
 
 			// Set the correct empty value (see #6284, #6373)
