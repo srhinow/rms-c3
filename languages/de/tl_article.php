@@ -12,6 +12,6 @@
 /**
  * Legends
  */
-$GLOBALS['TL_LANG']['tl_content']['rms_legend']      = 'Freigabe';
+$GLOBALS['TL_LANG']['tl_article']['rms_settings_legend']      = 'Freigabe-Einstellungen';
+$GLOBALS['TL_LANG']['tl_article']['rms_legend']      = 'Freigabe-Benachrichtigung';
 
-?>

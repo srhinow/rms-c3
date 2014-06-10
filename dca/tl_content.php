@@ -14,6 +14,9 @@
  */
 if($GLOBALS['TL_CONFIG']['rms_active'])
 {
+
+	$this->loadLanguageFile('tl_default');
+	    
     /**
     * change dca from tl_content
     */
@@ -28,7 +31,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
     */
     $GLOBALS['TL_DCA']['tl_content']['list']['operations']['showPreview'] = array
     (
-		'label'               => &$GLOBALS['TL_LANG']['tl_content']['show_preview'],
+		'label'               => &$GLOBALS['TL_LANG']['MSC']['show_preview'],
 		'href'                => 'key=showPreview',
 		'class'               => 'browser_preview',
 		'icon'                => 'page.gif',
@@ -55,7 +58,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 
     $GLOBALS['TL_DCA']['tl_content']['fields']['rms_notice'] = array
 	(
-		'label'                   => &$GLOBALS['TL_LANG']['tl_content']['rms_notice'],
+		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_notice'],
 		'exclude'                 => true,
 		'search'                  => true,
 		'inputType'               => 'textarea',
@@ -64,7 +67,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	);
     $GLOBALS['TL_DCA']['tl_content']['fields']['rms_release_info'] = array
 	(
-		'label'                   => &$GLOBALS['TL_LANG']['tl_content']['rms_release_info'],
+		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_release_info'],
 		'exclude'                 => true,
 		'inputType'               => 'checkbox',
 		'sql'					  => "char(1) NOT NULL default ''",
