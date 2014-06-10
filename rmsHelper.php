@@ -127,9 +127,11 @@ class rmsHelper extends \Backend
 		{
 			case 'tl_content':
 				$protected = $this->rmsIsContentProtected($strTable);
+				// print 'is Content protected? ... : '.(bool)$protected;
 			break;
 			default:
 				$protected = $this->rmsIsTableProtected($strTable);
+				// print 'is Table '.$strTable.' protected? ... : '.(bool)$protected;
 		}
 	    /**
 	    * deprecated
@@ -141,12 +143,14 @@ class rmsHelper extends \Backend
 	    {
 
 			$GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] = 'rmsTable';
-			$GLOBALS['TL_DCA'][$strTable]['config']['ondelete_callback'][] = array('SvenRhinow\rms\rmsDefaultCallbacks','onDeleteCallback');
+
+			//falls keine separaten callbacks existieren die Standart-Callbacks aufrufen
+			$GLOBALS['TL_DCA'][$strTable]['config']['ondelete_callback'][] = (method_exists($strTable.'_rms', 'onDeleteCallback')) ? array($strTable.'_rms','onDeleteCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onDeleteCallback');
 
 			if (\Input::get("act") == "edit")
 			{			    
-			    $GLOBALS['TL_DCA'][$strTable]['config']['getrms_callback'][] = array($strTable.'_rms','onEditCallback');
-			    $GLOBALS['TL_DCA'][$strTable]['config']['onsubmit_callback'][] = array($strTable.'_rms','onSubmitCallback');
+				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_callback'][] = (method_exists($strTable.'_rms', 'onEditCallback')) ? array($strTable.'_rms','onEditCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onEditCallback');
+				$GLOBALS['TL_DCA'][$strTable]['config']['onsubmit_callback'][] = (method_exists($strTable.'_rms', 'onSubmitCallback')) ?  array($strTable.'_rms','onSubmitCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onSubmitCallback');			
 			}
 	    }
 	}
@@ -167,8 +171,10 @@ class rmsHelper extends \Backend
 	    $ignoreFieldArr = explode( ',', str_replace(' ','',$this->settings['ignore_fields']) );
 	    if(is_array($ignoreFieldArr) && in_array($objElement->type, $ignoreFieldArr) ) return $strBuffer;
 
-	    if(\Input::get('do') == 'preview')
+	    if(\Input::get('do') == 'preview' && $objElement->rms_new_edit == 1)
 	    {
+			// print_r($objElement);
+
 			$id = false;
 
 			//region
@@ -583,6 +589,19 @@ class rmsHelper extends \Backend
 				}	
 
 			break;
+			case 'tl_newsletter_channel':
+
+				$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc` WHERE `nlc`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;			
 			case 'tl_faq':
 
 				$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc`
@@ -598,6 +617,75 @@ class rmsHelper extends \Backend
 				}	
 
 			break;
+			case 'tl_faq_category':
+
+				$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc` WHERE `faqc`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;
+			case 'tl_news':
+
+				$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na`
+				LEFT JOIN `tl_news` `n` ON `na`.`id` = `n`.`pid`
+				WHERE `n`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;	
+			case 'tl_news_archive':
+
+				$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na` WHERE `na`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;
+			case 'tl_calendar_events':
+
+				$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal`
+				LEFT JOIN `tl_calendar_events` `calev` ON `cal`.`id` = `calev`.`pid`
+				WHERE `calev`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;	
+			case 'tl_calendar':
+
+				$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal` WHERE `cal`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;								
 			default:
 				
 				// HOOK: add custom logic

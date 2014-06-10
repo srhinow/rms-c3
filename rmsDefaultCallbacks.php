@@ -91,6 +91,10 @@ class rmsDefaultCallbacks extends \Backend
     * set or update a entry in rms-table
     * @param object
     */
+    /**
+    * set or update a entry in rms-table
+    * @param object
+    */
     public function onSubmitCallback(\DataContainer $dc)
     {
 
@@ -178,8 +182,8 @@ class rmsDefaultCallbacks extends \Backend
         {
             $this->Database->prepare("INSERT INTO tl_rms %s")->set($arrSubmitData)->execute();
         }
-    }
 
+    }   
 
     /**
 	* delete from rms-table when item delete
