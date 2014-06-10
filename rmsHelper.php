@@ -52,6 +52,10 @@ class rmsHelper extends \Backend
 
         $this->settings = self::getSettings();
 
+        // if not set -> set default values
+	    if(!$this->settings['control_group']) $this->settings['control_group'] = 0;
+	    if(!$GLOBALS['TL_CONFIG']['rms_active']) $GLOBALS['TL_CONFIG']['rms_active'] = false;
+
         // Load Helper
         $String 	=	\String::getInstance();
         $Database  =	\Database::getInstance();
@@ -88,8 +92,8 @@ class rmsHelper extends \Backend
 	 */
 	 public function isMenmberOfSlaves()
 	 {
-	 	// $this->import('User','BackendUser');
-	 	return (!$this->User->isMemberOf($this->settings['control_group'])  && !$this->BackendUser->isAdmin) ? true : false;
+	 	$this->import('BackendUser');
+	 	return (!$this->BackendUser->isMemberOf($this->settings['control_group'])  && !$this->BackendUser->isAdmin) ? true : false;
 	 }
 
 	 /**
@@ -110,31 +114,41 @@ class rmsHelper extends \Backend
 
 	    if(TL_MODE != 'BE')	return;
 
-	    $arrAllowedTables = $this->settings['release_tables'] ? deserialize($this->settings['release_tables']) : array();
-		if(!in_array($strTable, $arrAllowedTables)) return;
+	    /**
+	    * deprecated
+		*
+		* $arrAllowedTables = $this->settings['release_tables'] ? deserialize($this->settings['release_tables']) : array();
+		* if(!in_array($strTable, $arrAllowedTables)) return;
+		*/
+		
+		$protected = false;
 
-	    if(!$this->settings['control_group']) $this->settings['control_group'] = 0;
+		switch($strTable)
+		{
+			case 'tl_content':
+				$protected = $this->rmsIsContentProtected($strTable);
+			break;
+			default:
+				$protected = $this->rmsIsTableProtected($strTable);
+		}
+	    /**
+	    * deprecated
+		*		
+	    * $protected = ($strTable == 'tl_content' ) ? $this->rmsIsContentProtected() : true;
+		*/
 
-	    if(!$GLOBALS['TL_CONFIG']['rms_active']) $GLOBALS['TL_CONFIG']['rms_active'] = false;
-
-	    $protectedContent = ($strTable == 'tl_content' ) ? $this->isContentRmsProtected() : true;
-
-	    if (!$this->isMemberOfMasters() && $protectedContent && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author")) // 
+	    if ($this->isMenmberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
 	    {
 
 			$GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] = 'rmsTable';
 			$GLOBALS['TL_DCA'][$strTable]['config']['ondelete_callback'][] = array('SvenRhinow\rms\rmsDefaultCallbacks','onDeleteCallback');
 
-			if (\Input::get("act")=="edit")
-			{
-			    
+			if (\Input::get("act") == "edit")
+			{			    
 			    $GLOBALS['TL_DCA'][$strTable]['config']['getrms_callback'][] = array($strTable.'_rms','onEditCallback');
 			    $GLOBALS['TL_DCA'][$strTable]['config']['onsubmit_callback'][] = array($strTable.'_rms','onSubmitCallback');
 			}
-
-
 	    }
-
 	}
 
 	/**
@@ -144,28 +158,31 @@ class rmsHelper extends \Backend
 	* @var string
 	* @return string
 	*/
+
+	//ToDo: rewrite this method and create a Hook for other modules
 	public function previewContentElement($objElement, $strBuffer)
 	{
-	    $arrTables = deserialize($this->settings['release_tables']);
 
 	    // return if this ignored field
-	    if(in_array($objElement->type, $GLOBALS['rms_extension']['ignoredFields']) ) return $strBuffer;
+	    $ignoreFieldArr = explode( ',', str_replace(' ','',$this->settings['ignore_fields']) );
+	    if(is_array($ignoreFieldArr) && in_array($objElement->type, $ignoreFieldArr) ) return $strBuffer;
 
-	    if($this->Input->get('do') == 'preview' || in_array(\Input::get('table'),$arrTables))
+	    if(\Input::get('do') == 'preview')
 	    {
 			$id = false;
 
 			//region
-			switch($this->Input->get('region'))
-			{
-				case 'news':
-				case 'newsletter':
-				case 'calendar_events':
-				    $typePrefix = 'mod_';
-				break;
-				default:
-				    $typePrefix = 'ce_';
-        	}
+			// ToDo: test of old
+			// switch($this->Input->get('region'))
+			// {
+			// 	case 'news':
+			// 	case 'newsletter':
+			// 	case 'calendar_events':
+			// 	    $typePrefix = 'mod_';
+			// 	break;
+			// 	default:
+			// 	    $typePrefix = 'ce_';
+   //      	}
 
         	$objStoredData = $this->Database->prepare("SELECT `data` FROM `tl_rms` WHERE `ref_id`=? AND `ref_table`=?")
 									->execute($objElement->id, 'tl_content');
@@ -173,7 +190,7 @@ class rmsHelper extends \Backend
 			if ($objStoredData->numRows  == 1)
 			{
 				$objRow =  $this->overwriteDbObj($objElement, deserialize($objStoredData->data));
-				$objRow->typePrefix = $typePrefix;
+				// $objRow->typePrefix = $typePrefix;
 
 				$objRow->published = 1; // news,newsletter
 				$objRow->invisible = 0; // content
@@ -223,40 +240,34 @@ class rmsHelper extends \Backend
 
 	    if($varValue == 1)
 	    {
-		//mail from editor to Super-Editor (question)
-		if(!$this->isMemberOfMasters())
-		{
-            $text =  $dc->Input->post('rms_notice');
-		    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
+			//mail from editor to Super-Editor (question)
+			if(!$this->isMemberOfMasters())
+			{
+	            $text =  $dc->Input->post('rms_notice');
+			    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
 
-		    $email = new \Email();
-		    $email->from = $this->BackendUser->email;
-		    $email->charset = 'utf-8';
-		    $email->subject = 'Freigabe-Aufforderung';
-		    $email->text = $text;
-		    $email->sendTo(($this->settings['sender_email']) ? $this->settings['sender_email'] : $GLOBALS['TL_CONFIG']['adminEmail']);
-		}
-		else
-		//send Email from Super-Editor to editor  (answer)
-		{
-		    //get the author-email from this change
-		    $lastEditorObj = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id`=?')
-		    ->limit(1)
-		    ->execute($this->Input->get('author'));
+			    $email = new \Email();
+			    $email->from = $this->BackendUser->email;
+			    $email->charset = 'utf-8';
+			    $email->subject = 'Freigabe-Aufforderung';
+			    $email->text = $text;
+			    $email->sendTo(($this->settings['sender_email']) ? $this->settings['sender_email'] : $GLOBALS['TL_CONFIG']['adminEmail']);
+			}
+			else
+			//send Email from Super-Editor to editor  (answer)
+			{
+			    if(!$lastEditorObj->email) return;
 
-		    if(!$lastEditorObj->email) return;
+	            $text =  $dc->Input->post('rms_notice');
+			    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
 
-            $text =  $dc->Input->post('rms_notice');
-		    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
-
-		    $email = new \Email();
-		    $email->from = $this->BackendUser->email;
-		    $email->charset = 'utf-8';
-		    $email->subject = 'Freigabe-Aufforderung (Antwort)';
-		    $email->text = $text;
-		    $email->sendTo($lastEditorObj->email);
-		}
-
+			    $email = new \Email();
+			    $email->from = $this->BackendUser->email;
+			    $email->charset = 'utf-8';
+			    $email->subject = 'Freigabe-Aufforderung (Antwort)';
+			    $email->text = $text;
+			    $email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
+			}
 	    }
 
 	    //disable everytime sendEmail
@@ -285,7 +296,7 @@ class rmsHelper extends \Backend
 		    $arrData['tstamp'] = time();
 
 
-		    //correct enny fields
+		    //correct any fields
 		    switch($objData->ref_table)
 		    {
 				case 'tl_calendar_events':
@@ -327,11 +338,11 @@ class rmsHelper extends \Backend
 
 	 	$return = array();
 
-	 	if($id == '') $id = $this->Input->get('id');
-	 	if($table == '') $table = $this->Input->get('table');
+	 	if($id == '') $id = \Input::get('id');
+	 	if($table == '') $table = \Input::get('table');
 	 	if(!$this->settings) $this->settings = $this->getSettings();
 
-	 	switch($this->Input->get('table'))
+	 	switch($table)
 		{
 			case 'tl_content':
 
@@ -351,14 +362,14 @@ class rmsHelper extends \Backend
 			    //get Preview-Link
 			    if($this->settings['prevjump_newsletter'])
 			    {
-				$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-											->limit(1)
-											->execute($this->settings['prevjump_newsletter']);
+					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
+												->limit(1)
+												->execute($this->settings['prevjump_newsletter']);
 
-				if ($objJumpTo->numRows)
-				{
-					$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/items/%s'));
-				}
+					if ($objJumpTo->numRows)
+					{
+						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/items/%s'));
+					}
 			    }
 
 			    //get Link-Title
@@ -373,14 +384,14 @@ class rmsHelper extends \Backend
 
 			    if($this->settings['prevjump_calendar_events'])
 			    {
-				$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-											->limit(1)
-											->execute($this->settings['prevjump_calendar_events']);
+					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
+												->limit(1)
+												->execute($this->settings['prevjump_calendar_events']);
 
-				if ($objJumpTo->numRows)
-				{
-					$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/events/%s'));
-				}
+					if ($objJumpTo->numRows)
+					{
+						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/events/%s'));
+					}
 			    }
 
 			    //get Link-Title
@@ -418,65 +429,199 @@ class rmsHelper extends \Backend
 
 	 }
 
-
-	 protected function isContentRmsProtected()
+	 /**
+	 * testet auf diverse Module welche die tl_content-Tabelle verwenden
+	 * @param string
+	 * @return bool
+	 */
+	 protected function rmsIsContentProtected($strTable)
 	 {
+		$return = false;
 
-		if($this->Input->get('table') == 'tl_content')
+		switch(\Input::get('do'))
 		{
-			$this->settings =  $this->getSettings();
-			$protectedRootPages = $this->settings['whitelist_domains'] ? deserialize($this->settings['whitelist_domains']) : array();
-			$return = false;
+			case 'article':
+			
+				$protectedRootPages = $this->settings['whitelist_domains'] ? deserialize($this->settings['whitelist_domains']) : array();
 
-			$curPageObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
-			LEFT JOIN `tl_article` `a` ON `p`.`id`=`a`.`pid`
-			LEFT JOIN `tl_content` `c` ON `a`.`id` = `c`.`pid`
-			WHERE `c`.`id`=?')
-					->limit(1)
-					->execute($this->Input->get('id'));
+				$curObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
+				LEFT JOIN `tl_article` `a` ON `p`.`id`=`a`.`pid`
+				LEFT JOIN `tl_content` `c` ON `a`.`id` = `c`.`pid`
+				WHERE `c`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
 
-			$rootId = $this->recursivePage($curPageObj->pid);
+				$rootPageObj = $this->getRootPage($curObj->pid);
 
-			if(in_array($rootId,$protectedRootPages)) $return = true;
+				// old and new filter
+				if(in_array($rootPageObj->id,$protectedRootPages) || $rootPageObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+					$return = true;
+				}
+			break;
+			case 'news':
+
+				$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na`
+				LEFT JOIN `tl_news` `n` ON `na`.`id`=`n`.`pid`
+				LEFT JOIN `tl_content` `c` ON `n`.`id` = `c`.`pid`
+				WHERE `c`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}
+			break;
+			case 'calendar':
+
+				$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal`
+				LEFT JOIN `tl_calendar_events` `calev` ON `cal`.`id`=`calev`.`pid`
+				LEFT JOIN `tl_content` `c` ON `calev`.`id` = `c`.`pid`
+				WHERE `c`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}		
+
+			break;
+			default:
+
+				// HOOK: add custom logic
+				if (isset($GLOBALS['TL_HOOKS']['rmsIsContentProtected']) && is_array($GLOBALS['TL_HOOKS']['rmsIsContentProtected']))
+				{
+					foreach ($GLOBALS['TL_HOOKS']['rmsIsContentProtected'] as $callback)
+					{
+						if (is_array($callback))
+						{
+							$this->import($callback[0]);
+							$status = $this->$callback[0]->$callback[1]($strTable);
+						}
+						elseif (is_callable($callback))
+						{
+							$status = $callback($strTable);
+						}
+
+						if (is_bool($status))
+						{
+							return $status;
+						}
+					}
+				}
+
 		}
 		return $return;
 	 }
 
-	 protected function recursivePage($pid=0)
+	 /**
+	 * get the RootPage from PageId
+	 * @param int
+	 * @return obj
+	 */
+	 protected function getRootPage($pid = 0)
 	 {
-	    $returnId = $pid;
-
 	    if(intval($pid) > 0)
 	    {
-			$Page = $this->Database->prepare("SELECT * FROM tl_page WHERE id=?")
+			$pageObj = $this->Database->prepare("SELECT * FROM tl_page WHERE id=?")
 					->limit(1)
 					->execute($pid);
 
-			if($Page->type == 'root')
-			{
-			   return $Page->id;
-			}
-			else
-			{
-			    return $this->recursivePage($Page->pid);
-			}
+			// return obj or recursive this method 
+			return ($pageObj->type == 'root') ? $pageObj : $this->getRootPage($pageObj->pid);
 	    }
 	}
 
-	public function convert_to_obj($array)
+	/**
+	* get any field from given user-id 
+	* @param int
+	* @param string
+	* @return mixed
+	*/
+	protected function getMemberData($id, $field = '')
 	{
-	    // if(is_array($array))
-	    // {
-		   //  $obj= object;
+		if(is_integer($id) && (int)$id > 0) 
+		{
+			$uObj = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id` = ?')->limit(1)->execute($id);
 
-		   //  foreach ($array as $k=> $v)
-		   //  {
-		   //      $obj->{$k} = $v;
-	    // 	}
-	    // 	return $obj;
-    	// }
-    	// return false;
-    	return (object) $array;
+			if(strlen($uObj->{$field}) > 0)
+			{
+				return $uObj->{$field};
+			}
+		}
+		return $this->settings['sender_email'];			
 	}
 
+	 /**
+	 * testet auf diverse Tabellen ob diese als geschützt markiert wurden
+	 * @param string
+	 * @return bool
+	 */	
+	protected function rmsIsTableProtected($strTable)
+	{
+		$return = false;
+
+		switch($strTable)
+		{
+			case 'tl_newsletter':
+
+				$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc`
+				LEFT JOIN `tl_newsletter` `nl` ON `nlc`.`id` = `nl`.`pid`
+				WHERE `nl`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;
+			case 'tl_faq':
+
+				$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc`
+				LEFT JOIN `tl_faq` `faq` ON `faqc`.`id` = `faq`.`pid`
+				WHERE `faq`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+
+				if($curObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
+					$return = true;						
+				}	
+
+			break;
+			default:
+				
+				// HOOK: add custom logic
+				if (isset($GLOBALS['TL_HOOKS']['rmsIsTableProtected']) && is_array($GLOBALS['TL_HOOKS']['rmsIsTableProtected']))
+				{
+					foreach ($GLOBALS['TL_HOOKS']['rmsIsTableProtected'] as $callback)
+					{
+						if (is_array($callback))
+						{
+							$this->import($callback[0]);
+							$status = $this->$callback[0]->$callback[1]($strTable);
+						}
+						elseif (is_callable($callback))
+						{
+							$status = $callback($strTable);
+						}
+
+						if (is_bool($status))
+						{
+							return $status;
+						}
+					}
+				}			
+		}
+		return $return;
+	}
 }

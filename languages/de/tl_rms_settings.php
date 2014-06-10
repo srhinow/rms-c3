@@ -33,11 +33,7 @@
  * Fields
  */
 $GLOBALS['TL_LANG']['tl_rms_settings']['control_group'] = array('Gruppe mit Freigabeberechtigung', 'Geben Sie die Benutzergruppe an welche eine Freigabeberechtigung haben soll.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['release_tables'] = array('Tabellen die berücksichtigt werden sollen', 'Geben Sie die Tabellen an welche eine Freigabeberechtigung haben soll.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['whitelist_domains'] = array('für Freigabe berücksichtigen', 'alle Unterseiten der ausgewählten Startseiten werden bei dem Freigaben berücksichtigt.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['sender_email']         = array('Empfangs-E-Mail', 'Hier können Sie ein oder mehrere EmailAdressen kommo-separiert eingeben.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_newsletter']         = array('Newsletter Vorschauseite', 'Wählen Sie hier die Seite mit dem eingebundenen Newsletter-Detail-Modul aus');
-$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_news']         = array('News Vorschauseite', 'Wählen Sie hier die Seite mit dem eingebundenen News-Detail-Modul aus');
-$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_calendar_events'] = array('Veranstaltungs Vorschauseite', 'Wählen Sie hier die Seite mit dem eingebundenen Veranstaltungs-Detail-Modul aus');
+$GLOBALS['TL_LANG']['tl_rms_settings']['sender_email']         = array('Empfangs-E-Mail-Adresse (Fallback)', 'Hier können Sie ein oder mehrere Email-Adressen durch ein Komma getrennt eingeben. Diese Email-Adresse wird zur Änderungsbenachrichtigung genommen falls keine zugewiesen wurde.');
+$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_fields']         = array('zu ignorierende Felder', 'Tragen Sie hier, durch ein Komma getrennt die Feldnamen ein die vom rms-Modul ignoriert werden sollen. Der Feldname muss der aus der Datenbank sein (z.B. ignore_fields).');
 
 ?>
