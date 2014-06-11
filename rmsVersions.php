@@ -13,15 +13,9 @@
  */
  namespace SvenRhinow\rms;
 
-
 /**
- * Class rmsVersions
- *
- * @copyright  Sven Rhinow 2004-2014
- * @author     Sven Rhinow <kservice@sr-tag.de>
- * @package    rms
+ * Class rmsVersions (fork from Contao-Core-Versions-Class)
  */
-
 class rmsVersions extends \Backend
 {
 	/**

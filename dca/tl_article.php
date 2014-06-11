@@ -24,22 +24,6 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	$GLOBALS['TL_DCA']['tl_article']['config']['onrestore_callback'][] = array('tl_article_rms','onRestoreCallback');
 	$GLOBALS['TL_DCA']['tl_article']['list']['operations']['editheader']['href'] = 'act=edit&table=tl_article';	
 
-	$GLOBALS['TL_DCA']['tl_article']['list']['operations']['toggle']['button_callback'] = array('tl_article_rms','toggleIcon');
-	$GLOBALS['TL_DCA']['tl_article']['list']['sorting']['child_record_callback']   = array('tl_article_rms', 'addCteType');
-
-    /**
-    * add operation show Preview
-    */
-    $GLOBALS['TL_DCA']['tl_article']['list']['operations']['showPreview'] = array
-    (
-		'label'               => &$GLOBALS['TL_LANG']['MSC']['show_preview'],
-		'href'                => 'key=showPreview',
-		'class'               => 'browser_preview',
-		'icon'                => 'page.gif',
-		'attributes'          => 'target="_blank"',
-		'button_callback' => array('tl_article_rms','checkPreviewIcon')
-    );
-
 	/**
 	* Fields
 	*/

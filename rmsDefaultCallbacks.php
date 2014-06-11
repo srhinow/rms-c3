@@ -154,6 +154,21 @@ class rmsDefaultCallbacks extends \Backend
         //overwrite with new-data
         $newRmsData = ($data['type'] == $newData['type']) ? array_merge($data, $newData) : $newData;
 
+        // create an BE-URL-String to edit
+        $getParamArr = array('do','table','id','act');
+        $urlParams = array();
+        foreach($getParamArr as $param)
+        {
+            if( strlen(\Input::get($param)) > 0 ) $urlParams[] = $param.'='.\Input::get($param);
+        }
+
+        // get root-parent-table
+        $pTable = ($strTable == 'tl_content') ? $dc->activeRecord->ptable : $GLOBALS['TL_DCA'][$strTable]['config']['ptable'];
+        $rootPTable = $this->rmsHelper->getRootParentTable($pTable);
+
+        // hole die email und vorschau-url
+        $sectionSettings = $this->rmsHelper->getRmsSectionSettings($intId, $strTable, $pTable);
+
         $arrSubmitData = array
         (
             'tstamp' => time(),
@@ -161,6 +176,10 @@ class rmsDefaultCallbacks extends \Backend
             'ref_table' =>  $strTable,
             'ref_author' => $userID,
             'ref_notice' => $newRmsData['rms_notice'],
+            'edit_url' =>  implode('&',$urlParams),
+            'root_ptable' => $rootPTable,
+            'master_email' => $sectionSettings['master_email'],
+            'preview_jumpTo' => $sectionSettings['preview_jumpTo'],
             'status' => $status,
             'data'=> $newRmsData
         );

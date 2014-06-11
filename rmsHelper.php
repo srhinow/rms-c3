@@ -127,12 +127,11 @@ class rmsHelper extends \Backend
 		{
 			case 'tl_content':
 				$protected = $this->rmsIsContentProtected($strTable);
-				// print 'is Content protected? ... : '.(bool)$protected;
 			break;
 			default:
 				$protected = $this->rmsIsTableProtected($strTable);
-				// print 'is Table '.$strTable.' protected? ... : '.(bool)$protected;
 		}
+
 	    /**
 	    * deprecated
 		*		
@@ -544,6 +543,113 @@ class rmsHelper extends \Backend
 	}
 
 	/**
+	* get root-Parent-Table for the rms-settings and jumpto for the preview-Link
+	* @param string
+	* @return string
+	*/
+	public function getRootParentTable($table)
+	{
+		$this->loadDataContainer($table);
+		$pTable = $table;
+		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
+		{
+			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable']);
+		}
+		return $pTable;
+	}
+
+	/**
+	* get root-Parent-DB-Object for the rms-settings and jumpto for the preview-Link
+	* @param string
+	* @return string
+	*/
+	public function getRootParentDBObj($id, $table, $ptable, $rtable)
+	{
+		$this->loadDataContainer($table);
+
+		$orig_id = $id;
+		$orig_table = $table;
+		$orig_ptable = $ptable;
+
+		$dbObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." pt  LEFT JOIN ".$table." t ON pt.id = t.pid WHERE t.`id`=?")
+					->limit(1)
+					->execute($id);
+
+		if( strlen($GLOBALS['TL_DCA'][$ptable]['config']['ptable']) > 0 )
+		{
+			$dbObj = $this->getRootParentDBObj($dbObj->id, $ptable, $GLOBALS['TL_DCA'][$ptable]['config']['ptable'], $rtable);
+		}
+		return $dbObj;
+	}
+
+	/**
+	* get rms_section_settings
+	* @param int
+	* @param string
+	* @param string
+	* @return array 
+	*/
+	public function getRmsSectionSettings($id, $table, $ptable)
+	{
+		// if($id=='' || $table=='' || $ptable=='') return false;
+
+		$root_table = $this->getRootParentTable($table);
+
+		$dbObj = $this->getRootParentDBObj($id, $table, $ptable, $root_table);
+		
+		$this->loadDataContainer($ptable);
+		
+		//preview-Url erstellen
+		$jumpToUrl = '';
+
+		if($ptable == 'tl_page')
+		{
+			$jumpToUrl = $this->generateFrontendUrl($dbObj->row(),'/do/preview');
+		}
+		else
+		{
+			$jumpToID = (strlen($dbObj->rms_preview_jumpTo) > 0 ) ? $dbObj->rms_preview_jumpTo : $dbObj->jumpTo;
+			
+			if($jumpToID > 0)
+			{	         	
+            	$pageObj = $this->Database->prepare('SELECT `id`,`alias` FROM `tl_page` WHERE `id`=?')->execute($jumpToID);
+            	$jumpToUrl = $this->generateFrontendUrl($pageObj->row(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
+
+            	if(strlen($ptable) > 0 )
+            	{
+					if($table == 'tl_content')
+					{
+						$moduleObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." `pt` LEFT JOIN `tl_content` `c` ON `pt`.`id` = `c`.`pid` WHERE `c`.`id`=?")
+	                    		                    ->limit(1)
+	                            		            ->execute($id);
+                    }
+                    else
+                    {
+						$moduleObj = $this->Database->prepare("SELECT * FROM ".$table."  WHERE `id`=?")
+		                    ->limit(1)
+        		            ->execute($id);
+
+                    }
+                    // print_r($moduleObj);
+					$jumpToUrl = sprintf($jumpToUrl, $moduleObj->alias);
+            	}
+			}
+			$rmsSectionSettings = array(
+				'master_email' => (strlen($dbObj->rms_master_member) > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],
+				'preview_jumpTo' => $jumpToUrl
+			);
+
+			return $rmsSectionSettings;
+		}	
+	}
+
+	public function test()
+	{
+		$rmsSectionSettings = array('master_email'=>'kservice@sr-tag.de',);
+		return $rmsSectionSettings;
+	}
+
+	/**
 	* get any field from given user-id 
 	* @param int
 	* @param string
@@ -551,7 +657,7 @@ class rmsHelper extends \Backend
 	*/
 	protected function getMemberData($id, $field = '')
 	{
-		if(is_integer($id) && (int)$id > 0) 
+		if((int)$id > 0) 
 		{
 			$uObj = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id` = ?')->limit(1)->execute($id);
 
@@ -560,7 +666,7 @@ class rmsHelper extends \Backend
 				return $uObj->{$field};
 			}
 		}
-		return $this->settings['sender_email'];			
+				
 	}
 
 	 /**

@@ -42,6 +42,7 @@ $GLOBALS['TL_LANG']['tl_rms']['ref_table']     = array('geänderte Tabelle', 're
 $GLOBALS['TL_LANG']['tl_rms']['ref_author']     = array('Autor der Änderung', '');
 $GLOBALS['TL_LANG']['tl_rms']['ref_id']     = array('ID', 'Eindeutige Datenbank-ID des geänderten Datensatzes');
 $GLOBALS['TL_LANG']['tl_rms']['ref_notice']     = array('Freigabe-Anmerkung', 'Die Anmerkung dient dem Verantwortlichen als Hilfestellung der Änderungen.');
+$GLOBALS['TL_LANG']['tl_rms']['edit_url']     = array('Pfad zur Bearbeitungsansicht', '');
 $GLOBALS['TL_LANG']['tl_rms']['data']     = array('geänderte Daten', 'serialisierte Daten des Datensatzes');
 $GLOBALS['TL_LANG']['tl_rms']['status']     = array('Status', 'zeigt an ob diese Freigabe bereits beantwortet wurde.');
 $GLOBALS['TL_LANG']['tl_rms']['region'][0]   =  'Bereich';

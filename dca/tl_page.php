@@ -13,7 +13,8 @@
  */
 if($GLOBALS['TL_CONFIG']['rms_active'])
 {
-   
+    $this->loadLanguageFile('tl_default');
+       
 	// Palettes
 	$GLOBALS['TL_DCA']['tl_page']['palettes']['__selector__'][] = 'rms_protected';
 	$GLOBALS['TL_DCA']['tl_page']['palettes']['root'] .=  ';{rms_legend:hide},rms_protected';
@@ -24,7 +25,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	// Fields
 	$GLOBALS['TL_DCA']['tl_page']['fields']['rms_protected'] = array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_page']['rms_protected'],
+			'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_protected'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -33,7 +34,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	);
     $GLOBALS['TL_DCA']['tl_page']['fields']['rms_master_member'] = array
     (
-		'label'                   => &$GLOBALS['TL_LANG']['tl_page']['rms_master_member'],
+		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_master_member'],
 		'exclude'                 => true,
 		'inputType'               => 'select',
 		'foreignKey'              => 'tl_user.name',
@@ -50,5 +51,13 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
  */
 class tl_page_rms extends \Backend
 {
-
+    /**
+     * Import the back end user object
+     */
+    public function __construct()
+    {
+		parent::__construct();
+		$this->import('BackendUser', 'User');
+		$this->import('Database');
+    }
 }

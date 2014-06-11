@@ -13,6 +13,8 @@
  */
 if($GLOBALS['TL_CONFIG']['rms_active'])
 {
+	$this->loadLanguageFile('tl_default');	
+		
     $GLOBALS['TL_DCA']['tl_news']['config']['onload_callback'][] = array('tl_news_rms','addRmsFields');
     $GLOBALS['TL_DCA']['tl_news']['list']['operations']['toggle']['button_callback'] = array('tl_news_rms','toggleIcon');
 
@@ -47,7 +49,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 
     $GLOBALS['TL_DCA']['tl_news']['fields']['rms_notice'] = array
 	(
-		'label'                   => &$GLOBALS['TL_LANG']['tl_news']['rms_notice'],
+		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_notice'],
 		'exclude'                 => true,
 		'search'                  => true,
 		'inputType'               => 'textarea',
@@ -57,7 +59,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 
     $GLOBALS['TL_DCA']['tl_news']['fields']['rms_release_info'] = array
 	(
-		'label'                   => &$GLOBALS['TL_LANG']['tl_news']['rms_release_info'],
+		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_release_info'],
 		'exclude'                 => true,
 		'inputType'               => 'checkbox',
 		'sql'					  => "char(1) NOT NULL default ''",
