@@ -176,6 +176,7 @@ class rmsDefaultCallbacks extends \Backend
             'ref_table' =>  $strTable,
             'ref_author' => $userID,
             'ref_notice' => $newRmsData['rms_notice'],
+            'do' =>  \Input::get('do'),
             'edit_url' =>  implode('&',$urlParams),
             'root_ptable' => $rootPTable,
             'master_email' => $sectionSettings['master_email'],
