@@ -194,7 +194,7 @@ class tl_news_rms extends \Backend
     {
         $this->import('Database');
         $this->import('SvenRhinow\rms\rmsHelper','rmsHelper');
-        $previewLink = $this->rmsHelper->getPreviewLink($row['id'],'tl_news');
+        $previewLink = $this->rmsHelper->getPreviewLink($row['id'],\Input::get('table'));
 
         //test rms
         $rmsObj = $this->Database->prepare('SELECT * FROM `tl_rms` WHERE `ref_table`=? AND `ref_id`=?')
