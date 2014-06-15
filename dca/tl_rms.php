@@ -150,6 +150,10 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 			'search'                  => true,
 			'sql'					  => "longtext NULL"
 		),
+		'do' => array
+		(
+			'sql'					  => "varchar(55) NOT NULL default ''"
+		),		
 		'edit_url' => array
 		(
 			'sql'					  => "longtext NULL"
