@@ -341,98 +341,162 @@ class rmsHelper extends \Backend
 	 public function getPreviewLink($id='',$table='')
 	 {
 
-	 	$return = array();
-
 	 	if($id == '') $id = \Input::get('id');
 	 	if($table == '') $table = \Input::get('table');
 	 	if(!$this->settings) $this->settings = $this->getSettings();
 
-	 	switch($table)
-		{
-			case 'tl_content':
+	 	$rmsObj = $this->Database->prepare('SELECT * FROM `tl_rms` WHERE `ref_id`=? AND `ref_table`=?')
+	 							->limit(1)
+	 							->execute($id, $table);
 
-			    $pageObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
-			    LEFT JOIN `tl_article` `a` ON `p`.`id`=`a`.`pid`
-			    LEFT JOIN `tl_content` `c` ON `a`.`id` = `c`.`pid`
-			    WHERE `c`.`id`=?')
-					    ->limit(1)
-					    ->execute($id);
-
-	             if($pageObj->numRows > 0) $strUrl = $this->generateFrontendUrl($pageObj->row(),'/do/preview');
-			    $strPreviewUrl = $this->Environment->base.$strUrl;
-
-			break;
-			case 'tl_newsletter':
-
-			    //get Preview-Link
-			    if($this->settings['prevjump_newsletter'])
-			    {
-					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-												->limit(1)
-												->execute($this->settings['prevjump_newsletter']);
-
-					if ($objJumpTo->numRows)
-					{
-						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/items/%s'));
-					}
-			    }
-
-			    //get Link-Title
-			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_newsletter` WHERE `id`=?')
-						      ->limit(1)
-						      ->execute($id);
-
-			    $strPreviewUrl = sprintf($strUrl, $pageObj->alias);
-
-			break;
-			case 'tl_calendar_events':
-
-			    if($this->settings['prevjump_calendar_events'])
-			    {
-					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-												->limit(1)
-												->execute($this->settings['prevjump_calendar_events']);
-
-					if ($objJumpTo->numRows)
-					{
-						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/events/%s'));
-					}
-			    }
-
-			    //get Link-Title
-			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_calendar_events` WHERE `id`=?')
-						      ->limit(1)
-						      ->execute($id);
-
-			    $strPreviewUrl = sprintf($strUrl, $pageObj->alias);
-
-			break;
-			case 'tl_news':
-
-			    if($this->settings['prevjump_news'])
-			    {
-					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-												->limit(1)
-												->execute($this->settings['prevjump_news']);
-
-					if ($objJumpTo->numRows)
-					{
-					    $strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s' : '/do/preview/items/%s'));
-					}
-			    }
-
-			    //get Link-Title
-			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_news` WHERE `id`=?')
-						      ->limit(1)
-						      ->execute($id);
-
-			    $strPreviewUrl = sprintf($strUrl, $pageObj->alias);
-			break;
-		}
-
-		return $strPreviewUrl;
+		return $rmsObj->preview_jumpTo;
 
 	 }
+
+	 /**
+	 * get the RootPage from PageId
+	 * @param int
+	 * @return obj
+	 */
+	 protected function getRootPage($pid = 0)
+	 {
+	    if(intval($pid) > 0)
+	    {
+			$pageObj = $this->Database->prepare("SELECT * FROM tl_page WHERE id=?")
+					->limit(1)
+					->execute($pid);
+
+			// return obj or recursive this method 
+			return ($pageObj->type == 'root') ? $pageObj : $this->getRootPage($pageObj->pid);
+	    }
+	}
+
+	/**
+	* get root-Parent-Table for the rms-settings and jumpto for the preview-Link
+	* @param string
+	* @return string
+	*/
+	public function getRootParentTable($table)
+	{
+		$this->loadDataContainer($table);
+		$pTable = $table;
+		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
+		{
+			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable']);
+		}
+		return $pTable;
+	}
+
+	/**
+	* get root-Parent-DB-Object for the rms-settings and jumpto for the preview-Link
+	* @param string
+	* @return string
+	*/
+	public function getRootParentDBObj($id, $table, $ptable, $rtable)
+	{
+		$this->loadDataContainer($table);
+
+		$orig_id = $id;
+		$orig_table = $table;
+		$orig_ptable = $ptable;
+
+		$dbObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." pt  LEFT JOIN ".$table." t ON pt.id = t.pid WHERE t.`id`=?")
+					->limit(1)
+					->execute($id);
+
+		if( strlen($GLOBALS['TL_DCA'][$ptable]['config']['ptable']) > 0 )
+		{
+			$dbObj = $this->getRootParentDBObj($dbObj->id, $ptable, $GLOBALS['TL_DCA'][$ptable]['config']['ptable'], $rtable);
+		}
+		return $dbObj;
+	}
+
+	/**
+	* get rms_section_settings
+	* @param int
+	* @param string
+	* @param string
+	* @return array 
+	*/
+	public function getRmsSectionSettings($id, $table, $ptable)
+	{
+		// um zu testen ob es tl_page ist oder eine andere, da tl_content auch von Modulen wie News verwendet wird
+		$root_table = $this->getRootParentTable($table);
+
+		// die Einstellungen zu dem Bereich holen
+		$dbObj = $this->getRootParentDBObj($id, $table, $ptable, $root_table);
+
+		// den dca der Eltern-Tabelle holen
+		$this->loadDataContainer($ptable);
+		
+		$jumpToUrl = '';
+
+		// wenn es ein normaler Inhalt einer Seite ist
+		if($root_table == 'tl_page')
+		{
+			$jumpToUrl = $this->generateFrontendUrl($dbObj->row(),'/do/preview');
+		}
+		// wenn es ein Modul wie z.B. News ist
+		else
+		{
+			// Weiterleitungsseite (ID) ermitteln
+			$jumpToID = (strlen($dbObj->rms_preview_jumpTo) > 0 ) ? $dbObj->rms_preview_jumpTo : $dbObj->jumpTo;
+			
+			if($jumpToID > 0)
+			{	         	
+            	$pageObj = $this->Database->prepare('SELECT `id`,`alias` FROM `tl_page` WHERE `id`=?')->execute($jumpToID);
+            	$jumpToUrl = $this->generateFrontendUrl($pageObj->row(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
+
+            	if(strlen($ptable) > 0 )
+            	{
+					// wenn es die Content-Ebene ist, dann den Alias der Eltern-Tabelle für den Vorschaulink zuholen
+					if($table == 'tl_content')
+					{
+						$moduleObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." `pt` LEFT JOIN `tl_content` `c` ON `pt`.`id` = `c`.`pid` WHERE `c`.`id`=?")
+	                    		                    ->limit(1)
+	                            		            ->execute($id);
+                    }
+                    // wenn es die Modulebene ist, den Alias direkt aus der aktuellen Tabelle für den Vorschaulink holen
+                    else
+                    {
+						$moduleObj = $this->Database->prepare("SELECT * FROM ".$table."  WHERE `id`=?")
+		                    ->limit(1)
+        		            ->execute($id);
+
+                    }
+                    // komplette Vorschau-Url erstellen
+					$jumpToUrl = sprintf($jumpToUrl, $moduleObj->alias);
+            	}
+			}
+		}	
+		// Bereich-Einstellungen als Array zusammenstellen
+		$rmsSectionSettings = array(
+			'master_email' => ((int) $dbObj->rms_master_member > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],
+			'preview_jumpTo' => $jumpToUrl
+		);
+	
+		return $rmsSectionSettings;
+	}
+
+	/**
+	* get any field from given user-id 
+	* @param int
+	* @param string
+	* @return mixed
+	*/
+	protected function getMemberData($id, $field = '')
+	{
+		if((int)$id > 0) 
+		{
+			$uObj = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id` = ?')->limit(1)->execute($id);
+
+			if(strlen($uObj->{$field}) > 0)
+			{
+				return $uObj->{$field};
+			}
+		}
+				
+	}
 
 	 /**
 	 * testet auf diverse Module welche die tl_content-Tabelle verwenden
@@ -523,151 +587,6 @@ class rmsHelper extends \Backend
 		}
 		return $return;
 	 }
-
-	 /**
-	 * get the RootPage from PageId
-	 * @param int
-	 * @return obj
-	 */
-	 protected function getRootPage($pid = 0)
-	 {
-	    if(intval($pid) > 0)
-	    {
-			$pageObj = $this->Database->prepare("SELECT * FROM tl_page WHERE id=?")
-					->limit(1)
-					->execute($pid);
-
-			// return obj or recursive this method 
-			return ($pageObj->type == 'root') ? $pageObj : $this->getRootPage($pageObj->pid);
-	    }
-	}
-
-	/**
-	* get root-Parent-Table for the rms-settings and jumpto for the preview-Link
-	* @param string
-	* @return string
-	*/
-	public function getRootParentTable($table)
-	{
-		$this->loadDataContainer($table);
-		$pTable = $table;
-		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
-		{
-			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable']);
-		}
-		return $pTable;
-	}
-
-	/**
-	* get root-Parent-DB-Object for the rms-settings and jumpto for the preview-Link
-	* @param string
-	* @return string
-	*/
-	public function getRootParentDBObj($id, $table, $ptable, $rtable)
-	{
-		$this->loadDataContainer($table);
-
-		$orig_id = $id;
-		$orig_table = $table;
-		$orig_ptable = $ptable;
-
-		$dbObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." pt  LEFT JOIN ".$table." t ON pt.id = t.pid WHERE t.`id`=?")
-					->limit(1)
-					->execute($id);
-
-		if( strlen($GLOBALS['TL_DCA'][$ptable]['config']['ptable']) > 0 )
-		{
-			$dbObj = $this->getRootParentDBObj($dbObj->id, $ptable, $GLOBALS['TL_DCA'][$ptable]['config']['ptable'], $rtable);
-		}
-		return $dbObj;
-	}
-
-	/**
-	* get rms_section_settings
-	* @param int
-	* @param string
-	* @param string
-	* @return array 
-	*/
-	public function getRmsSectionSettings($id, $table, $ptable)
-	{
-		// if($id=='' || $table=='' || $ptable=='') return false;
-
-		$root_table = $this->getRootParentTable($table);
-
-		$dbObj = $this->getRootParentDBObj($id, $table, $ptable, $root_table);
-		
-		$this->loadDataContainer($ptable);
-		
-		//preview-Url erstellen
-		$jumpToUrl = '';
-
-		if($ptable == 'tl_page')
-		{
-			$jumpToUrl = $this->generateFrontendUrl($dbObj->row(),'/do/preview');
-		}
-		else
-		{
-			$jumpToID = (strlen($dbObj->rms_preview_jumpTo) > 0 ) ? $dbObj->rms_preview_jumpTo : $dbObj->jumpTo;
-			
-			if($jumpToID > 0)
-			{	         	
-            	$pageObj = $this->Database->prepare('SELECT `id`,`alias` FROM `tl_page` WHERE `id`=?')->execute($jumpToID);
-            	$jumpToUrl = $this->generateFrontendUrl($pageObj->row(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
-
-            	if(strlen($ptable) > 0 )
-            	{
-					if($table == 'tl_content')
-					{
-						$moduleObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." `pt` LEFT JOIN `tl_content` `c` ON `pt`.`id` = `c`.`pid` WHERE `c`.`id`=?")
-	                    		                    ->limit(1)
-	                            		            ->execute($id);
-                    }
-                    else
-                    {
-						$moduleObj = $this->Database->prepare("SELECT * FROM ".$table."  WHERE `id`=?")
-		                    ->limit(1)
-        		            ->execute($id);
-
-                    }
-                    // print_r($moduleObj);
-					$jumpToUrl = sprintf($jumpToUrl, $moduleObj->alias);
-            	}
-			}
-			$rmsSectionSettings = array(
-				'master_email' => (strlen($dbObj->rms_master_member) > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],
-				'preview_jumpTo' => $jumpToUrl
-			);
-
-			return $rmsSectionSettings;
-		}	
-	}
-
-	public function test()
-	{
-		$rmsSectionSettings = array('master_email'=>'kservice@sr-tag.de',);
-		return $rmsSectionSettings;
-	}
-
-	/**
-	* get any field from given user-id 
-	* @param int
-	* @param string
-	* @return mixed
-	*/
-	protected function getMemberData($id, $field = '')
-	{
-		if((int)$id > 0) 
-		{
-			$uObj = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id` = ?')->limit(1)->execute($id);
-
-			if(strlen($uObj->{$field}) > 0)
-			{
-				return $uObj->{$field};
-			}
-		}
-				
-	}
 
 	 /**
 	 * testet auf diverse Tabellen ob diese als geschützt markiert wurden
