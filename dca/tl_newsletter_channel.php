@@ -22,7 +22,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	$GLOBALS['TL_DCA']['tl_newsletter_channel']['palettes']['__selector__'][] = 'rms_protected';
 
 	// Subpalettes
-	$GLOBALS['TL_DCA']['tl_newsletter_channel']['subpalettes']['rms_protected'] = 'rms_master_member';
+	$GLOBALS['TL_DCA']['tl_newsletter_channel']['subpalettes']['rms_protected'] = 'rms_master_member,rms_preview_jumpTo';
     
 	// Fields
 	$GLOBALS['TL_DCA']['tl_newsletter_channel']['fields']['rms_protected'] = array
@@ -40,11 +40,20 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'exclude'                 => true,
 		'inputType'               => 'select',
 		'foreignKey'              => 'tl_user.name',
-		'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'w50'),
+		'eval'                    => array('mandatory'=>true, 'chosen'=>true),
 		'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
     );
-
+	$GLOBALS['TL_DCA']['tl_newsletter_channel']['fields']['rms_preview_jumpTo'] = array
+	(
+		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_preview_jumpTo'],
+		'exclude'                 => true,
+		'inputType'               => 'pageTree',
+		'foreignKey'              => 'tl_page.title',
+		'eval'                    => array('mandatory'=>false, 'fieldType'=>'radio'),
+		'sql'                     => "int(10) unsigned NOT NULL default '0'",
+		'relation'                => array('type'=>'hasOne', 'load'=>'eager')
+	);
     $GLOBALS['TL_DCA']['tl_newsletter_channel']['fields']['ptable']['ignoreDiff'] = true;
 
     $GLOBALS['TL_DCA']['tl_newsletter_channel']['fields']['rms_first_save'] = array

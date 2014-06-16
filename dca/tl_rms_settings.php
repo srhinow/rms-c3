@@ -128,7 +128,7 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 			'exclude'                 => true,
 			'inputType'               => 'radio',
 			'foreignKey'              => 'tl_user_group.name',
-			'eval'                    => array('multiple'=>false),
+			'eval'                    => array('mandatory'=>true,'multiple'=>false),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 	    ),
 	    'sender_email' => array

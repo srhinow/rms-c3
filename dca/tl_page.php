@@ -41,7 +41,8 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'w50'),
 		'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
-    );	
+    );
+    	
 }
 /**
  * Class tl_page_rms
