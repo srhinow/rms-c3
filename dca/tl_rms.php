@@ -228,8 +228,8 @@ class tl_rms extends Backend
 		$ifFirstSave = ($refObj->rms_first_save == 1) ? '<span style="padding:0 10px; font-weight:bold;">'.$GLOBALS['TL_LANG']['tl_rms']['info_new_edit'].'</span>': '';
 
 		$label  = '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['status'][0].':</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span>'.$ifFirstSave.'<br>';
-		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$row['ref_table'].'<br>';
-		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0].': </strong>'.$strPreviewLink.'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$GLOBALS['TL_LANG']['tl_rms']['sessions'][$row['do'].'_'.$row['ref_table']].'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0].': </strong><a href="'.$row['preview_jumpTo'].'" target="_blank">'.$row['preview_jumpTo'].'</a><br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_author'][0].':</strong> '.$userObj->name.' ('.$userObj->email.')<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['last_edit'][0].':</strong> '.date($GLOBALS['TL_CONFIG']['datimFormat'],$row['tstamp']).'<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_notice'][0].':</strong> '.nl2br($row['ref_notice']);

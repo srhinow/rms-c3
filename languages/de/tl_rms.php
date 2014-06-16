@@ -68,14 +68,16 @@ $GLOBALS['TL_LANG']['tl_content']['rm_legend']      = 'Freigabe';
 /**
 * Bereiche
 */
-$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_article'] = 'Artikel :: Inhaltselement';
-$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_content'] = 'Artikel :: Inhaltselement';
-$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_newsletter'] = 'Newsletter :: Element';
-$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_calendar_events'] = 'Event :: Element';
-$GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_news'] = 'Nachrichten :: Inhaltselement';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['article_tl_article'] = 'Artikel';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['article_tl_content'] = 'Artikel :: Inhaltselement';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['newsletter_tl_newsletter'] = 'Newsletter :: Element';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['newsletter_tl_content'] = 'Newsletter :: Element';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['calendar_events'] = 'Event :: Element';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['news_tl_news'] = 'Nachrichten :: Beitrag';
+$GLOBALS['TL_LANG']['tl_rms']['sessions']['news_tl_content'] = 'Nachrichten :: Inhaltselement';
 
 /**
-* Other Text
+* anderer Text
 */
 $GLOBALS['TL_LANG']['tl_rms']['diff_new_content'] = '<h5>Der Inhalt wurde neu erstellt.</h5> <p>Es gibt daher keine Version zum Vergleich.</p>';
 $GLOBALS['TL_LANG']['tl_rms']['info_new_edit'] = '*neu erstellt*';
