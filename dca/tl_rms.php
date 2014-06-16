@@ -286,17 +286,12 @@ class tl_rms extends Backend
      */
     public function showDiff($row, $href, $label, $title, $icon, $attributes)
     {
-       	// print_r($row);
-
-       	if ($this->Input->get('key') == 'show_diff')
+       	if ($this->Input->get('key') == 'show_diff' && $row['ref_id'] == \Input::get('ref_id'))
 		{
-	        $this->import('Database');
-
 	        $objVersions = new \SvenRhinow\rms\rmsVersions($row);
-
-	        $previewLink = $objVersions->compare();
-
+	        $objVersions->compare();
     	}
+
     	$href .= "&ref_id=".$row['ref_id'];
     	return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
     }
