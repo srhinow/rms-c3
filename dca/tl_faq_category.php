@@ -43,17 +43,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'eval'                    => array('mandatory'=>true, 'chosen'=>true),
 		'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
-    );
-	$GLOBALS['TL_DCA']['tl_faq_category']['fields']['rms_preview_jumpTo'] = array
-	(
-		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_preview_jumpTo'],
-		'exclude'                 => true,
-		'inputType'               => 'pageTree',
-		'foreignKey'              => 'tl_page.title',
-		'eval'                    => array('mandatory'=>false, 'fieldType'=>'radio'),
-		'sql'                     => "int(10) unsigned NOT NULL default '0'",
-		'relation'                => array('type'=>'hasOne', 'load'=>'eager')
-	);    
+    );    
 	$GLOBALS['TL_DCA']['tl_faq_category']['fields']['rms_preview_jumpTo'] = array
 	(
 		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_preview_jumpTo'],
