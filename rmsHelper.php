@@ -165,12 +165,11 @@ class rmsHelper extends \Backend
 	//ToDo: rewrite this method and create a Hook for other modules
 	public function previewContentElement($objElement, $strBuffer)
 	{
-
 	    // return if this ignored field
 	    $ignoreFieldArr = explode( ',', str_replace(' ','',$this->settings['ignore_fields']) );
 	    if(is_array($ignoreFieldArr) && in_array($objElement->type, $ignoreFieldArr) ) return $strBuffer;
 
-	    if(\Input::get('do') == 'preview' && $objElement->rms_new_edit == 1)
+	    if(\Input::get('do') == 'preview')
 	    {
 			// print_r($objElement);
 
@@ -211,6 +210,26 @@ class rmsHelper extends \Backend
 	    }
 
 	    return  $strBuffer;
+	}
+
+	/**
+	* parseTemplate-HOOK
+	* ersetzt die Inhalte wenn rms_new_edit=1 und get-Parameter do=preview mit rms-Datensatz
+	*/
+	public function modifyForPreview($objElement)
+	{
+	    if(\Input::get('do') == 'preview' $obj->rms_new_edit)
+	    {
+
+        	$objStoredData = $this->Database->prepare("SELECT `data` FROM `tl_rms` WHERE `ref_id`=? AND `ref_table`=?")
+									->execute($objElement->id, $objElement->rms_ref_table);
+
+			if ($objStoredData->numRows  == 1)
+			{
+				$objRow =  $this->overwriteDbObj($objElement, deserialize($objStoredData->data));
+				$objRow->published = 1; // news,newsletter
+				$objRow->invisible = 0; // content
+			}		
 	}
 
 	/**

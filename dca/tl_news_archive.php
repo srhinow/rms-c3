@@ -35,6 +35,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 			'eval'                    => array('submitOnChange'=>true),
 			'sql'                     => "char(1) NOT NULL default ''"
 	);
+
     $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rms_master_member'] = array
     (
 		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_master_member'],
@@ -45,6 +46,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
     );
+
 	$GLOBALS['TL_DCA']['tl_news_archive']['fields']['rms_preview_jumpTo'] = array
 	(
 		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_preview_jumpTo'],
@@ -55,6 +57,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 		'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		'relation'                => array('type'=>'hasOne', 'load'=>'eager')
 	);
+	
     $GLOBALS['TL_DCA']['tl_news_archive']['fields']['ptable']['ignoreDiff'] = true;
     
     $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rms_first_save'] = array
@@ -66,6 +69,12 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	$GLOBALS['TL_DCA']['tl_news_archive']['fields']['rms_new_edit'] = array
 	(
 		'sql'					  => "char(1) NOT NULL default ''"
+	);
+	
+	$GLOBALS['TL_DCA']['tl_news_archive']['fields']['rms_ref_table'] = array
+	(
+		'sql'					  => "char(55) NOT NULL default ''",
+		'ignoreDiff'			=> true,
 	);
 
     $GLOBALS['TL_DCA']['tl_news_archive']['fields']['rms_notice'] = array

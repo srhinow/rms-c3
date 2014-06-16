@@ -34,6 +34,12 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
     (
         'sql'                     => "char(1) NOT NULL default ''"
     );
+    
+    $GLOBALS['TL_DCA']['tl_faq']['fields']['rms_ref_table'] = array
+    (
+        'sql'                     => "char(55) NOT NULL default ''",
+        'ignoreDiff'            => true,
+    );
 
     $GLOBALS['TL_DCA']['tl_faq']['fields']['rms_notice'] = array
     (

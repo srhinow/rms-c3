@@ -60,11 +60,19 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
     (
         'sql'                     => "char(1) NOT NULL default ''"
     );
+
     $GLOBALS['TL_DCA']['tl_newsletter_channel']['fields']['rms_new_edit'] = array
     (
         'sql'                     => "char(1) NOT NULL default ''",
         'ignoreDiff'            => true,        
     );
+    
+    $GLOBALS['TL_DCA']['tl_newsletter_channel']['fields']['rms_ref_table'] = array
+    (
+        'sql'                     => "char(55) NOT NULL default ''",
+        'ignoreDiff'            => true,
+    );
+    
     $GLOBALS['TL_DCA']['tl_newsletter_channel']['fields']['rms_notice'] = array
 	(
 		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_notice'],
