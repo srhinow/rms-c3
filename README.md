@@ -54,12 +54,12 @@ ab Version 3.2-beta1
 3. Wechseln Sie nun in das Backend-Modul "Freigabe-Anfragen" und dort unter "Freigabe-Einstellungen" legen Sie die Gruppe (Freigabe-Redaktionsgruppe), einen Fallbackredakteur, zusätzliche Emailempfänger die bei Freigaben informiert werden sollen und zu ignorirende Felder fest.
 4. Anders als in älteren Versionen werden die verantwortlichen Freigabe-Redakteure immer in den obersten Ebenen festgelegt ob der Bereich geschützt sein soll, durch wen administriert, und (nur bei Modulen) welche Weiterleitungsseite als Vorschau verwendet werden soll.
 
-	-für Artikel und Inhaltselemente eines bestimmten Seitenstrukturbaumes werden die Einstellungen in dem Seitenstruktur/Startpunkt einer Seite
-	-für News ist es das jeweilige News-Archiv
-	-für die Events in dem jeweilig zugehörigen Kalender
-	-für Newsletter in dem jeweiligen Verteiler
-	-für FAQ in der zugehörigen FAQ-Kategorie
-	-Zusatz-- für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
+1. für Artikel und Inhaltselemente eines bestimmten Seitenstrukturbaumes werden die Einstellungen in dem Seitenstruktur/Startpunkt einer Seite
+2. für News ist es das jeweilige News-Archiv
+3. für die Events in dem jeweilig zugehörigen Kalender
+4. für Newsletter in dem jeweiligen Verteiler
+5. für FAQ in der zugehörigen FAQ-Kategorie
+6. Zusatz-- für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
 
 ---------------------------
 ENTWICKLER-INFORMATIONEN
@@ -70,6 +70,7 @@ Es wird, wenn die Freigabeverwaltung für den Bereich aktiv ist, werden Callback
 (Quelle: rmsHelper->handleBackendUserAccessControlls())
 
 Weiterhin gibt es zusätzliche HOOKS um zu pruefen ob Inhalte Freigabegeschützt sind. Diese werden zwingend für eigene Erweiterungen benötigt:
+
 1. $GLOBALS['TL_HOOKS']['rmsIsContentProtected'] (Falls eine Erweiterung auch auf die tl_content-Tabelle zurückgreift. Übergibt die aktuelle Tabelle und überprüft selbst auf den GET-Paramter 'do')
 2. $GLOBALS['TL_HOOKS']['rmsIsTableProtected'] (Wird für alle Erweiterungs-DCA benötigt welche nicht tl_content sind. Übergibt die aktuelle Tabelle und überprüft auf die übergebene Tabelle)
 3. Für bestimmte Module gibt es für die Frontendausgabe bestimmte zusätzliche Formatierungen die beim überschreiben der rms-Daten verloren gehen bevor diese ans Template geschickt werden. Für diesen Fall prüfe ich ob es eine Methode 'modifyForPreview' in der Class $objTemplate->rms_ref_table.'_rms' existiert. Als Beispiel für die News lege ich die Methode modifyForPreview in der Klasse tl_news_rms an und setzte dort einen Template-Parameter 'linkHeadline' neu.
