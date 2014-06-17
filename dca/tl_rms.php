@@ -30,6 +30,11 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 				'id' => 'primary'
 			)
 		),
+		'onload_callback' => array
+		(
+			array('tl_rms', 'filterMemberEntries')
+
+		),		
 		'ondelete_callback' => array
 		(
 			array('tl_rms', 'setUnEditData')
@@ -205,6 +210,18 @@ class tl_rms extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+	}
+
+	/**
+	* list only Entries for the cureent master-member
+	*/
+	public function filterMemberEntries()
+	{
+		$this->import('BackendUser');
+
+		$GLOBALS['TL_DCA']['tl_rms']['list']['sorting']['filter'] = array(
+			array('master_id=?', $this->BackendUser->id)
+		);
 	}
 
 	/**
