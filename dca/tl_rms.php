@@ -157,7 +157,11 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 		'edit_url' => array
 		(
 			'sql'					  => "longtext NULL"
-		),		
+		),
+		'master_id' => array
+		(
+			'sql'					  => "int(10) unsigned NOT NULL default '0'"
+		),
 		'master_email' => array
 		(
 			'sql'					  => "varchar(255) NOT NULL default ''"

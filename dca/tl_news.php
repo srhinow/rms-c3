@@ -81,8 +81,8 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
  * Class tl_news_rms
  *
  * Provide miscellaneous methods that are used by the data configuration array.
- * @copyright  Leo Feyer 2005-2013
- * @author     Leo Feyer <https://contao.org>
+ * @copyright  Sven Rhinow
+ * @author     sr-tag Sven Rhinow Webentwicklung <https://www.sr-tag.de>
  * @package    Controller
  */
 class tl_news_rms extends \Backend
@@ -230,6 +230,37 @@ class tl_news_rms extends \Backend
 			$GLOBALS['TL_DCA'][$strTable]['palettes'][$name] .=  ';{rms_legend:hide},rms_notice,rms_release_info';
         }
 
+	}
+
+	/**
+	* custom modify the rms-Preview
+	* used from rmsHelper->modifyForPreview() -> is a parseTemplate->HOOK
+	* @param object
+	* @param array
+	* @return object
+	*/
+	public function modifyForPreview($templObj, $newArr)
+	{
+		global $objPage;
+
+		$origObj = clone $templObj;
+
+	    if(is_array($newArr) && count($newArr) > 0)
+	    {
+	 		foreach($newArr as $k => $v)
+	 		{			    
+			    $templObj->$k = $v;
+	 		}
+
+			$templObj->newsHeadline = $templObj->headline;
+			$templObj->linkHeadline = str_replace($origObj->headline,$templObj->headline, $templObj->linkHeadline);
+			$templObj->date = \Date::parse($objPage->datimFormat, $templObj->time);
+			
+			//author
+			$objAuthor = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id`=?')->limit(1)->execute($templObj->author);
+			if($objAuthor->numRows > 0) $templObj->author = $GLOBALS['TL_LANG']['MSC']['by'] . ' ' . $objAuthor->name;
+	    }
+	    return $templObj;
 	}
 
 }

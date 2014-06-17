@@ -144,6 +144,7 @@ class rmsDefaultCallbacks extends \Backend
 
         //overwrite with live-data
         $data['rms_new_edit'] = 1;
+        $data['rms_ref_table'] = $strTable;
         $data['rms_notice'] = $newData['rms_notice'];
 
         $objUpdate = $this->Database->prepare("UPDATE ".$strTable." %s WHERE id=?")->set($data)->execute($intId);
@@ -179,6 +180,7 @@ class rmsDefaultCallbacks extends \Backend
             'do' =>  \Input::get('do'),
             'edit_url' =>  implode('&',$urlParams),
             'root_ptable' => $rootPTable,
+            'master_id' => $sectionSettings['master_id'],
             'master_email' => $sectionSettings['master_email'],
             'preview_jumpTo' => $sectionSettings['preview_jumpTo'],
             'status' => $status,

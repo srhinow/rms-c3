@@ -101,7 +101,7 @@ class rmsHelper extends \Backend
 	 */
 	 public function isMemberOfMasters()
 	 {
-	 	$this->import('BackendUser');
+	 	$this->import('BackendUser');	 	
 	 	return ($this->BackendUser->isMemberOf($this->settings['control_group']) || $this->BackendUser->isAdmin) ? true : false;
 	 }
 
@@ -171,22 +171,7 @@ class rmsHelper extends \Backend
 
 	    if(\Input::get('do') == 'preview')
 	    {
-			// print_r($objElement);
-
 			$id = false;
-
-			//region
-			// ToDo: test of old
-			// switch($this->Input->get('region'))
-			// {
-			// 	case 'news':
-			// 	case 'newsletter':
-			// 	case 'calendar_events':
-			// 	    $typePrefix = 'mod_';
-			// 	break;
-			// 	default:
-			// 	    $typePrefix = 'ce_';
-   //      	}
 
         	$objStoredData = $this->Database->prepare("SELECT `data` FROM `tl_rms` WHERE `ref_id`=? AND `ref_table`=?")
 									->execute($objElement->id, 'tl_content');
@@ -194,7 +179,6 @@ class rmsHelper extends \Backend
 			if ($objStoredData->numRows  == 1)
 			{
 				$objRow =  $this->overwriteDbObj($objElement, deserialize($objStoredData->data));
-				// $objRow->typePrefix = $typePrefix;
 
 				$objRow->published = 1; // news,newsletter
 				$objRow->invisible = 0; // content
@@ -216,20 +200,36 @@ class rmsHelper extends \Backend
 	* parseTemplate-HOOK
 	* ersetzt die Inhalte wenn rms_new_edit=1 und get-Parameter do=preview mit rms-Datensatz
 	*/
-	public function modifyForPreview($objElement)
+	public function modifyForPreview($objTemplate)
 	{
-	    if(\Input::get('do') == 'preview' $obj->rms_new_edit)
+	    if(\Input::get('do') == 'preview' && $objTemplate->rms_new_edit == 1 && strlen($objTemplate->rms_ref_table) > 0)
 	    {
-
+        	
         	$objStoredData = $this->Database->prepare("SELECT `data` FROM `tl_rms` WHERE `ref_id`=? AND `ref_table`=?")
-									->execute($objElement->id, $objElement->rms_ref_table);
+									->execute($objTemplate->id, $objTemplate->rms_ref_table);
 
 			if ($objStoredData->numRows  == 1)
 			{
-				$objRow =  $this->overwriteDbObj($objElement, deserialize($objStoredData->data));
-				$objRow->published = 1; // news,newsletter
-				$objRow->invisible = 0; // content
+				// custom edit for modul template in the bottom class of dca-file
+				$sectionClass = $objTemplate->rms_ref_table.'_rms';
+				$sectionMethod = 'modifyForPreview';
+				$rmsDataArr = deserialize($objStoredData->data);
+
+				if(method_exists($sectionClass, $sectionMethod))
+				{ 	
+					$this->import($sectionClass);
+					$objTemplate = 	$this->$sectionClass->$sectionMethod($objTemplate, $rmsDataArr);
+				}
+				else
+				{
+					$objTemplate =  $this->overwriteDbObj($objTemplate, $rmsDataArr);
+				}
+
+				// force view
+				$objTemplate->published = 1; // news,newsletter
+				$objTemplate->invisible = 0; // content
 			}		
+		}
 	}
 
 	/**
@@ -459,8 +459,8 @@ class rmsHelper extends \Backend
 		else
 		{
 			// Weiterleitungsseite (ID) ermitteln
-			$jumpToID = (strlen($dbObj->rms_preview_jumpTo) > 0 ) ? $dbObj->rms_preview_jumpTo : $dbObj->jumpTo;
-			
+			$jumpToID = ((int) $dbObj->rms_preview_jumpTo > 0 ) ? $dbObj->rms_preview_jumpTo : $dbObj->jumpTo;
+
 			if($jumpToID > 0)
 			{	         	
             	$pageObj = $this->Database->prepare('SELECT `id`,`alias` FROM `tl_page` WHERE `id`=?')->execute($jumpToID);
@@ -490,7 +490,8 @@ class rmsHelper extends \Backend
 		}	
 		// Bereich-Einstellungen als Array zusammenstellen
 		$rmsSectionSettings = array(
-			'master_email' => ((int) $dbObj->rms_master_member > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],
+			'master_id'	=> $dbObj->rms_master_member,
+			'master_email' => ((int) $dbObj->rms_master_member > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],			
 			'preview_jumpTo' => $jumpToUrl
 		);
 	
