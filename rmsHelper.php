@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2014 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -12,7 +15,6 @@
  * set namespace
  */
  namespace SvenRhinow\rms;
-
 
 /**
  * Class rmsHelper
@@ -169,6 +171,9 @@ class rmsHelper extends \Backend
 	    $ignoreFieldArr = explode( ',', str_replace(' ','',$this->settings['ignore_fields']) );
 	    if(is_array($ignoreFieldArr) && in_array($objElement->type, $ignoreFieldArr) ) return $strBuffer;
 
+       	//wenn es keine tl_content-Tabelle ist nicht weiter, da diese von 'modifyForPreview' verarbeitet werden
+    	if($objElement->rms_ref_table != 'tl_content') return $strBuffer;
+
 	    if(\Input::get('do') == 'preview')
 	    {
 			$id = false;
@@ -198,13 +203,15 @@ class rmsHelper extends \Backend
 
 	/**
 	* parseTemplate-HOOK
-	* ersetzt die Inhalte wenn rms_new_edit=1 und get-Parameter do=preview mit rms-Datensatz
+	* ersetzt die Inhalte mit rms-Datensatz, wenn rms_new_edit=1 und get-Parameter do=preview gesetzt ist.
 	*/
 	public function modifyForPreview($objTemplate)
 	{
 	    if(\Input::get('do') == 'preview' && $objTemplate->rms_new_edit == 1 && strlen($objTemplate->rms_ref_table) > 0)
 	    {
-        	
+        	//wenn es eine tl_content-Tabelle ist, nicht weiter da diese Inhalte von 'previewContentElement' verarbeitet werden
+	    	if($objTemplate->rms_ref_table == 'tl_content') return;
+
         	$objStoredData = $this->Database->prepare("SELECT `data` FROM `tl_rms` WHERE `ref_id`=? AND `ref_table`=?")
 									->execute($objTemplate->id, $objTemplate->rms_ref_table);
 

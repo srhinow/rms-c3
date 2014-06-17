@@ -1,24 +1,7 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php
 
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2012 Leo Feyer
- *
- * Formerly known as TYPOlight Open Source CMS.
- *
- * This program is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program. If not, please visit the Free
- * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2012 <http://www.sr-tag.de>
@@ -47,8 +30,8 @@ $GLOBALS['TL_LANG']['tl_rms']['status']     = array('status', 'indicates whether
 $GLOBALS['TL_LANG']['tl_rms']['region'][0]   =  'region';
 $GLOBALS['TL_LANG']['tl_rms']['preview_link'][0]   =  'Link to preview';
 $GLOBALS['TL_LANG']['tl_rms']['last_edit'][0]   =  'last edit';
-
 $GLOBALS['TL_LANG']['tl_rms']['status_options'] = array('0'=>'unfinished','1'=>'edited');
+
 /**
  * Buttons
  */
@@ -57,7 +40,6 @@ $GLOBALS['TL_LANG']['tl_rms']['acknowledge']     = array('Release Change', 'Rele
 $GLOBALS['TL_LANG']['tl_rms']['delete']     = array('delete change', 'delete this change.');
 $GLOBALS['TL_LANG']['tl_rms']['edit']       = array('edit content', 'edit this content');
 $GLOBALS['TL_LANG']['tl_rms']['show_diff']       = array('Show difference', 'View the processed difference.');
-
 
 /**
  * Legends
@@ -78,5 +60,3 @@ $GLOBALS['TL_LANG']['tl_rms']['sessions']['tl_news'] = 'News :: element';
 */
 $GLOBALS['TL_LANG']['tl_rms']['diff_new_content'] = '<h5>The content has been re-created.</h5> <p>Therefore, there is no version for comparison.</p>';
 $GLOBALS['TL_LANG']['tl_rms']['info_new_edit'] = '*new created*';
-
-?>

@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2014 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -104,7 +107,7 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'   => 'control_group,sender_email,ignore_fields',
+		'default'   => 'control_group,fallback_master_member,extent_emailto,ignore_fields',
 	),
 
 	// Fields
@@ -131,9 +134,19 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 			'eval'                    => array('mandatory'=>true,'multiple'=>false),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 	    ),
-	    'sender_email' => array
+		'fallback_master_member' => array
 	    (
-		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['sender_email'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['fallback_master_member'],
+			'exclude'                 => true,
+			'inputType'               => 'select',
+			'foreignKey'              => 'tl_user.name',
+			'eval'                    => array('mandatory'=>true,'chosen'=>true),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+			'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
+	    ),
+	    'extent_emailto' => array
+	    (
+		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['extent_emailto'],
 		    'exclude'                 => true,
 		    'inputType'               => 'text',
 		    'eval'                    => array('decodeEntities'=>true, 'tl_class'=>'clr long'),

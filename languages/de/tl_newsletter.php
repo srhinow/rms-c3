@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2012 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -8,6 +10,7 @@
  * @package    rms (Release Management System)
  * @license    LGPL 
  */
+
 /**
  * Legends
  */

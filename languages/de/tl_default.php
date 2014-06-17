@@ -24,4 +24,3 @@ $GLOBALS['TL_LANG']['MSC']['show_preview'] = array('Vorschau anzeigen','zeigt di
 $GLOBALS['TL_LANG']['MSC']['rms_protected'] = array('Diesen Bereich in die Freigabe-Verwaltung aufnehmen','Die Inhalte in diesem Bereich werden von dem Modul (rms) berücksichtigt.');
 $GLOBALS['TL_LANG']['MSC']['rms_master_member'] = array('verantwortlich für Freigaben','Geben Sie hier die Person an die für die Freigaben in dem Bereich verantwortlich sind.');
 $GLOBALS['TL_LANG']['MSC']['rms_preview_jumpTo'] = array('Freigabe-Vorschauseite','Wenn dieses Feld leer bleibt, wird die "Weiterleitungsseite" als Freigabe-Vorschauseite genommen. Diese kann hier aber überschrieben werden.');
-

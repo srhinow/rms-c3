@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2012-2014 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -14,4 +16,3 @@
  */
 $GLOBALS['TL_LANG']['tl_news_archive']['rms_settings_legend']      = 'Freigabe-Einstellungen';
 $GLOBALS['TL_LANG']['tl_news_archive']['rms_legend']      = 'Freigabe-Benachrichtigung';
-

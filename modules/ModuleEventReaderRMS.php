@@ -5,8 +5,8 @@
  *
  * Copyright (c) 2005-2014 Leo Feyer
  *
- * @package Calendar
- * @link    https://contao.org
+ * @package rms
+ * @link    https://www.sr-tag.de
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
