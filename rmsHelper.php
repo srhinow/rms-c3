@@ -282,7 +282,7 @@ class rmsHelper extends \Backend
 		        $fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
 		        $sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
 
-		        $sendToEmailsArr = (strlen($this->settings['extent_emailto']) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
+		        $sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
 		        $sendToEmailsArr[] = $sendToEmail;
 		        $sendToEmailsArr = array_unique($sendToEmailsArr);
 		        $sendToEmails = implode(',',$sendToEmailsArr);
