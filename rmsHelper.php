@@ -264,11 +264,13 @@ class rmsHelper extends \Backend
 	*/
 	public function sendEmailInfo($varValue, \DataContainer $dc)
 	{
-	    $strTable = $this->Input->get("table");
-        $this->settings = $this->getSettings();
-
+	    $this->loadLanguageFile('tl_default');	
 	    $this->import("BackendUser");
 
+	    $strTable = $this->Input->get("table");
+        $this->settings = $this->getSettings();        
+        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id, \Input::get("table"), $dc->activeRecord->ptable);
+       
 	    if($varValue == 1)
 	    {
 			//mail from editor to Super-Editor (question)
@@ -277,12 +279,20 @@ class rmsHelper extends \Backend
 	            $text =  $dc->Input->post('rms_notice');
 			    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
 
+		        $fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
+		        $sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
+
+		        $sendToEmailsArr = array_map('trim',explode(',',$this->settings['extent_emailto']));
+		        $sendToEmailsArr[] = $sendToEmail;
+		        $sendToEmailsArr = array_unique($sendToEmailsArr);
+		        $sendToEmails = implode(',',$sendToEmailsArr);
+
 			    $email = new \Email();
 			    $email->from = $this->BackendUser->email;
 			    $email->charset = 'utf-8';
-			    $email->subject = 'Freigabe-Aufforderung';
+			    $email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
 			    $email->text = $text;
-			    $email->sendTo(($this->settings['sender_email']) ? $this->settings['sender_email'] : $GLOBALS['TL_CONFIG']['adminEmail']);
+			    $email->sendTo($sendToEmails);
 			}
 			else
 			//send Email from Super-Editor to editor  (answer)
@@ -295,7 +305,7 @@ class rmsHelper extends \Backend
 			    $email = new \Email();
 			    $email->from = $this->BackendUser->email;
 			    $email->charset = 'utf-8';
-			    $email->subject = 'Freigabe-Aufforderung (Antwort)';
+			    $email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_answer'];
 			    $email->text = $text;
 			    $email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
 			}
@@ -402,10 +412,13 @@ class rmsHelper extends \Backend
 	* @param string
 	* @return string
 	*/
-	public function getRootParentTable($table)
-	{
+	public function getRootParentTable($table,$ptable)
+	{	
+		if($ptable == 'tl_article') return 'tl_page';
+
 		$this->loadDataContainer($table);
 		$pTable = $table;
+		
 		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
 		{
 			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable']);
@@ -420,7 +433,7 @@ class rmsHelper extends \Backend
 	*/
 	public function getRootParentDBObj($id, $table, $ptable, $rtable)
 	{
-		$this->loadDataContainer($table);
+		$this->loadDataContainer($ptable);
 
 		$orig_id = $id;
 		$orig_table = $table;
@@ -447,7 +460,7 @@ class rmsHelper extends \Backend
 	public function getRmsSectionSettings($id, $table, $ptable)
 	{
 		// um zu testen ob es tl_page ist oder eine andere, da tl_content auch von Modulen wie News verwendet wird
-		$root_table = $this->getRootParentTable($table);
+		$root_table = $this->getRootParentTable($table, $ptable);
 
 		// die Einstellungen zu dem Bereich holen
 		$dbObj = $this->getRootParentDBObj($id, $table, $ptable, $root_table);
@@ -460,6 +473,9 @@ class rmsHelper extends \Backend
 		// wenn es ein normaler Inhalt einer Seite ist
 		if($root_table == 'tl_page')
 		{
+			$rootPage = $this->getRootPage($dbObj->id);
+			$dbObj->rms_master_member = $rootPage->rms_master_member;
+
 			$jumpToUrl = $this->generateFrontendUrl($dbObj->row(),'/do/preview');
 		}
 		// wenn es ein Modul wie z.B. News ist
