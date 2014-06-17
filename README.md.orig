@@ -41,7 +41,10 @@ Um die alte Version für Contao2.x zu entfernen, am besten den kompletten alten 
 KONFIGURATION
 ----------------------------
 bis Version 3.1.x
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7276a1537e139c438c6e238d2ade55d5ba8c6934
 1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und 
  setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt
 "Freigabe-Anfragen" zusehen sein.
@@ -71,10 +74,16 @@ Es wird, wenn die Freigabeverwaltung für den Bereich aktiv ist, werden Callback
 (Quelle: rmsHelper->handleBackendUserAccessControlls())
 
 Weiterhin gibt es zusätzliche HOOKS um zu pruefen ob Inhalte Freigabegeschützt sind. Diese werden zwingend für eigene Erweiterungen benötigt:
+<<<<<<< HEAD
+=======
 
 1. $GLOBALS['TL_HOOKS'] ['rmsIsContentProtected'] Falls eine Erweiterung auch auf die tl_content-Tabelle zurückgreift. Übergibt die aktuelle Tabelle und überprüft selbst auf den GET-Paramter do
 2. $GLOBALS['TL_HOOKS'] ['rmsIsTableProtected'] Wird für alle Erweiterungs-DCA benötigt welche nicht tl_content sind. Übergibt die aktuelle Tabelle und überprüft auf die übergebene Tabelle
 3. Für bestimmte Module gibt es für die Frontendausgabe bestimmte zusätzliche Formatierungen die beim überschreiben der rms-Daten verloren gehen bevor diese ans Template geschickt werden. Für diesen Fall prüfe ich ob es eine Methode 'modifyForPreview' in der Class $objTemplate->rms_ref_table.'_rms' existiert. Als Beispiel für die News lege ich die Methode modifyForPreview in der Klasse tl_news_rms an und setzte dort einen Template-Parameter 'linkHeadline' neu.
 
 
+>>>>>>> 7276a1537e139c438c6e238d2ade55d5ba8c6934
 
+1. $GLOBALS['TL_HOOKS'] ['rmsIsContentProtected'] Falls eine Erweiterung auch auf die tl_content-Tabelle zurückgreift. Übergibt die aktuelle Tabelle und überprüft selbst auf den GET-Paramter do
+2. $GLOBALS['TL_HOOKS'] ['rmsIsTableProtected'] Wird für alle Erweiterungs-DCA benötigt welche nicht tl_content sind. Übergibt die aktuelle Tabelle und überprüft auf die übergebene Tabelle
+3. Für bestimmte Module gibt es für die Frontendausgabe bestimmte zusätzliche Formatierungen die beim überschreiben der rms-Daten verloren gehen bevor diese ans Template geschickt werden. Für diesen Fall prüfe ich ob es eine Methode 'modifyForPreview' in der Class $objTemplate->rms_ref_table.'_rms' existiert. Als Beispiel für die News lege ich die Methode modifyForPreview in der Klasse tl_news_rms an und setzte dort einen Template-Parameter 'linkHeadline' neu.
