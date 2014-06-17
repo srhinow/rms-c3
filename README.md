@@ -41,6 +41,7 @@ Um die alte Version für Contao2.x zu entfernen, am besten den kompletten alten 
 KONFIGURATION
 ----------------------------
 bis Version 3.1.x
+
 1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und 
  setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt
 "Freigabe-Anfragen" zusehen sein.
