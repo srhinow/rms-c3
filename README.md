@@ -71,8 +71,8 @@ Es wird, wenn die Freigabeverwaltung für den Bereich aktiv ist, werden Callback
 
 Weiterhin gibt es zusätzliche HOOKS um zu pruefen ob Inhalte Freigabegeschützt sind. Diese werden zwingend für eigene Erweiterungen benötigt:
 
-1. $GLOBALS['TL_HOOKS']['rmsIsContentProtected'] (Falls eine Erweiterung auch auf die tl_content-Tabelle zurückgreift. Übergibt die aktuelle Tabelle und überprüft selbst auf den GET-Paramter 'do')
-2. $GLOBALS['TL_HOOKS']['rmsIsTableProtected'] (Wird für alle Erweiterungs-DCA benötigt welche nicht tl_content sind. Übergibt die aktuelle Tabelle und überprüft auf die übergebene Tabelle)
+1. $GLOBALS['TL_HOOKS'] ['rmsIsContentProtected'] (Falls eine Erweiterung auch auf die tl_content-Tabelle zurückgreift. Übergibt die aktuelle Tabelle und überprüft selbst auf den GET-Paramter 'do')
+2. $GLOBALS['TL_HOOKS'] ['rmsIsTableProtected'] (Wird für alle Erweiterungs-DCA benötigt welche nicht tl_content sind. Übergibt die aktuelle Tabelle und überprüft auf die übergebene Tabelle)
 3. Für bestimmte Module gibt es für die Frontendausgabe bestimmte zusätzliche Formatierungen die beim überschreiben der rms-Daten verloren gehen bevor diese ans Template geschickt werden. Für diesen Fall prüfe ich ob es eine Methode 'modifyForPreview' in der Class $objTemplate->rms_ref_table.'_rms' existiert. Als Beispiel für die News lege ich die Methode modifyForPreview in der Klasse tl_news_rms an und setzte dort einen Template-Parameter 'linkHeadline' neu.
 
 
