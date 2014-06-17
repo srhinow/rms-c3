@@ -41,29 +41,32 @@ Um die alte Version für Contao2.x zu entfernen, am besten den kompletten alten 
 KONFIGURATION
 ----------------------------
 bis Version 3.1.x
-1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt "Freigabe-Anfragen" zusehen sein.
+1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und 
+ setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt
+"Freigabe-Anfragen" zusehen sein.
 2. Legen Sie im Bereich Benutzerverwaltung/ Benutzergruppen eine gruppe an die als Freigabe-Redaktionsgruppe dienen soll. Danach weisen Sie einem Benutzer diese Gruppe zu.
 3. Wechseln Sie nun in das Backend-Modul "Freigabe-Anfragen" und dort unter "Freigabe-Einstellungen" legen Sie die Gruppe (Freigabe-Redaktionsgruppe), eine Emailadresse, die aktiven Module und die freigabegeschützte Seitenstruktur zu und speichern die Einstellungen. 
 
 ab Version 3.2-beta1
+
 1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt "Freigabe-Anfragen" zusehen sein.
 2. Legen Sie im Bereich Benutzerverwaltung/ Benutzergruppen eine gruppe an die als Freigabe-Redaktionsgruppe dienen soll. Danach weisen Sie allen Benutzern diese Gruppe zu welche für Freigaben verantworltich seien sollen.
 3. Wechseln Sie nun in das Backend-Modul "Freigabe-Anfragen" und dort unter "Freigabe-Einstellungen" legen Sie die Gruppe (Freigabe-Redaktionsgruppe), einen Fallbackredakteur, zusätzliche Emailempfänger die bei Freigaben informiert werden sollen und zu ignorirende Felder fest.
 4. Anders als in älteren Versionen werden die verantwortlichen Freigabe-Redakteure immer in den obersten Ebenen festgelegt ob der Bereich geschützt sein soll, durch wen administriert, und (nur bei Modulen) welche Weiterleitungsseite als Vorschau verwendet werden soll.
-	4.1 für Artikel und Inhaltselemente eines bestimmten Seitenstrukturbaumes werden die Einstellungen in dem Seitenstruktur/Startpunkt einer Seite
-	4.2 für News ist es das jeweilige News-Archiv
-	4.3 für die Events in dem jeweilig zugehörigen Kalender
-	4.4 für Newsletter in dem jeweiligen Verteiler
-	4.5 für FAQ in der zugehörigen FAQ-Kategorie
-	4.6 --Zusatz-- für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
+
+	-für Artikel und Inhaltselemente eines bestimmten Seitenstrukturbaumes werden die Einstellungen in dem Seitenstruktur/Startpunkt einer Seite
+	-für News ist es das jeweilige News-Archiv
+	-für die Events in dem jeweilig zugehörigen Kalender
+	-für Newsletter in dem jeweiligen Verteiler
+	-für FAQ in der zugehörigen FAQ-Kategorie
+	-Zusatz-- für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
 
 ---------------------------
 ENTWICKLER-INFORMATIONEN
 ---------------------------
 Ich habe versucht das Modul soweit wie möglich offen für weitere zu schützende Erweiterungen zuhalten.
 
-Es wird, wenn die Freigabeverwaltung für den Bereich aktiv ist, werden Callbacks geladen. Er versucht erst eine Methode "onEditCallback" und eine Methode "onSubmitCallback" in einer Klasse mit folgenden Namensaufbau zufinden [table].'_rms'. Sollte es diese nicht geben greift er auf die gleichnamigen Methoden 
-in der rmsDefaultCallbacks.php zurück. Es muss hier also keine eigene Logik vorhanden sein, wenn die Funktion so wie sie vorhanden ist genügt.
+Es wird, wenn die Freigabeverwaltung für den Bereich aktiv ist, werden Callbacks geladen. Er versucht erst eine Methode "onEditCallback" und eine Methode "onSubmitCallback" in einer Klasse mit folgenden Namensaufbau zufinden [table].'_rms'. Sollte es diese nicht geben greift er auf die gleichnamigen Methoden in der rmsDefaultCallbacks.php zurück. Es muss hier also keine eigene Logik vorhanden sein, wenn die Funktion so wie sie vorhanden ist genügt.
 (Quelle: rmsHelper->handleBackendUserAccessControlls())
 
 Weiterhin gibt es zusätzliche HOOKS um zu pruefen ob Inhalte Freigabegeschützt sind. Diese werden zwingend für eigene Erweiterungen benötigt:
