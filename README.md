@@ -2,8 +2,22 @@
 rms (Release Management System)
 ---------------------------
 
-rms-c3 ist eine Contao3-Erweiterung, welches es bestimmten Benutzergruppen erlaubt Freigaben zu verwalten. Alle Redakteur-Zugänge die nicht als Super-Redakteurgruppe in dem Freigabeeinstellungen zugewiesen wurden, können zwar Änderungen an Inhalten vornehmen, diese werden aber nach dem speichern nicht Live angezeigt sondern stehen in der Freigabeliste. Außerdem sind Inhalte die auf Freigabe warten, in der Listenansicht im jeweiligen Bereich mit einem roten Hinweis gekennzeichnet. 
-Die Freigabe ist im Moment für die Bereiche Inhalte unterhalb von Artikeln, News, Newsletter und Calender-Events umgesetzt worden.
+rms-c3 ist eine Contao3-Erweiterung, welches es Benutzern einer bestimmten Benutzergruppe erlaubt, Freigaben zu verwalten. Alle Redakteur-Zugänge die nicht als Super-Redakteurgruppe in dem Freigabeeinstellungen zugewiesen wurden, können zwar Änderungen an Inhalten vornehmen oder wenn es ihnen erlaubt ist auch neue Inhalte erstellen. Diese werden aber nach dem speichern nicht Live angezeigt sondern stehen in der Freigabeliste. Damit der jeweilige Freigabe-Redakteur nicht nach jedem speichern eine Email bekommt, hat der normale Redakteur die Möglichkeit in der Bearbeiten-Ansicht eine Freigabe-Notiz zu hinterlassen und eine checkbox um die Nachricht an den Freigabe-Redakteur zusenden. Außerdem sind Inhalte die auf Freigabe warten, in der Listenansicht im jeweiligen Bereich mit einem roten Hinweis gekennzeichnet. 
+
+Die Freigaben sind im Moment für die Bereiche 
+
+- Artikel, 
+- alle Inhaltselemente egal unter welchen Elterntabelle, 
+- News, 
+- Newsletter, 
+- FAQ (ab 3.2)
+- Calender-Events 
+
+umgesetzt worden.
+
+Die Zuweisung der Redakteure findet immer in den Root-Einstellungen des jeweiligen Bereiches statt. z.B. bei den News sind es die "Freigabe-Einstellungen" in den jeweiligen News-Archiv-Einstellungen oder bei Artikel und Inhaltslemente unterhalb der Artikel ist es die ROOT-Page eines jeden Seitenbaumes. So können verschiedene Bereiche verschiedenen Verantwortlichen zugewiesen werden. Der zugewiesene Freigabe-Redakteur sieht dann unter der Freigabe-Verwaltung auch nur die Freigaben die für ihn bestimmt sind. Die Felder für die Redakteure und die Freigabe-Redakteure müssen noch in den Benutzer(gruppen)-Rechten zugewiesen werden. (TIPP: man sucht in den Berechtigungseinstellungen im Browser nach "Freigabe" und arbeitet sich so  durch die einzelnen Bereiche).
+
+In dem BE-Modul 'Freigabe-Anfragen' hat der Freigabe-Redaktuer die Möglichkeit sich eine Frontendvorschau anzeigen zulassen, eine Diff-Ansicht der Änderungen, den Inhalt direkt zu editieren und per Checkbox wiederum den Redaktuer über die Reaktion per Email zu informieren. Sobald eine Anfrage im Bearbeitenmodus gespeichert wurde erscheint es in der Liste (grün) als bearbeitet und kann auch danach gefiltert werden. Sobald eine Freigabe-Anfrage mit dem Häkchen in der Freigabe-Liste bestätigt wird, wird der Inhalt Live gestellt und der Eintrag aus der Freigabeliste gelöscht. Wenn der Freigabe-Eintrag gelöscht wird, wird in bestehenden Elementen der Freigabemodus zurück gesetzt, neu angelegte Elemente gelöscht und der Eintrag aus der Freigabeliste entfernt.
 
 ---------------------------
 finanziert durch
