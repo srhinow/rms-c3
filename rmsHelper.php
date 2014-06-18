@@ -56,11 +56,13 @@ class rmsHelper extends \Backend
 
         // if not set -> set default values
 	    if(!$this->settings['control_group']) $this->settings['control_group'] = 0;
-	    if(!$GLOBALS['TL_CONFIG']['rms_active']) $GLOBALS['TL_CONFIG']['rms_active'] = false;
-
-        // Load Helper
-        $String 	=	\String::getInstance();
-        $Database  =	\Database::getInstance();
+	    
+	    // deaktiviere Freigabefunktion wenn der Schlater nicht existiert
+	    if(!$GLOBALS['TL_CONFIG']['rms_active']) 
+	    {
+	    	$this->Config->update($GLOBALS['TL_CONFIG']['rms_active'], false);
+	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
+	    }        
     }
 
     /**
@@ -80,13 +82,20 @@ class rmsHelper extends \Backend
     static public function getSettings()
 	{
 	    $Database = \Database::getInstance();
+
+	    // verhindert Fehlermeldungen beim re-installieren wenn 'rms_active' noch aktiv gesetzt ist (#1)
+	    if(!$Database->tableExists('tl_rms_settings'))
+	    {
+	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
+	    	$this->Config->update($GLOBALS['TL_CONFIG']['rms_active'], false);
+	    	return array();
+	    }
+	    
 	    $resObj = $Database->prepare('SELECT * FROM `tl_rms_settings`')
 				   ->limit(1)
 				   ->execute();
 
-	    if(!$resObj->numRows)  return array();
-
-	    return $resObj->row();
+	    return (!$resObj->numRows) ? array() : $resObj->row();
 	 }
 
 	 /**
