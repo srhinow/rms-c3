@@ -50,17 +50,18 @@ bis rms-Version 3.1.x (Contao-Version sollte ab 3.0 sein)
 
 ab rms-Version 3.2-beta1 (Contao-Version sollte ab 3.0 sein)
 
-1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt "Freigabe-Anfragen" zusehen sein.
-2. Legen Sie im Bereich Benutzerverwaltung/ Benutzergruppen eine gruppe an die als Freigabe-Redaktionsgruppe dienen soll. Danach weisen Sie allen Benutzern diese Gruppe zu welche für Freigaben verantworltich seien sollen.
-3. Wechseln Sie nun in das Backend-Modul "Freigabe-Anfragen" und dort unter "Freigabe-Einstellungen" legen Sie die Gruppe (Freigabe-Redaktionsgruppe), einen Fallbackredakteur, zusätzliche Emailempfänger die bei Freigaben informiert werden sollen und zu ignorirende Felder fest.
+1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Daraufhin werden diverse Tabellen mit zusätzlichen Feldern befülllt. Anschließend sollte Backend im Bereich "Inhalte" der Punkt "Freigabe-Anfragen" zusehen sein.
+2. Legen Sie im Bereich Benutzerverwaltung/ Benutzergruppen eine Gruppe an, die als Freigabe-Redaktionsgruppe dienen soll. Danach weisen Sie allen Benutzern, welche für Freigaben verantworltich seien sollen, diese Gruppe zu.
+3. Wechseln Sie nun in das Backend-Modul "Freigabe-Anfragen" und dort unter "Freigabe-Einstellungen", legen Sie die Gruppe (Freigabe-Redaktionsgruppe), einen Fallbackredakteur, zusätzliche Emailempfänger die bei Freigaben informiert werden sollen und zu ignorirende Felder fest.
 4. Anders als in älteren Versionen werden die verantwortlichen Freigabe-Redakteure immer in den obersten Ebenen festgelegt ob der Bereich geschützt sein soll, durch wen administriert, und (nur bei Modulen) welche Weiterleitungsseite als Vorschau verwendet werden soll.
 
-1. für Artikel und Inhaltselemente eines bestimmten Seitenstrukturbaumes werden die Einstellungen in dem Seitenstruktur/Startpunkt einer Seite
-2. für News ist es das jeweilige News-Archiv
-3. für die Events in dem jeweilig zugehörigen Kalender
-4. für Newsletter in dem jeweiligen Verteiler
-5. für FAQ in der zugehörigen FAQ-Kategorie
-6. Zusatz-- für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
+  * für Artikel und Inhaltselemente eines bestimmten Seitenstrukturbaumes werden die Einstellungen in dem Seitenstruktur/Startpunkt einer Seite festgelegt
+  * für News ist es das jeweilige News-Archiv
+  * für die Events in dem jeweilig zugehörigen Kalender
+  * für Newsletter in dem jeweiligen Verteiler
+  * für FAQ in der zugehörigen FAQ-Kategorie
+
+--Zusatz-- für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
 
 ---------------------------
 ENTWICKLER-INFORMATIONEN
