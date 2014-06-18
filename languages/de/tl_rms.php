@@ -30,8 +30,8 @@ $GLOBALS['TL_LANG']['tl_rms']['status']     = array('Status', 'zeigt an ob diese
 $GLOBALS['TL_LANG']['tl_rms']['region'][0]   =  'Bereich';
 $GLOBALS['TL_LANG']['tl_rms']['preview_link'][0]   =  'Vorschau-Link';
 $GLOBALS['TL_LANG']['tl_rms']['last_edit'][0]   =  'letzte Bearbeitung';
-
 $GLOBALS['TL_LANG']['tl_rms']['status_options'] = array('0'=>'unbearbeitet','1'=>'bearbeitet');
+
 /**
  * Buttons
  */
@@ -40,7 +40,6 @@ $GLOBALS['TL_LANG']['tl_rms']['acknowledge']     = array('Änderung freigeben', 
 $GLOBALS['TL_LANG']['tl_rms']['delete']     = array('Änderung löschen', 'diese Änderung löschen.');
 $GLOBALS['TL_LANG']['tl_rms']['edit']       = array('Inhalt bearbeiten', 'Inhalt bearbeiten');
 $GLOBALS['TL_LANG']['tl_rms']['show_diff']       = array('Unterschied anzeigen', 'Den bearbeiteten Unterschied anzeigen.');
-
 
 /**
  * Legends
@@ -64,4 +63,3 @@ $GLOBALS['TL_LANG']['tl_rms']['sessions']['news_tl_content'] = 'Nachrichten :: I
 $GLOBALS['TL_LANG']['tl_rms']['diff_new_content'] = '<h5>Der Inhalt wurde neu erstellt.</h5> <p>Es gibt daher keine Version zum Vergleich.</p>';
 $GLOBALS['TL_LANG']['tl_rms']['info_new_edit'] = '*neu erstellt*';
 
-?>

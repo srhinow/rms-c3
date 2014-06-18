@@ -15,7 +15,7 @@
  * Fields
  */
 $GLOBALS['TL_LANG']['tl_rms_settings']['control_group'] = array('Gruppe mit Freigabeberechtigung', 'Geben Sie die Benutzergruppe an welche eine Freigabeberechtigung haben soll.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['fallback_master_member']         = array('Fallback-RMS-Redakteur', 'Falls in irgendeinem Bereich zwar rms aktiviert wurde, aber kein zugehöriger rms-Redakteur exisitert, wird dieser hier benachrichtigt.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['extent_emailto']         = array('zusätzliche Empfänger-E-Mail-Adresse', 'Hier können Sie ein oder mehrere Email-Adressen durch ein Komma getrennt eingeben. Diese Email-Adresse werden zusätzllich bei allen Änderungen benachrichtigt. Das Feld kann leer bleiben.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_fields']         = array('zu ignorierende Felder', 'Tragen Sie hier, durch ein Komma getrennt die Feldnamen ein die vom rms-Modul ignoriert werden sollen. Der Feldname muss der aus der Datenbank sein (z.B. ignore_fields).');
+$GLOBALS['TL_LANG']['tl_rms_settings']['fallback_master_member']         = array('Fallback-RMS-Redakteur', 'Falls in irgendeinem Bereich zwar rms aktiviert wurde, aber kein zugehöriger rms-Redakteur existiert, wird dieser hier benachrichtigt.');
+$GLOBALS['TL_LANG']['tl_rms_settings']['extent_emailto']         = array('zusätzliche Empfänger-E-Mail-Adressen', 'Hier können Sie ein oder mehrere Email-Adressen durch ein Komma getrennt eingeben. Diese Email-Adressen werden zusätzlich bei allen Änderungen benachrichtigt. Das Feld kann leer bleiben.');
+$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_fields']         = array('zu ignorierende Felder', 'Tragen Sie hier, durch ein Komma getrennt die Feldnamen ein die vom rms-Modul ignoriert werden sollen. Der Feldname muss der aus der Datenbank sein (z.B. colsetStart,colsetPart,colsetEnd).');
 
