@@ -60,7 +60,7 @@ class rmsHelper extends \Backend
 	    // deaktiviere Freigabefunktion wenn der Schlater nicht existiert
 	    if(!$GLOBALS['TL_CONFIG']['rms_active']) 
 	    {
-	    	$this->Config->update($GLOBALS['TL_CONFIG']['rms_active'], false);
+	    	$this->Config->update('rms_active', false);
 	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
 	    }        
     }
@@ -87,7 +87,7 @@ class rmsHelper extends \Backend
 	    if(!$Database->tableExists('tl_rms_settings'))
 	    {
 	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
-	    	$this->Config->update($GLOBALS['TL_CONFIG']['rms_active'], false);
+	    	$this->Config->update('rms_active', false);
 	    	return array();
 	    }
 	    
