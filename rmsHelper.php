@@ -413,7 +413,7 @@ class rmsHelper extends \Backend
 	* @param string
 	* @return string
 	*/
-	public function getRootParentTable($table,$ptable)
+	public function getRootParentTable($table,$ptable='')
 	{	
 		if($ptable == 'tl_article') return 'tl_page';
 
@@ -422,7 +422,7 @@ class rmsHelper extends \Backend
 		
 		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
 		{
-			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable']);
+			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable'], '');
 		}
 		return $pTable;
 	}
