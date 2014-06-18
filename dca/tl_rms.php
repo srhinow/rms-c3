@@ -291,12 +291,17 @@ class tl_rms extends Backend
 		$rmsObj = $this->Database->prepare("SELECT count(*) c FROM tl_rms WHERE ref_id=?")
                                  ->execute($dc->id);
 
-		//reset rms_new_edit
+		
         if((int)$rmsObj->c == 0)
     	{
+			//reset rms_new_edit
 			$this->Database->prepare("UPDATE ".$ref_Table." SET `rms_new_edit`='' WHERE id=?")
 							->limit(1)
 							->execute($ref_id);
+			
+			//delete new empty elements
+			$this->Database->prepare('DELETE FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
+							->execute($ref_id, 1);
 		}
 	}
 
