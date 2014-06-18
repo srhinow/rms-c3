@@ -156,6 +156,7 @@ class rmsHelper extends \Backend
 
 			//falls keine separaten callbacks existieren die Standart-Callbacks aufrufen
 			$GLOBALS['TL_DCA'][$strTable]['config']['ondelete_callback'][] = (method_exists($strTable.'_rms', 'onDeleteCallback')) ? array($strTable.'_rms','onDeleteCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onDeleteCallback');
+			$GLOBALS['TL_DCA'][$strTable]['config']['oncut_callback'][] = (method_exists($strTable.'_rms', 'onCutCallback')) ? array($strTable.'_rms','onCutCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onCutCallback');
 
 			if (\Input::get("act") == "edit")
 			{			    
@@ -279,7 +280,7 @@ class rmsHelper extends \Backend
 	    $strTable = $this->Input->get("table");
         $this->settings = $this->getSettings();      
 
-        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	\Input::get("table"), $dc->activeRecords->ptable);
+        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	\Input::get("table"), $dc->activeRecord->ptable);
 
 	    if($varValue == 1)
 	    {
