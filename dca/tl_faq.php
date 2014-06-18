@@ -108,4 +108,32 @@ class tl_faq_rms extends \Backend
         }
 
     }
+    
+    /**
+    * custom modify the rms-Preview
+    * used from rmsHelper->modifyForPreview() -> is a parseTemplate->HOOK
+    * @param object
+    * @param array
+    * @return object
+    */
+    public function modifyForPreview($templObj, $newArr)
+    {
+        global $objPage;
+
+        $origObj = clone $templObj;
+
+        if(is_array($newArr) && count($newArr) > 0)
+        {
+            foreach($newArr as $k => $v)
+            {               
+                $templObj->$k = $v;
+            }
+            
+            //author
+            $objAuthor = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id`=?')->limit(1)->execute($templObj->author);
+            $this->Template->info = sprintf($GLOBALS['TL_LANG']['MSC']['faqCreatedBy'], \Date::parse($templObj->dateFormat, $templObj->tstamp), $objAuthor->name);
+
+        }
+        return $templObj;
+    }    
 }
