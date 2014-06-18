@@ -268,8 +268,9 @@ class rmsHelper extends \Backend
 	    $this->import("BackendUser");
 
 	    $strTable = $this->Input->get("table");
-        $this->settings = $this->getSettings();        
-        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id, \Input::get("table"), $dc->activeRecord->ptable);
+        $this->settings = $this->getSettings();      
+
+        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	\Input::get("table"), $dc->activeRecords->ptable);
 
 	    if($varValue == 1)
 	    {
@@ -427,26 +428,33 @@ class rmsHelper extends \Backend
 	}
 
 	/**
-	* get root-Parent-DB-Object for the rms-settings and jumpto for the preview-Link
+	* get root-Parent-DB-Object for the rms-settings
 	* @param string
 	* @return string
 	*/
 	public function getRootParentDBObj($id, $table, $ptable, $rtable)
 	{
-		$this->loadDataContainer($ptable);
-
-		$orig_id = $id;
-		$orig_table = $table;
-		$orig_ptable = $ptable;
-
-		$dbObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." pt  LEFT JOIN ".$table." t ON pt.id = t.pid WHERE t.`id`=?")
-					->limit(1)
-					->execute($id);
-
-		if( strlen($GLOBALS['TL_DCA'][$ptable]['config']['ptable']) > 0 )
+		
+		if($ptable == '')
 		{
-			$dbObj = $this->getRootParentDBObj($dbObj->id, $ptable, $GLOBALS['TL_DCA'][$ptable]['config']['ptable'], $rtable);
+			$dbObj = $this->Database->prepare( "SELECT * FROM ".$table." WHERE `id`=?")
+						->limit(1)
+						->execute($id);
 		}
+		else
+		{
+			$this->loadDataContainer($ptable);
+
+			$dbObj = $this->Database->prepare("SELECT pt.* FROM ".$ptable." pt  LEFT JOIN ".$table." t ON pt.id = t.pid WHERE t.`id`=?")
+						->limit(1)
+						->execute($id);
+
+			if( strlen($GLOBALS['TL_DCA'][$ptable]['config']['ptable']) > 0 )
+			{
+				$dbObj = $this->getRootParentDBObj($dbObj->id, $ptable, $GLOBALS['TL_DCA'][$ptable]['config']['ptable'], $rtable);
+			}
+		}	
+
 		return $dbObj;
 	}
 
@@ -457,8 +465,9 @@ class rmsHelper extends \Backend
 	* @param string
 	* @return array 
 	*/
-	public function getRmsSectionSettings($id, $table, $ptable)
+	public function getRmsSectionSettings($id,$table,$ptable)
 	{
+
 		// um zu testen ob es tl_page ist oder eine andere, da tl_content auch von Modulen wie News verwendet wird
 		$root_table = $this->getRootParentTable($table, $ptable);
 
