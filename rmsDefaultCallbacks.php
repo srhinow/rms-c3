@@ -94,10 +94,6 @@ class rmsDefaultCallbacks extends \Backend
     * set or update a entry in rms-table
     * @param object
     */
-    /**
-    * set or update a entry in rms-table
-    * @param object
-    */
     public function onSubmitCallback(\DataContainer $dc)
     {
 
@@ -209,6 +205,15 @@ class rmsDefaultCallbacks extends \Backend
         }
 
     }   
+
+    /**
+    * oncut 
+    */
+    public function onCutCallback(\DataContainer $dc)
+    {
+        // ToDo: der der Inhalt ja evtnetuell schon freigeeben wurde und auch plötzlich nicht verschwinden darf nur weil es an einer anderen Stelle stehen soll
+        // ist der Umgang als Freigabe-Schutz noch unklar.
+    }
 
     /**
 	* delete from rms-table when item delete
