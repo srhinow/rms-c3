@@ -97,7 +97,6 @@ class rmsVersions extends \Backend
 						$arrOrder[] = $arrField['eval']['orderField'];
 					}
 				}
-				// print_r($to);
 
 				// Find the changed fields and highlight the changes
 				foreach ($to as $k=>$v)
@@ -151,9 +150,6 @@ class rmsVersions extends \Backend
 							$from[$k] = \Date::parse($GLOBALS['TL_CONFIG']['datimFormat'], $from[$k] ?: '');
 						}
 
-						
-
-
 						// Convert strings into arrays
 						if (!is_array($to[$k]))
 						{
@@ -180,8 +176,7 @@ class rmsVersions extends \Backend
 							}					
 						}	
 
-						$objDiff = new \Diff($from[$k], $to[$k]);
-												
+						$objDiff = new \Diff($from[$k], $to[$k]);											
 						$strBuffer .= $objDiff->Render(new \Diff_Renderer_Html_Contao(array('field'=>($arrFields[$k]['label'][0] ?: (isset($GLOBALS['TL_LANG']['MSC'][$k]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$k]) ? $GLOBALS['TL_LANG']['MSC'][$k][0] : $GLOBALS['TL_LANG']['MSC'][$k]) : $k)))));
 					}
 				}
