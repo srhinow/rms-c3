@@ -40,7 +40,7 @@ Um die alte Version für Contao2.x zu entfernen, am besten den kompletten alten 
 ----------------------------
 KONFIGURATION
 ----------------------------
-bis Version 3.1.x
+bis rms-Version 3.1.x (Contao-Version sollte ab 3.0 sein)
 
 1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und 
  setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt
@@ -48,7 +48,7 @@ bis Version 3.1.x
 2. Legen Sie im Bereich Benutzerverwaltung/ Benutzergruppen eine gruppe an die als Freigabe-Redaktionsgruppe dienen soll. Danach weisen Sie einem Benutzer diese Gruppe zu.
 3. Wechseln Sie nun in das Backend-Modul "Freigabe-Anfragen" und dort unter "Freigabe-Einstellungen" legen Sie die Gruppe (Freigabe-Redaktionsgruppe), eine Emailadresse, die aktiven Module und die freigabegeschützte Seitenstruktur zu und speichern die Einstellungen. 
 
-ab Version 3.2-beta1
+ab rms-Version 3.2-beta1 (Contao-Version sollte ab 3.0 sein)
 
 1. Um das Freigabemodul nach der Installation zu aktivieren, gehen Sie im Backend unter System/Einstellungen -> Abschnitt "Freigabe-Modul" und setzen den Haken vor "Freigabe-Modus aktivieren" und speichern Sie die Einstellungen. Danach sollte Backend im Bereich "Inhalte" der Punkt "Freigabe-Anfragen" zusehen sein.
 2. Legen Sie im Bereich Benutzerverwaltung/ Benutzergruppen eine gruppe an die als Freigabe-Redaktionsgruppe dienen soll. Danach weisen Sie allen Benutzern diese Gruppe zu welche für Freigaben verantworltich seien sollen.
