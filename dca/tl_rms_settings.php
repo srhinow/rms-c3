@@ -107,7 +107,7 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'   => 'control_group,fallback_master_member,extent_emailto,ignore_fields',
+		'default'   => 'control_group,fallback_master_member,extent_emailto,ignore_fields,ignore_content_types',
 	),
 
 	// Fields
@@ -155,6 +155,15 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 	    'ignore_fields' => array
 	    (
 		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_fields'],
+		    'exclude'                 => true,
+		    'inputType'               => 'text',
+		    'default'				  => 'rms_first_save',
+		    'eval'                    => array('decodeEntities'=>true, 'tl_class'=>'clr long'),
+		   	'sql'					  => "varchar(255) NOT NULL default ''"
+	    ),
+	    'ignore_content_types' => array
+	    (
+		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_content_types'],
 		    'exclude'                 => true,
 		    'inputType'               => 'text',
 		    'default'				  => 'colsetStart','colsetPart','colsetEnd',
