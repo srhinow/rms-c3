@@ -218,10 +218,12 @@ class tl_rms extends Backend
 	public function filterMemberEntries()
 	{
 		$this->import('BackendUser');
-
-		$GLOBALS['TL_DCA']['tl_rms']['list']['sorting']['filter'] = array(
-			array('master_id=?', $this->BackendUser->id)
-		);
+		if(!$this->BackendUser->isAdmin)
+		{
+			$GLOBALS['TL_DCA']['tl_rms']['list']['sorting']['filter'] = array(
+				array('master_id=?', $this->BackendUser->id)
+			);
+		}
 	}
 
 	/**
