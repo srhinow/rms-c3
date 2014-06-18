@@ -62,7 +62,6 @@ class rmsVersions extends \Backend
 		}
 		else
 		{
-
 			// From			
 			$from = $objReference->row();
 			$intFrom = \Input::get('ref_id');
@@ -98,6 +97,7 @@ class rmsVersions extends \Backend
 						$arrOrder[] = $arrField['eval']['orderField'];
 					}
 				}
+				// print_r($to);
 
 				// Find the changed fields and highlight the changes
 				foreach ($to as $k=>$v)
@@ -151,17 +151,37 @@ class rmsVersions extends \Backend
 							$from[$k] = \Date::parse($GLOBALS['TL_CONFIG']['datimFormat'], $from[$k] ?: '');
 						}
 
+						
+
+
 						// Convert strings into arrays
 						if (!is_array($to[$k]))
 						{
 							$to[$k] = explode("\n", $to[$k]);
 						}
+						//auf multicolumnfelder testen (value als Array) und dann serialisieren damit es als string versioniert werden kann
+						else
+						{
+							foreach($to[$k] as $tk => $tv)
+							{
+								if(is_array($tv)) $to[$k][$tk] = serialize($tv);
+							}
+						}
+
 						if (!is_array($from[$k]))
 						{
 							$from[$k] = explode("\n", $from[$k]);
 						}
+						else
+						{
+							foreach($from[$k] as $fk => $fv)
+							{
+								if(is_array($fv)) $from[$k][$fk] = serialize($fv);
+							}					
+						}	
 
 						$objDiff = new \Diff($from[$k], $to[$k]);
+												
 						$strBuffer .= $objDiff->Render(new \Diff_Renderer_Html_Contao(array('field'=>($arrFields[$k]['label'][0] ?: (isset($GLOBALS['TL_LANG']['MSC'][$k]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$k]) ? $GLOBALS['TL_LANG']['MSC'][$k][0] : $GLOBALS['TL_LANG']['MSC'][$k]) : $k)))));
 					}
 				}
