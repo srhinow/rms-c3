@@ -37,16 +37,21 @@ class rmsDefaultCallbacks extends \Backend
     {
         $this->import("BackendUser");
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
+        $settings = $this->rmsHelper->getSettings();
 
+        //nötige Paramter ermitteln
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
         $strTable = \Input::get("table");
         $contentId = \Input::get("id");
 
-        // if (\Input::post('FORM_SUBMIT') == $strTable) return '';
-
+        //wenn eins der nötigen Parameter fehlt -> hier abbrechen
         if(!$userID || !$strTable || !$contentId) return;
 
-        //loesche evtl Leichen in tmp-table
+        // falls es eine tl_content ist und der Datentyp ignoriert werden soll -> hier abbrechen
+        $ignoreTypedArr = array_map('trim',explode(',',$settings['ignore_content_types']));
+        if($strTable == 'tl_content' && is_array($ignoreTypedArr) && in_array($liveDataObj->type, $ignoreTypedArr)) return;
+
+        //loesche evtl alte Datensätze zu diesem Element aus der tl_rms_tmp 
         $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?')
                         ->execute
                         (
@@ -54,6 +59,8 @@ class rmsDefaultCallbacks extends \Backend
                             $strTable,
                             $userID
                         );
+        //loesche alle Datensätze die älter als einen Tag sind aus der tl_rms_tmp
+        $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE tstamp <= ?')->execute( strtotime('-1 Day') );
 
         //sichere live-daten
         $set = array
@@ -98,12 +105,17 @@ class rmsDefaultCallbacks extends \Backend
     {
 
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
+        $settings = $this->rmsHelper->getSettings();
 
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
         $strTable = \Input::get("table");
         $intId = \Input::get("id");
 
         if(!$userID || !$strTable || !$intId) return;
+
+        // falls es eine tl_content ist und der Datentyp ignoriert werden soll -> hier abbrechen
+        $ignoreTypedArr = array_map('trim',explode(',',$settings['ignore_content_types']));
+        if($strTable == 'tl_content' && is_array($ignoreTypedArr) && in_array($dc->activeRecord->type, $ignoreTypedArr)) return;
 
         // Get the currently available fields
         $arrFields = array_flip($this->Database->getFieldnames($strTable));

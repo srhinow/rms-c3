@@ -178,7 +178,8 @@ class rmsHelper extends \Backend
 	public function previewContentElement($objElement, $strBuffer)
 	{
 	    // return if this ignored field
-	    $ignoreFieldArr = explode( ',', str_replace(' ','',$this->settings['ignore_fields']) );
+	    $ignoreFieldArr = array_map('trim',explode(',',$this->settings['ignore_content_types']));
+	    
 	    if(is_array($ignoreFieldArr) && in_array($objElement->type, $ignoreFieldArr) ) return $strBuffer;
 
        	//wenn es keine tl_content-Tabelle ist nicht weiter, da diese von 'modifyForPreview' verarbeitet werden
