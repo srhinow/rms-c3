@@ -52,6 +52,9 @@ class rmsVersions extends \Backend
 		$intFrom = 0;
 		$firstSave = false;
 
+        $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
+        $settings = $this->rmsHelper->getSettings();
+
 		$objReference = $this->Database->prepare("SELECT * FROM " . $this->rmsArr['ref_table'] . " WHERE id=?")
 										->limit(1)
 									  	->execute( \Input::get('ref_id') );
@@ -109,6 +112,10 @@ class rmsVersions extends \Backend
 						{
 							continue;
 						}
+
+						// weitere in der Anzeige, zuignorierende Felder aus den rms-Einstellungen prüfen
+				        $ignoreFieldArr = array_map('trim',explode(',',$settings['ignore_fields']));
+				        if(is_array($ignoreFieldArr) && in_array($k, $ignoreFieldArr)) continue;
 
 						$blnIsBinary = ($arrFields[$k]['inputType'] == 'fileTree' || in_array($k, $arrOrder));
 
