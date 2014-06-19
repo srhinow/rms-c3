@@ -1,24 +1,7 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2010 Leo Feyer
- *
- * Formerly known as TYPOlight Open Source CMS.
- *
- * This program is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program. If not, please visit the Free
- * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2012 <http://www.sr-tag.de>
@@ -28,16 +11,12 @@
  * @license    LGPL 
  */
 
-
 /**
  * Fields
  */
 $GLOBALS['TL_LANG']['tl_rms_settings']['control_group'] = array('Gruppe mit Freigabeberechtigung', 'Geben Sie die Benutzergruppe an welche eine Freigabeberechtigung haben soll.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['release_tables'] = array('Tabellen die berücksichtigt werden sollen', 'Geben Sie die Tabellen an welche eine Freigabeberechtigung haben soll.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['whitelist_domains'] = array('für Freigabe berücksichtigen', 'alle Unterseiten der ausgewählten Startseiten werden bei dem Freigaben berücksichtigt.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['sender_email']         = array('Empfangs-E-Mail', 'Hier können Sie ein oder mehrere EmailAdressen kommo-separiert eingeben.');
-$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_newsletter']         = array('Newsletter Vorschauseite', 'Wählen Sie hier die Seite mit dem eingebundenen Newsletter-Detail-Modul aus');
-$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_news']         = array('News Vorschauseite', 'Wählen Sie hier die Seite mit dem eingebundenen News-Detail-Modul aus');
-$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_calendar_events'] = array('Veranstaltungs Vorschauseite', 'Wählen Sie hier die Seite mit dem eingebundenen Veranstaltungs-Detail-Modul aus');
+$GLOBALS['TL_LANG']['tl_rms_settings']['fallback_master_member']         = array('Fallback-RMS-Redakteur', 'Falls in irgendeinem Bereich zwar rms aktiviert wurde, aber kein zugehöriger rms-Redakteur existiert, wird dieser hier benachrichtigt.');
+$GLOBALS['TL_LANG']['tl_rms_settings']['extent_emailto']         = array('zusätzliche Empfänger-E-Mail-Adressen', 'Hier können Sie ein oder mehrere Email-Adressen durch ein Komma getrennt eingeben. Diese Email-Adressen werden zusätzlich bei allen Änderungen benachrichtigt. Das Feld kann leer bleiben.');
+$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_fields']         = array('zu ignorierende Felder in der Vergleichsansicht', 'Tragen Sie hier, durch ein Komma getrennt die Feldnamen ein die vom rms-Modul ignoriert werden sollen. Der In muss der aus der Datenbank sein (z.B. rms_first_save).');
+$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_content_types']         = array('zu ignorierende Inhaltselemente', 'Tragen Sie hier, durch ein Komma getrennt die Inhaltselemententypen ein die vom rms-Modul ignoriert werden sollen. Der Inhaltselemententyp muss der aus der Datenbank sein (z.B. colsetStart,colsetPart,colsetEnd).');
 
-?>

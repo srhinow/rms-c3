@@ -3,19 +3,17 @@
 /**
  * Contao Open Source CMS
  *
- * Copyright (c) 2005-2014 Leo Feyer
+ * Copyright (c) 2004-2014 Sven Rhinow and Leo Feyer
  *
- * @package Core
- * @link    https://contao.org
+ * @package rms
+ * @link    https://www.sr-tag.de
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
-
 
 /**
  * Run in a custom namespace, so the class can be replaced
  */
  namespace SvenRhinow\rms;
-
 
 /**
  * Class rmsAjax

@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2014 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -11,7 +14,6 @@
 /**
  * System configuration
  */
-
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{rms_legend:hide},rms_active';
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['rms_active'] = array

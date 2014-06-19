@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2014 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -27,6 +30,11 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 				'id' => 'primary'
 			)
 		),
+		'onload_callback' => array
+		(
+			array('tl_rms', 'filterMemberEntries')
+
+		),		
 		'ondelete_callback' => array
 		(
 			array('tl_rms', 'setUnEditData')
@@ -150,6 +158,30 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 			'search'                  => true,
 			'sql'					  => "longtext NULL"
 		),
+		'do' => array
+		(
+			'sql'					  => "varchar(55) NOT NULL default ''"
+		),		
+		'edit_url' => array
+		(
+			'sql'					  => "longtext NULL"
+		),
+		'master_id' => array
+		(
+			'sql'					  => "int(10) unsigned NOT NULL default '0'"
+		),
+		'master_email' => array
+		(
+			'sql'					  => "varchar(255) NOT NULL default ''"
+		),		
+		'preview_jumpTo' => array
+		(
+			'sql'					  => "longtext NULL"
+		),
+		'root_ptable' => array
+		(
+			'sql'					  => "varchar(255) NOT NULL default ''"
+		),		
 		'status' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_rms']['status'],
@@ -181,6 +213,20 @@ class tl_rms extends Backend
 	}
 
 	/**
+	* list only Entries for the cureent master-member
+	*/
+	public function filterMemberEntries()
+	{
+		$this->import('BackendUser');
+		if(!$this->BackendUser->isAdmin)
+		{
+			$GLOBALS['TL_DCA']['tl_rms']['list']['sorting']['filter'] = array(
+				array('master_id=?', $this->BackendUser->id)
+			);
+		}
+	}
+
+	/**
 	 * List a recipient
 	 * @param array
 	 * @return string
@@ -201,116 +247,15 @@ class tl_rms extends Backend
 		               ->limit(1)
 			       ->execute($row['ref_author']);
 
-		$strUrl = false;
 
 		//get referenz
 		$refObj = $this->Database->prepare('SELECT * FROM '.$row['ref_table'].' WHERE `id`=? ')->limit(1)->execute($row['ref_id']);
 
-		$rowDataArr = unserialize($row['data']);
-
-		// get the correct section for the preview
-		if($row['ref_table'] == 'tl_content' && $rowDataArr['ptable'] != '') $section = $rowDataArr['ptable'];
-		elseif($row['ref_table'] == 'tl_content' && $rowDataArr['ptable'] == '') $section = 'tl_content';
-		else $section = $row['ref_table'];
-
-		$sectionName = $GLOBALS['TL_LANG']['tl_rms']['sessions'][$section];
-
-		switch($section)
-		{
-			case 'tl_article':
-			case 'tl_content':
-			    $pageObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
-			    LEFT JOIN `tl_article` `a` ON `p`.`id`=`a`.`pid`
-			    LEFT JOIN `tl_content` `c` ON `a`.`id`=`c`.`pid`
-			    WHERE `c`.`id`=?')
-					    ->limit(1)
-					    ->execute($row['ref_id']);
-
-			    if($pageObj->numRows > 0) $strUrl = $this->generateFrontendUrl($pageObj->row(),'/do/preview');
-
-			    $strPreviewLink = '<a href="'.$this->Environment->base.$strUrl.'" target="_blank">'.$pageObj->title.'</a>';
-
-			break;
-			case 'tl_newsletter':
-
-			    //get Preview-Link
-			    if($settings['prevjump_newsletter'])
-			    {
-					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-												->limit(1)
-												->execute($settings['prevjump_newsletter']);
-
-					if ($objJumpTo->numRows)
-					{
-						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
-					}
-			    }
-
-			    //if parent or chield-text
-			    $nlId = ($row['ref_table'] == 'tl_content') ? $rowDataArr['pid'] : $rowDataArr['id'];
-
-			    //get Link-Title
-			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_newsletter` WHERE `id`=?')
-						      ->limit(1)
-						      ->execute($nlId);
-
-			    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->subject.'</a>';
-			break;
-			case 'tl_calendar_events':
-
-			    if($settings['prevjump_calendar_events'])
-			    {
-					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-												->limit(1)
-												->execute($settings['prevjump_calendar_events']);
-
-					if ($objJumpTo->numRows)
-					{
-						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/events/%s/do/preview'));
-					}
-			    }
-
-			    //if parent or chield-text
-			    $eventId = ($row['ref_table'] == 'tl_content') ? $rowDataArr['pid'] : $rowDataArr['id'];
-
-			    //get Link-Title
-			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_calendar_events` WHERE `id`=?')
-						      ->limit(1)
-						      ->execute($eventId);
-
-			    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->title.'</a>';
-			break;
-			case 'tl_news':
-
-			    if($settings['prevjump_news'])
-			    {
-					$objJumpTo = $this->Database->prepare("SELECT id, alias FROM tl_page WHERE id=?" . (!BE_USER_LOGGED_IN ? " AND published=1" : ""))
-												->limit(1)
-												->execute($settings['prevjump_news']);
-
-					if ($objJumpTo->numRows)
-					{
-						$strUrl = $this->generateFrontendUrl($objJumpTo->fetchAssoc(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
-					}
-			    }
-
-			    //if parent or chield-text
-			    $newsId = ($row['ref_table'] == 'tl_content') ? $rowDataArr['pid'] : $rowDataArr['id'];
-
-			    //get Link-Title
-			    $pageObj = $this->Database->prepare('SELECT * FROM `tl_news` WHERE `id`=?')
-						      ->limit(1)
-						      ->execute($newsId);
-
-			    $strPreviewLink = '<a href="'.sprintf($strUrl, $pageObj->alias).'" target="_blank">'.$pageObj->headline.'</a>';
-
-			break;
-		}
 		$ifFirstSave = ($refObj->rms_first_save == 1) ? '<span style="padding:0 10px; font-weight:bold;">'.$GLOBALS['TL_LANG']['tl_rms']['info_new_edit'].'</span>': '';
 
 		$label  = '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['status'][0].':</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span>'.$ifFirstSave.'<br>';
-		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$sectionName.'<br>';
-		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0].': </strong>'.$strPreviewLink.'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$GLOBALS['TL_LANG']['tl_rms']['sessions'][$row['do'].'_'.$row['ref_table']].'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0].': </strong><a href="'.$row['preview_jumpTo'].'" target="_blank">'.$row['preview_jumpTo'].'</a><br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_author'][0].':</strong> '.$userObj->name.' ('.$userObj->email.')<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['last_edit'][0].':</strong> '.date($GLOBALS['TL_CONFIG']['datimFormat'],$row['tstamp']).'<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_notice'][0].':</strong> '.nl2br($row['ref_notice']);
@@ -332,18 +277,8 @@ class tl_rms extends Backend
 	 */
 	public function editArticle($row, $href, $label, $title, $icon, $attributes)
 	{
-// 		$objPage = $this->Database->prepare("SELECT * FROM ".$row['ref_table']." WHERE id=?")
-// 								  ->limit(1)
-// 								  ->execute($row['ref_id']);
-
-                switch($row['ref_table'])
-                {
-                case 'tl_content': $getTableStr = 'do=article&table=tl_content'; break;
-                case 'tl_newsletter': $getTableStr = 'do=newsletter&table=tl_newsletter'; break;
-                case 'tl_news': $getTableStr = 'do=news&table=tl_news'; break;
-                case 'tl_calendar_events': $getTableStr = 'do=calendar&table=tl_calendar_events'; break;
-		}
-		return  '<a href="'.$this->addToUrl($getTableStr.'&amp;act=edit&amp;id='.$row['ref_id']).'&amp;author='.$row['ref_author'].'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return  '<a href="'.$this->addToUrl($row['edit_url'].'&author='.$row['ref_author']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		// return  '<a href="'.$this->Environment->scriptName.'?'.$row['edit_url'].'&amp;author='.$row['ref_author'].'&amp;rt='.\Input::get('rt').'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 	}
 
 	public function setUnEditData(DataContainer $dc)
@@ -356,12 +291,17 @@ class tl_rms extends Backend
 		$rmsObj = $this->Database->prepare("SELECT count(*) c FROM tl_rms WHERE ref_id=?")
                                  ->execute($dc->id);
 
-		//reset rms_new_edit
+		
         if((int)$rmsObj->c == 0)
     	{
+			//reset rms_new_edit
 			$this->Database->prepare("UPDATE ".$ref_Table." SET `rms_new_edit`='' WHERE id=?")
 							->limit(1)
 							->execute($ref_id);
+			
+			//delete new empty elements
+			$this->Database->prepare('DELETE FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
+							->execute($ref_id, 1);
 		}
 	}
 
@@ -377,17 +317,12 @@ class tl_rms extends Backend
      */
     public function showDiff($row, $href, $label, $title, $icon, $attributes)
     {
-       	// print_r($row);
-
-       	if ($this->Input->get('key') == 'show_diff')
+       	if ($this->Input->get('key') == 'show_diff' && $row['ref_id'] == \Input::get('ref_id'))
 		{
-	        $this->import('Database');
-
 	        $objVersions = new \SvenRhinow\rms\rmsVersions($row);
-
-	        $previewLink = $objVersions->compare();
-
+	        $objVersions->compare();
     	}
+
     	$href .= "&ref_id=".$row['ref_id'];
     	return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
     }

@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2014 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -104,13 +107,12 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'   => 'control_group,whitelist_domains,release_tables,sender_email,prevjump_newsletter,prevjump_news,prevjump_calendar_events',
+		'default'   => 'control_group,fallback_master_member,extent_emailto,ignore_content_types,ignore_fields',
 	),
 
 	// Fields
 	'fields' => array
 	(
-
 	    'id' => array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
@@ -129,57 +131,44 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 			'exclude'                 => true,
 			'inputType'               => 'radio',
 			'foreignKey'              => 'tl_user_group.name',
-			'eval'                    => array('multiple'=>false),
+			'eval'                    => array('mandatory'=>true,'multiple'=>false),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 	    ),
-	    'whitelist_domains' => array
+		'fallback_master_member' => array
 	    (
-			'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['whitelist_domains'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['fallback_master_member'],
 			'exclude'                 => true,
-			'inputType'               => 'checkboxWizard',
-			'options_callback'        => array('tl_rms_settings', 'getRootPages'),
-			'eval'                    => array('multiple'=>true,'decodeEntities'=>true),
-			'sql'					  => "varchar(255) NOT NULL default ''"
+			'inputType'               => 'select',
+			'foreignKey'              => 'tl_user.name',
+			'eval'                    => array('mandatory'=>true,'chosen'=>true),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+			'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
 	    ),
-	    'release_tables' => array
+	    'extent_emailto' => array
 	    (
-			'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['release_tables'],
-			'inputType'               => 'checkbox',
-			'options_callback'        => array('tl_rms_settings', 'getReleaseTables'),
-			'eval'                    => array('multiple'=>true),
-			'sql'					  => "varchar(255) NOT NULL default ''"
-	    ),
-	    'sender_email' => array
-	    (
-		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['sender_email'],
+		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['extent_emailto'],
 		    'exclude'                 => true,
 		    'inputType'               => 'text',
 		    'eval'                    => array('decodeEntities'=>true, 'tl_class'=>'clr long'),
 		   	'sql'					  => "varchar(155) NOT NULL default ''"
 	    ),
-	    'prevjump_newsletter' => array
+	    'ignore_fields' => array
 	    (
-		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_newsletter'],
+		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_fields'],
 		    'exclude'                 => true,
-		    'inputType'               => 'pageTree',
-		    'eval'                    => array('fieldType'=>'radio'),
-		    'sql'					  => "int(10) unsigned NOT NULL default '0'"
+		    'inputType'               => 'text',
+		    'default'				  => 'rms_first_save',
+		    'eval'                    => array('decodeEntities'=>true, 'tl_class'=>'clr long'),
+		   	'sql'					  => "varchar(255) NOT NULL default ''"
 	    ),
-	    'prevjump_news' => array
+	    'ignore_content_types' => array
 	    (
-		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_news'],
+		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['ignore_content_types'],
 		    'exclude'                 => true,
-		    'inputType'               => 'pageTree',
-		    'eval'                    => array('fieldType'=>'radio'),
-		    'sql'					  => "int(10) unsigned NOT NULL default '0'"
-	    ),
-	    'prevjump_calendar_events' => array
-	    (
-		    'label'                   => &$GLOBALS['TL_LANG']['tl_rms_settings']['prevjump_calendar_events'],
-		    'exclude'                 => true,
-		    'inputType'               => 'pageTree',
-		    'eval'                    => array('fieldType'=>'radio'),
-		    'sql'					  => "int(10) unsigned NOT NULL default '0'"
+		    'inputType'               => 'text',
+		    'default'				  => 'colsetStart','colsetPart','colsetEnd',
+		    'eval'                    => array('decodeEntities'=>true, 'tl_class'=>'clr long'),
+		   	'sql'					  => "varchar(255) NOT NULL default ''"
 	    ),
 	)
 );

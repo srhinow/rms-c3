@@ -35,6 +35,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 
     $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('\SvenRhinow\rms\rmsHelper', 'handleBackendUserAccessControlls');
     $GLOBALS['TL_HOOKS']['getContentElement'][] = array('\SvenRhinow\rms\rmsHelper', 'previewContentElement');
+    $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('\SvenRhinow\rms\rmsHelper', 'modifyForPreview');
     $GLOBALS['TL_HOOKS']['executePostActions'][] = array('\SvenRhinow\rms\rmsAjax', 'executePostActions');
     
 }

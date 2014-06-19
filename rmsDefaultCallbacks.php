@@ -1,5 +1,8 @@
 <?php
+
 /**
+ * Contao Open Source CMS
+ *
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2014 <http://www.sr-tag.de>
  * @author     Stefan Lindecke  <stefan@ktrion.de>
@@ -34,16 +37,22 @@ class rmsDefaultCallbacks extends \Backend
     {
         $this->import("BackendUser");
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
+        $settings = $this->rmsHelper->getSettings();
+        $liveDataArr = $liveDataObj->fetchAssoc();
 
+        //nötige Paramter ermitteln
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
         $strTable = \Input::get("table");
         $contentId = \Input::get("id");
 
-        // if (\Input::post('FORM_SUBMIT') == $strTable) return '';
-
+        //wenn eins der nötigen Parameter fehlt -> hier abbrechen
         if(!$userID || !$strTable || !$contentId) return;
 
-        //loesche evtl Leichen in tmp-table
+        // falls es eine tl_content ist und der Datentyp ignoriert werden soll -> hier abbrechen
+        $ignoreTypedArr = array_map('trim',explode(',',$settings['ignore_content_types']));             
+        if($strTable == 'tl_content' && is_array($ignoreTypedArr) && in_array($liveDataArr['type'], $ignoreTypedArr)) return;
+
+        //loesche evtl alte Datensätze zu diesem Element aus der tl_rms_tmp 
         $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?')
                         ->execute
                         (
@@ -52,10 +61,13 @@ class rmsDefaultCallbacks extends \Backend
                             $userID
                         );
 
+        //loesche alle Datensätze die älter als einen Tag sind aus der tl_rms_tmp
+        $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE tstamp <= ?')->execute( strtotime('-1 Month') );
+
         //sichere live-daten
         $set = array
         (
-            'data' => serialize($liveDataObj->fetchAssoc()),
+            'data' => serialize($liveDataArr),
             'ref_id' => $contentId,
             'ref_table' => $strTable,
             'ref_author' => $userID,
@@ -95,12 +107,17 @@ class rmsDefaultCallbacks extends \Backend
     {
 
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
+        $settings = $this->rmsHelper->getSettings();
 
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
         $strTable = \Input::get("table");
         $intId = \Input::get("id");
 
         if(!$userID || !$strTable || !$intId) return;
+
+        // falls es eine tl_content ist und der Datentyp ignoriert werden soll -> hier abbrechen
+        $ignoreTypedArr = array_map('trim',explode(',',$settings['ignore_content_types']));
+        if($strTable == 'tl_content' && is_array($ignoreTypedArr) && in_array($dc->activeRecord->type, $ignoreTypedArr)) return;
 
         // Get the currently available fields
         $arrFields = array_flip($this->Database->getFieldnames($strTable));
@@ -140,6 +157,7 @@ class rmsDefaultCallbacks extends \Backend
 
         //overwrite with live-data
         $data['rms_new_edit'] = 1;
+        $data['rms_ref_table'] = $strTable;
         $data['rms_notice'] = $newData['rms_notice'];
 
         $objUpdate = $this->Database->prepare("UPDATE ".$strTable." %s WHERE id=?")->set($data)->execute($intId);
@@ -150,6 +168,21 @@ class rmsDefaultCallbacks extends \Backend
         //overwrite with new-data
         $newRmsData = ($data['type'] == $newData['type']) ? array_merge($data, $newData) : $newData;
 
+        // create an BE-URL-String to edit
+        $getParamArr = array('do','table','id','act');
+        $urlParams = array();
+        foreach($getParamArr as $param)
+        {
+            if( strlen(\Input::get($param)) > 0 ) $urlParams[] = $param.'='.\Input::get($param);
+        }
+
+        // get root-parent-table
+        $pTable = ($strTable == 'tl_content') ? $dc->activeRecord->ptable : $GLOBALS['TL_DCA'][$strTable]['config']['ptable'];
+        $rootPTable = $this->rmsHelper->getRootParentTable($pTable);
+
+        // hole die email und vorschau-url
+        $sectionSettings = $this->rmsHelper->getRmsSectionSettings($intId, $strTable, $pTable);
+
         $arrSubmitData = array
         (
             'tstamp' => time(),
@@ -157,6 +190,12 @@ class rmsDefaultCallbacks extends \Backend
             'ref_table' =>  $strTable,
             'ref_author' => $userID,
             'ref_notice' => $newRmsData['rms_notice'],
+            'do' =>  \Input::get('do'),
+            'edit_url' =>  implode('&',$urlParams),
+            'root_ptable' => $rootPTable,
+            'master_id' => $sectionSettings['master_id'],
+            'master_email' => $sectionSettings['master_email'],
+            'preview_jumpTo' => $sectionSettings['preview_jumpTo'],
             'status' => $status,
             'data'=> $newRmsData
         );
@@ -178,8 +217,17 @@ class rmsDefaultCallbacks extends \Backend
         {
             $this->Database->prepare("INSERT INTO tl_rms %s")->set($arrSubmitData)->execute();
         }
-    }
 
+    }   
+
+    /**
+    * oncut 
+    */
+    public function onCutCallback(\DataContainer $dc)
+    {
+        // ToDo: der der Inhalt ja evtnetuell schon freigeeben wurde und auch plötzlich nicht verschwinden darf nur weil es an einer anderen Stelle stehen soll
+        // ist der Umgang als Freigabe-Schutz noch unklar.
+    }
 
     /**
 	* delete from rms-table when item delete
@@ -236,6 +284,5 @@ class rmsDefaultCallbacks extends \Backend
                 ->set($set)
                 ->execute($intPid, $strTable, \Input::get('author'));
         }
-
     }
 }
