@@ -41,7 +41,7 @@ Das Modul 'rms' wurde für Contao 3.x komplett umgeschrieben. Außerdem benötig
 rms-c3 ist NICHT abwärtskompatibel. Beim Update von einer älteren Version, dürften (NICHT GETESTET) keine Datenverluste von evtl. bestehenden Einstellungen oder Datensätzen entstehen. Es sind nur Felder hinzugekommen aber keine Spalten gelöscht oder umbenannt.
 
 
-## INSTALLATION
+## Installation
 
 1. Den Inhalt von https://github.com/srhinow/rms-c3 in das Verzeichnis TL_ROOT/system/modules/rms/ kopieren.
 2. Danbank  aktualisieren z.B. unter der Erweiterungsverwaltung ->Datenbank aktualisieren
@@ -49,12 +49,12 @@ rms-c3 ist NICHT abwärtskompatibel. Beim Update von einer älteren Version, dü
 4. Unter dem neuen Backendmodul-Menüpunkt "Freigabe-Anfragen" -> Freigabe-Einstellungen die Einstellungen vornehmen.
 
 
-## UPDATE
+## Update
 
 Um die alte Version für Contao2.x zu entfernen, am besten den kompletten alten Erweiterungsordner /system/modules/rms löschen. Danach diese Erweitrung unter dem gleichen Pfad kopieren als auch wieder /system/modules/rms. Danach unter Erweiterungsverwaltung die Datenbank aktualisieren.
 
 
-## KONFIGURATION
+## Konfiguration
 
 bis rms-Version 3.1.x (Contao-Version sollte ab 3.0 sein)
 
@@ -80,7 +80,7 @@ ab rms-Version 3.2-beta1 (Contao-Version sollte ab 3.0 sein)
 *Zusatz:* für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
 
 
-## ENTWICKLER-INFORMATIONEN
+## Entwickler-Informationen
 
 Ich habe versucht das Modul soweit wie möglich offen für weitere zu schützende Erweiterungen zuhalten.
 
