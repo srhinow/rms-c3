@@ -28,7 +28,7 @@ Weitere globale rms-Einstellungen befinden sich "Freigabe-Anfragen" / "Freigabe-
 finanziert durch
 ---------------------------
 
-Die erste Umsetzung der rms-Erweiterung für Contao 2.11.x ist durch Anforderungen in einem Auftrag von der Büchereizentrale Niedersachsen (http://www.bz-niedersachsen.de) mit der finaziellen Unterstützung entstanden.
+Die erste Umsetzung der rms-Erweiterung für Contao 2.11.x ist durch Anforderungen in einem Auftrag und mit der finanziellen Unterstützung der Büchereizentrale Niedersachsen (http://www.bz-niedersachsen.de) entstanden.
 
 Die Umsetzung der rms-Erweiterung für Contao 3 und die Erweiterung um eine "Unterschiede anzeigen" - Funktion, wurde durch Cyrill Weiss (http://www.cyrillweiss.ch/) in Auftrag gegeben und finanziert.
 
