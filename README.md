@@ -33,12 +33,12 @@ Die Umarbeitung der rms-Erweiterung, so das zukünftig pro Bereich ein eigener F
 
 ## Versionshinweis
 
-*HINWEIS ZUM 3.2-UPDATE VON EINER ÄLTEREN VERSION
-Da in der Version grundsätzlich der Umgang mit der Vorschau und den Orten wo Einstellungen gespeichert werden, sich geändert hat, sollte es keine Einträge mehr unter Freigabe-Anfragen geben. Wie und wo nach einem Update die Einstellungen zuprüfen sind, lesen Sie unter Konfiguration.*
+**HINWEIS ZUM 3.2-UPDATE VON EINER ÄLTEREN VERSION
+Da in der Version grundsätzlich der Umgang mit der Vorschau und den Orten wo Einstellungen gespeichert werden, sich geändert hat, sollte es keine Einträge mehr unter Freigabe-Anfragen geben. Wie und wo nach einem Update die Einstellungen zuprüfen sind, lesen Sie unter Konfiguration.**
 
 Das Modul 'rms' wurde für Contao 3.x komplett umgeschrieben. Außerdem benötigt rms-c3 nun keinen externen DC-Treiber mehr, sondern besitzt nun einen eigenen. Dieser 'DC_rmsTable.php' ist eine angepasste Variante von DC_Table.php. Die Datei liegt innerhalb von der Erweiterung rms/drivers und muss nicht extra platziert werden.
 
-rms-c3 ist NICHT abwärtskompatibel. Beim Update von einer älteren Version, dürften (NICHT GETESTET) keine Datenverluste von evtl. bestehenden Einstellungen oder Datensätzen entstehen. Es sind nur Felder hinzugekommen aber keine Spalten gelöscht oder umbenannt.
+rms-c3 ist **NICHT** abwärtskompatibel. Beim Update von einer älteren Version, dürften (NICHT GETESTET) keine Datenverluste von evtl. bestehenden Einstellungen oder Datensätzen entstehen. Es sind nur Felder hinzugekommen aber keine Spalten gelöscht oder umbenannt.
 
 
 ## Installation
@@ -77,7 +77,7 @@ ab rms-Version 3.2-beta1 (Contao-Version sollte ab 3.0 sein)
   * für Newsletter in dem jeweiligen Verteiler
   * für FAQ in der zugehörigen FAQ-Kategorie
 
-*Zusatz:* für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
+**Zusatz:** für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
 
 
 ## Entwickler-Informationen
