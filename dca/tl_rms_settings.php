@@ -107,7 +107,7 @@ $GLOBALS['TL_DCA']['tl_rms_settings'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'   => 'control_group,fallback_master_member,extent_emailto,ignore_fields,ignore_content_types',
+		'default'   => 'control_group,fallback_master_member,extent_emailto,ignore_content_types,ignore_fields',
 	),
 
 	// Fields
