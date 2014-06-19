@@ -60,9 +60,9 @@ class rmsDefaultCallbacks extends \Backend
                             $strTable,
                             $userID
                         );
-                        
+
         //loesche alle Datensätze die älter als einen Tag sind aus der tl_rms_tmp
-        $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE tstamp <= ?')->execute( strtotime('-1 Day') );
+        $this->Database->prepare('DELETE FROM tl_rms_tmp WHERE tstamp <= ?')->execute( strtotime('-1 Month') );
 
         //sichere live-daten
         $set = array
@@ -284,6 +284,5 @@ class rmsDefaultCallbacks extends \Backend
                 ->set($set)
                 ->execute($intPid, $strTable, \Input::get('author'));
         }
-
     }
 }
