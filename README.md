@@ -30,7 +30,7 @@ finanziert durch
 
 Die Umsetzung der rms-Erweiterung für Contao 3 und die Erweiterung um eine "Unterschiede anzeigen" - Funktion, wurde durch Cyrill Weiss (http://www.cyrillweiss.ch/) in Auftrag gegeben und finanziert.
 
-Die umarbeitung der rms-Erweitrung das zukünftig pro Bereich ein eigener Master-Member zugewiesen werden kann, wird durch Michael Roedhamer (http://pixelkinder.com) in Auftrag gegeben und finanziert.
+Die Umarbeitung der rms-Erweiterung, so das zukünftig pro Bereich ein eigener Freigabe-Redakteur zugewiesen werden kann, wurde durch Michael Roedhamer (http://pixelkinder.com) in Auftrag gegeben und finanziert.
 
 ---------------------------
 Versionshinweis
