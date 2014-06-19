@@ -1,5 +1,5 @@
 ---------------------------
-rms (Release Management System)
+# rms (Release Management System)
 ---------------------------
 
 rms-c3 ist eine Contao3-Erweiterung, welches es Benutzern einer bestimmten Benutzergruppe erlaubt, Freigaben zu verwalten. Alle Redakteur-Zugänge die nicht als Super-Redakteurgruppe in dem Freigabeeinstellungen zugewiesen wurden, können zwar Änderungen an Inhalten vornehmen oder wenn es ihnen erlaubt ist auch neue Inhalte erstellen. Diese werden aber nach dem speichern nicht Live angezeigt sondern stehen in der Freigabeliste. Damit der jeweilige Freigabe-Redakteur nicht nach jedem speichern eine Email bekommt, hat der normale Redakteur die Möglichkeit in der Bearbeiten-Ansicht eine Freigabe-Notiz zu hinterlassen und eine checkbox um die Nachricht an den Freigabe-Redakteur zusenden. Außerdem sind Inhalte die auf Freigabe warten, in der Listenansicht im jeweiligen Bereich mit einem roten Hinweis gekennzeichnet. 
@@ -25,7 +25,7 @@ Weitere globale rms-Einstellungen befinden sich "Freigabe-Anfragen" / "Freigabe-
 
 
 ---------------------------
-finanziert durch
+## finanziert durch
 ---------------------------
 
 Die erste Umsetzung der rms-Erweiterung für Contao 2.11.x ist durch Anforderungen in einem Auftrag und mit der finanziellen Unterstützung der Büchereizentrale Niedersachsen (http://www.bz-niedersachsen.de) entstanden.
@@ -35,18 +35,19 @@ Die Umsetzung der rms-Erweiterung für Contao 3 und die Erweiterung um eine "Unt
 Die Umarbeitung der rms-Erweiterung, so das zukünftig pro Bereich ein eigener Freigabe-Redakteur zugewiesen werden kann, wurde durch Michael Roedhamer (http://pixelkinder.com) in Auftrag gegeben und finanziert.
 
 ---------------------------
-Versionshinweis
+## Versionshinweis
 ---------------------------
+
+
+*HINWEIS ZUM 3.2-UPDATE VON EINER ÄLTEREN VERSION
+Da in der Version grundsätzlich der Umgang mit der Vorschau und den Orten wo Einstellungen gespeichert werden, sich geändert hat, sollte es keine Einträge mehr unter Freigabe-Anfragen geben. Wie und wo nach einem Update die Einstellungen zuprüfen sind, lesen Sie unter Konfiguration.*
 
 Das Modul 'rms' wurde für Contao 3.x komplett umgeschrieben. Außerdem benötigt rms-c3 nun keinen externen DC-Treiber mehr, sondern besitzt nun einen eigenen. Dieser 'DC_rmsTable.php' ist eine angepasste Variante von DC_Table.php. Die Datei liegt innerhalb von der Erweiterung rms/drivers und muss nicht extra platziert werden.
 
 rms-c3 ist NICHT abwärtskompatibel. Beim Update von einer älteren Version, dürften (NICHT GETESTET) keine Datenverluste von evtl. bestehenden Einstellungen oder Datensätzen entstehen. Es sind nur Felder hinzugekommen aber keine Spalten gelöscht oder umbenannt.
 
-HINWEIS ZUM 3.2-UPDATE VON EINER ÄLTEREN VERSION
-Da in der Version grundsätzlich der Umgang mit der Vorschau und den Orten wo Einstellungen gespeichert werden, sich geändert hat, sollte es keine Einträge mehr unter Freigabe-Anfragen geben. Wie und wo nach einem Update die Einstellungen zuprüfen sind, lesen Sie unter Konfiguration.
-
 ----------------------------
-INSTALLATION
+## INSTALLATION
 ----------------------------
 1. Den Inhalt von https://github.com/srhinow/rms-c3 in das Verzeichnis TL_ROOT/system/modules/rms/ kopieren.
 2. Danbank  aktualisieren z.B. unter der Erweiterungsverwaltung ->Datenbank aktualisieren
@@ -54,12 +55,12 @@ INSTALLATION
 4. Unter dem neuen Backendmodul-Menüpunkt "Freigabe-Anfragen" -> Freigabe-Einstellungen die Einstellungen vornehmen.
 
 ----------------------------
-UPDATE
+## UPDATE
 ----------------------------
 Um die alte Version für Contao2.x zu entfernen, am besten den kompletten alten Erweiterungsordner /system/modules/rms löschen. Danach diese Erweitrung unter dem gleichen Pfad kopieren als auch wieder /system/modules/rms. Danach unter Erweiterungsverwaltung die Datenbank aktualisieren.
 
 ----------------------------
-KONFIGURATION
+## KONFIGURATION
 ----------------------------
 bis rms-Version 3.1.x (Contao-Version sollte ab 3.0 sein)
 
@@ -82,10 +83,10 @@ ab rms-Version 3.2-beta1 (Contao-Version sollte ab 3.0 sein)
   * für Newsletter in dem jeweiligen Verteiler
   * für FAQ in der zugehörigen FAQ-Kategorie
 
---Zusatz-- für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
+*Zusatz:* für eigene Module können freigaben genauso aufgebaut werden, da ich es so flexibel strukturiert habe das er sich immer die oberste Ebene ermittelt (per ptable) und dort nach den Einstellungen sucht
 
 ---------------------------
-ENTWICKLER-INFORMATIONEN
+## ENTWICKLER-INFORMATIONEN
 ---------------------------
 Ich habe versucht das Modul soweit wie möglich offen für weitere zu schützende Erweiterungen zuhalten.
 
