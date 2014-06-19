@@ -24,7 +24,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
     * change dca from tl_content
     */
 	$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = array('tl_content_rms','addRmsFields');
-	$GLOBALS['TL_DCA']['tl_content']['config']['onrestore_callback'][] = array('tl_content_rms','onRestoreCallback');
+	// $GLOBALS['TL_DCA']['tl_content']['config']['onrestore_callback'][] = array('tl_content_rms','onRestoreCallback');
 
 	$GLOBALS['TL_DCA']['tl_content']['list']['operations']['toggle']['button_callback'] = array('tl_content_rms','toggleIcon');
 	$GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']   = array('tl_content_rms', 'addCteType');
