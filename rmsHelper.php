@@ -82,12 +82,13 @@ class rmsHelper extends \Backend
     static public function getSettings()
 	{
 	    $Database = \Database::getInstance();
+	    $Config = \Config::getInstance();
 
 	    // verhindert Fehlermeldungen beim re-installieren wenn 'rms_active' noch aktiv gesetzt ist (#1)
 	    if(!$Database->tableExists('tl_rms_settings'))
 	    {
-	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
-	    	$this->Config->update('rms_active', false);
+	    	// $GLOBALS['TL_CONFIG']['rms_active'] = false;
+	    	$Config->update("\$GLOBALS['TL_CONFIG']['rms_active']", false);
 	    	return array();
 	    }
 	    
