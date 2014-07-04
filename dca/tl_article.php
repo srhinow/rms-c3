@@ -27,87 +27,53 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 	$GLOBALS['TL_DCA']['tl_article']['config']['onrestore_callback'][] = array('tl_article_rms','onRestoreCallback');
 	$GLOBALS['TL_DCA']['tl_article']['list']['operations']['editheader']['href'] = 'act=edit&table=tl_article';	
 
-	/**
-	* Fields
-	*/
-	$GLOBALS['TL_DCA']['tl_article']['fields']['ptable']['ignoreDiff'] = true;
-	
-	$GLOBALS['TL_DCA']['tl_article']['fields']['rms_first_save'] = array
-	(
-		'sql'					  => "char(1) NOT NULL default ''",
-		'ignoreDiff'			=> true,
-	);
-
-	$GLOBALS['TL_DCA']['tl_article']['fields']['rms_new_edit'] = array
-	(
-		'sql'					  => "char(1) NOT NULL default ''",
-		'ignoreDiff'			=> true,
-	);
-	
-	$GLOBALS['TL_DCA']['tl_article']['fields']['rms_ref_table'] = array
-	(
-		'sql'					  => "char(55) NOT NULL default ''",
-		'ignoreDiff'			=> true,
-	);
-
-    $GLOBALS['TL_DCA']['tl_article']['fields']['rms_notice'] = array
-	(
-		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_notice'],
-		'exclude'                 => true,
-		'search'                  => true,
-		'inputType'               => 'textarea',
-		'eval'                    => array('mandatory'=>false, 'rte'=>FALSE),
-		'sql'					  => "longtext NULL"
-	);
-    $GLOBALS['TL_DCA']['tl_article']['fields']['rms_release_info'] = array
-	(
-		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_release_info'],
-		'exclude'                 => true,
-		'inputType'               => 'checkbox',
-		'sql'					  => "char(1) NOT NULL default ''",
-		'ignoreDiff'			=> true,
-		'save_callback' => array
-		(
-			array('SvenRhinow\rms\rmsHelper', 'sendEmailInfo')
-		)
-	);
-	
-	$GLOBALS['TL_DCA']['tl_calendar']['fields']['ptable']['ignoreDiff'] = true;
-    
-    $GLOBALS['TL_DCA']['tl_calendar']['fields']['rms_first_save'] = array
-	(
-		'sql'					  => "char(1) NOT NULL default ''",
-		'ignoreDiff'			=> true,
-	);
-
-	$GLOBALS['TL_DCA']['tl_calendar']['fields']['rms_new_edit'] = array
-	(
-		'sql'					  => "char(1) NOT NULL default ''"
-	);
-
-    $GLOBALS['TL_DCA']['tl_calendar']['fields']['rms_notice'] = array
-	(
-		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_notice'],
-		'exclude'                 => true,
-		'search'                  => true,
-		'inputType'               => 'textarea',
-		'eval'                    => array('mandatory'=>false, 'rte'=>FALSE),
-		'sql'					  => "longtext NULL"
-	);
-
-    $GLOBALS['TL_DCA']['tl_calendar']['fields']['rms_release_info'] = array
-	(
-		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_release_info'],
-		'exclude'                 => true,
-		'inputType'               => 'checkbox',
-		'sql'					  => "char(1) NOT NULL default ''",
-		'ignoreDiff'			=> true,
-		'save_callback' => array
-		(
-			array('SvenRhinow\rms\rmsHelper', 'sendEmailInfo')
-		)
-	);	
 }
+
+/**
+* Fields
+*/
+$GLOBALS['TL_DCA']['tl_article']['fields']['ptable']['ignoreDiff'] = true;
+
+$GLOBALS['TL_DCA']['tl_article']['fields']['rms_first_save'] = array
+(
+	'sql'					  => "char(1) NOT NULL default ''",
+	'ignoreDiff'			=> true,
+);
+
+$GLOBALS['TL_DCA']['tl_article']['fields']['rms_new_edit'] = array
+(
+	'sql'					  => "char(1) NOT NULL default ''",
+	'ignoreDiff'			=> true,
+);
+
+$GLOBALS['TL_DCA']['tl_article']['fields']['rms_ref_table'] = array
+(
+	'sql'					  => "char(55) NOT NULL default ''",
+	'ignoreDiff'			=> true,
+);
+
+$GLOBALS['TL_DCA']['tl_article']['fields']['rms_notice'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_notice'],
+	'exclude'                 => true,
+	'search'                  => true,
+	'inputType'               => 'textarea',
+	'eval'                    => array('mandatory'=>false, 'rte'=>FALSE),
+	'sql'					  => "longtext NULL"
+);
+$GLOBALS['TL_DCA']['tl_article']['fields']['rms_release_info'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_release_info'],
+	'exclude'                 => true,
+	'inputType'               => 'checkbox',
+	'sql'					  => "char(1) NOT NULL default ''",
+	'ignoreDiff'			=> true,
+	'save_callback' => array
+	(
+		array('SvenRhinow\rms\rmsHelper', 'sendEmailInfo')
+	)
+);
+
 
 /**
  * Class tl_rms_calendar_events

@@ -24,29 +24,30 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
 
 	// Subpalettes
 	$GLOBALS['TL_DCA']['tl_page']['subpalettes']['rms_protected'] = 'rms_master_member';
-    
-	// Fields
-	$GLOBALS['TL_DCA']['tl_page']['fields']['rms_protected'] = array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_protected'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('submitOnChange'=>true),
-			'sql'                     => "char(1) NOT NULL default ''"
-	);
-    $GLOBALS['TL_DCA']['tl_page']['fields']['rms_master_member'] = array
-    (
-		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_master_member'],
-		'exclude'                 => true,
-		'inputType'               => 'select',
-		'foreignKey'              => 'tl_user.name',
-		'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'w50'),
-		'sql'                     => "int(10) unsigned NOT NULL default '0'",
-		'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
-    );
-    	
+       	
 }
+
+// Fields
+$GLOBALS['TL_DCA']['tl_page']['fields']['rms_protected'] = array
+	(
+		'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_protected'],
+		'exclude'                 => true,
+		'filter'                  => true,
+		'inputType'               => 'checkbox',
+		'eval'                    => array('submitOnChange'=>true),
+		'sql'                     => "char(1) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_page']['fields']['rms_master_member'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_master_member'],
+	'exclude'                 => true,
+	'inputType'               => 'select',
+	'foreignKey'              => 'tl_user.name',
+	'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'w50'),
+	'sql'                     => "int(10) unsigned NOT NULL default '0'",
+	'relation'                => array('type'=>'hasOne', 'load'=>'lazy')
+);
+
 /**
  * Class tl_page_rms
  *
