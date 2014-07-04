@@ -2997,7 +2997,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 			}
 
 			// Set the correct empty value (see #6284, #6373)
-			if ($varValue === '')
+			if ($varValue === '' && method_exists('\Widget','getEmptyValueByFieldType'))
 			{
 				$varValue = \Widget::getEmptyValueByFieldType($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['sql']);
 			}
