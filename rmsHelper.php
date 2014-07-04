@@ -82,13 +82,12 @@ class rmsHelper extends \Backend
     static public function getSettings()
 	{
 	    $Database = \Database::getInstance();
-	    $Config = \Config::getInstance();
 
 	    // verhindert Fehlermeldungen beim re-installieren wenn 'rms_active' noch aktiv gesetzt ist (#1)
 	    if(!$Database->tableExists('tl_rms_settings'))
 	    {
-	    	// $GLOBALS['TL_CONFIG']['rms_active'] = false;
-	    	$Config->update("\$GLOBALS['TL_CONFIG']['rms_active']", false);
+	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
+	    	$this->Config->update('rms_active', false);
 	    	return array();
 	    }
 	    
@@ -141,8 +140,9 @@ class rmsHelper extends \Backend
 				$protected = $this->rmsIsContentProtected($strTable);
 			break;
 			default:
-				$protected = $this->rmsIsTableProtected($strTable);
-		}
+				$protected = $this->rmsIsTableProtected($strTable);				
+		}                  
+              
 
 	    /**
 	    * deprecated
@@ -592,6 +592,7 @@ class rmsHelper extends \Backend
 				{
 					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
 					$return = true;
+
 				}
 			break;
 			case 'news':
@@ -650,6 +651,7 @@ class rmsHelper extends \Backend
 				}
 
 		}
+
 		return $return;
 	 }
 
@@ -664,6 +666,23 @@ class rmsHelper extends \Backend
 
 		switch($strTable)
 		{
+			case 'tl_article':
+				
+				$curObj = $this->Database->prepare('SELECT `p`.* FROM `tl_article` `a`
+				LEFT JOIN `tl_page` `p` ON `p`.`id` = `a`.`pid`
+				WHERE `a`.`id`=?')
+						->limit(1)
+						->execute(\Input::get('id'));
+				
+				$rootPageObj = $this->getRootPage($curObj->pid);	
+				
+				if($rootPageObj->rms_protected == 1) 
+				{
+					$this->settings['sender_email'] = $this->getMemberData($rootPageObj->rms_master_member,'email');				
+					$return = true;						
+				}
+
+			break;
 			case 'tl_newsletter':
 
 				$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc`
