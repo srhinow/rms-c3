@@ -280,25 +280,28 @@ class rmsHelper extends \Backend
 	    $this->loadLanguageFile('tl_default');	
 	    $this->import("BackendUser");
 
-	    $strTable = $this->Input->get("table");
+	    $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $this->settings = $this->getSettings();      
 
-        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	\Input::get("table"), $dc->activeRecord->ptable);
+        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->activeRecord->ptable);
+		$fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
+		$sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
 
-	    if($varValue == 1)
+	    if($varValue == 1 && !empty($strTable) && $RmsSectionSettings->rms_protected)
 	    {
+			
 			//mail from editor to Super-Editor (question)
 			if(!$this->isMemberOfMasters())
 			{
 	            $text =  $dc->Input->post('rms_notice');
 			    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
 
-		        $fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
-		        $sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
+
 
 		        $sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
 		        $sendToEmailsArr[] = $sendToEmail;
 		        $sendToEmailsArr = array_unique($sendToEmailsArr);
+
 		        $sendToEmails = implode(',',$sendToEmailsArr);
 
 			    $email = new \Email();
@@ -307,6 +310,9 @@ class rmsHelper extends \Backend
 			    $email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
 			    $email->text = $text;
 			    $email->sendTo($sendToEmails);
+			    
+print $this->BackendUser->email;
+exit();
 			}
 			else
 			//send Email from Super-Editor to editor  (answer)
@@ -415,7 +421,7 @@ class rmsHelper extends \Backend
 			$pageObj = $this->Database->prepare("SELECT * FROM tl_page WHERE id=?")
 					->limit(1)
 					->execute($pid);
-
+					// print_r($pageObj);
 			// return obj or recursive this method 
 			return ($pageObj->type == 'root') ? $pageObj : $this->getRootPage($pageObj->pid);
 	    }
@@ -432,11 +438,12 @@ class rmsHelper extends \Backend
 
 		$this->loadDataContainer($table);
 		$pTable = $table;
-		
+			
 		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
 		{
 			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable'], '');
 		}
+		print $pTable;	
 		return $pTable;
 	}
 
@@ -447,7 +454,9 @@ class rmsHelper extends \Backend
 	*/
 	public function getRootParentDBObj($id, $table, $ptable, $rtable)
 	{
-		
+		$mode = \Input::get('mode');
+		if( !empty($mode) && $table == 'tl_article') $ptable = 'tl_page';
+
 		if($ptable == '')
 		{
 			$dbObj = $this->Database->prepare( "SELECT * FROM ".$table." WHERE `id`=?")
@@ -495,10 +504,14 @@ class rmsHelper extends \Backend
 		// wenn es ein normaler Inhalt einer Seite ist
 		if($root_table == 'tl_page')
 		{
+
 			$rootPage = $this->getRootPage($dbObj->id);
+
 			$dbObj->rms_master_member = $rootPage->rms_master_member;
+			$dbObj->rms_protected = $rootPage->rms_protected;
 
 			$jumpToUrl = $this->generateFrontendUrl($dbObj->row(),'/do/preview');
+
 		}
 		// wenn es ein Modul wie z.B. News ist
 		else
@@ -535,11 +548,12 @@ class rmsHelper extends \Backend
 		}	
 		// Bereich-Einstellungen als Array zusammenstellen
 		$rmsSectionSettings = array(
+			'rms_protected' =>	$dbObj->rms_protected,
 			'master_id'	=> $dbObj->rms_master_member,
 			'master_email' => ((int) $dbObj->rms_master_member > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],			
 			'preview_jumpTo' => $jumpToUrl
 		);
-	
+
 		return $rmsSectionSettings;
 	}
 
