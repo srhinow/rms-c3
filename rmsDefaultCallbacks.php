@@ -178,7 +178,7 @@ class rmsDefaultCallbacks extends \Backend
 
         // get root-parent-table
         $pTable = ($strTable == 'tl_content') ? $dc->activeRecord->ptable : $GLOBALS['TL_DCA'][$strTable]['config']['ptable'];
-        $rootPTable = $this->rmsHelper->getRootParentTable($pTable);
+        $rootPTable = $this->rmsHelper->getRootParentTable($strTable,$pTable);
 
         // hole die email und vorschau-url
         $sectionSettings = $this->rmsHelper->getRmsSectionSettings($intId, $strTable, $pTable);
@@ -230,11 +230,11 @@ class rmsDefaultCallbacks extends \Backend
     }
 
     /**
-	* delete from rms-table when item delete
-	* @var object
-	*/
-	public function onDeleteCallback(\DataContainer $dc)
-	{
+    * delete from rms-table when item delete
+    * @var object
+    */
+    public function onDeleteCallback(\DataContainer $dc)
+    {
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
         $strTable = \Input::get("table");
         $intId = \Input::get("id");
@@ -242,10 +242,10 @@ class rmsDefaultCallbacks extends \Backend
         $objStoredData = $this->Database->prepare("DELETE FROM tl_rms WHERE ref_id=? AND ref_table=?")
                                         ->execute
                                         (
-    										$intId,
-    										$strTable
-										);
-	}
+                                            $intId,
+                                            $strTable
+                                        );
+    }
 
     /**
     * overwrite only rms-date und reset live-data
