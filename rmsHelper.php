@@ -57,7 +57,7 @@ class rmsHelper extends \Backend
         // if not set -> set default values
 	    if(!$this->settings['control_group']) $this->settings['control_group'] = 0;
 	    
-	    // deaktiviere Freigabefunktion wenn der Schlater nicht existiert
+	    // deaktiviere Freigabefunktion wenn der Schalter nicht existiert
 	    if(!$GLOBALS['TL_CONFIG']['rms_active']) 
 	    {
 	    	$this->Config->update('rms_active', false);
@@ -101,7 +101,7 @@ class rmsHelper extends \Backend
 	 /**
 	 * ueberprueft ob der Benutzer ohne Freigaberechte ist
 	 */
-	 public function isMenmberOfSlaves()
+	 public function isMemberOfSlaves()
 	 {
 	 	$this->import('BackendUser');
 	 	return (!$this->BackendUser->isMemberOf($this->settings['control_group'])  && !$this->BackendUser->isAdmin) ? true : false;
@@ -150,9 +150,9 @@ class rmsHelper extends \Backend
 	    * $protected = ($strTable == 'tl_content' ) ? $this->rmsIsContentProtected() : true;
 		*/
 
-	    if ($this->isMenmberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
+	    if ($this->isMemberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
 	    {
-
+	    	
 			$GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] = 'rmsTable';
 
 			//falls keine separaten callbacks existieren die Standart-Callbacks aufrufen
@@ -309,10 +309,7 @@ class rmsHelper extends \Backend
 			    $email->charset = 'utf-8';
 			    $email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
 			    $email->text = $text;
-			    $email->sendTo($sendToEmails);
-			    
-print $this->BackendUser->email;
-exit();
+			    $email->sendTo($sendToEmails);			    
 			}
 			else
 			//send Email from Super-Editor to editor  (answer)
@@ -438,12 +435,11 @@ exit();
 
 		$this->loadDataContainer($table);
 		$pTable = $table;
-			
+		
 		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
 		{
 			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable'], '');
 		}
-		print $pTable;	
 		return $pTable;
 	}
 
@@ -509,7 +505,6 @@ exit();
 
 			$dbObj->rms_master_member = $rootPage->rms_master_member;
 			$dbObj->rms_protected = $rootPage->rms_protected;
-
 			$jumpToUrl = $this->generateFrontendUrl($dbObj->row(),'/do/preview');
 
 		}
