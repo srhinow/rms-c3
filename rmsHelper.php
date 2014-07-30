@@ -284,19 +284,17 @@ class rmsHelper extends \Backend
         $this->settings = $this->getSettings();      
 
         $RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->activeRecord->ptable);
+
 		$fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
 		$sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
 
-	    if($varValue == 1 && !empty($strTable) && $RmsSectionSettings->rms_protected)
-	    {
-			
+	    if($varValue == 1 && !empty($strTable) && $RmsSectionSettings['rms_protected'])
+	    {	
 			//mail from editor to Super-Editor (question)
 			if(!$this->isMemberOfMasters())
 			{
 	            $text =  $dc->Input->post('rms_notice');
 			    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
-
-
 
 		        $sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
 		        $sendToEmailsArr[] = $sendToEmail;
