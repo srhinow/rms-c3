@@ -277,52 +277,52 @@ class rmsHelper extends \Backend
 	*/
 	public function sendEmailInfo($varValue, \DataContainer $dc)
 	{
-	    $this->loadLanguageFile('tl_default');	
-	    $this->import("BackendUser");
+		$this->loadLanguageFile('tl_default');	
+		$this->import("BackendUser");
 
-	    $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
-        $this->settings = $this->getSettings();      
+		$strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
+		$this->settings = $this->getSettings();      
 
-        $RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->activeRecord->ptable);
+		$RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->activeRecord->ptable);
 
 		$fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
 		$sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
 
-	    if($varValue == 1 && !empty($strTable) && $RmsSectionSettings['rms_protected'])
-	    {	
+		if($varValue == 1 && !empty($strTable) && $RmsSectionSettings['rms_protected'])
+		{	
 			//mail from editor to Super-Editor (question)
 			if(!$this->isMemberOfMasters())
 			{
-	            $text =  $dc->Input->post('rms_notice');
-			    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
+				$text =  $dc->Input->post('rms_notice');
+				$text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
 
-		        $sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
-		        $sendToEmailsArr[] = $sendToEmail;
-		        $sendToEmailsArr = array_unique($sendToEmailsArr);
+				$sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
+				$sendToEmailsArr[] = $sendToEmail;
+				$sendToEmailsArr = array_unique($sendToEmailsArr);
 
-		        $sendToEmails = implode(',',$sendToEmailsArr);
+				$sendToEmails = implode(',',$sendToEmailsArr);
 
-			    $email = new \Email();
-			    $email->from = $this->BackendUser->email;
-			    $email->charset = 'utf-8';
-			    $email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
-			    $email->text = $text;
-			    $email->sendTo($sendToEmails);			    
+				$email = new \Email();
+				$email->from = $this->BackendUser->email;
+				$email->charset = 'utf-8';
+				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
+				$email->text = $text;
+				$email->sendTo($sendToEmails);			    
 			}
 			else
 			//send Email from Super-Editor to editor  (answer)
 			{
-			    if(!$lastEditorObj->email) return;
+				if(!$lastEditorObj->email) return;
 
-	            $text =  $dc->Input->post('rms_notice');
-			    $text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
+				$text =  $dc->Input->post('rms_notice');
+				$text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
 
-			    $email = new \Email();
-			    $email->from = $this->BackendUser->email;
-			    $email->charset = 'utf-8';
-			    $email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_answer'];
-			    $email->text = $text;
-			    $email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
+				$email = new \Email();
+				$email->from = $this->BackendUser->email;
+				$email->charset = 'utf-8';
+				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_answer'];
+				$email->text = $text;
+				$email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
 			}
 	    }
 
