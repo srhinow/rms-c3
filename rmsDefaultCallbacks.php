@@ -26,6 +26,44 @@
  */
 class rmsDefaultCallbacks extends \Backend
 {
+    /**
+    * overwrite table-data if current BackendUser a low-level-redakteur
+    * @param object
+    * @param object
+    * @return string or object
+    */
+    public function onListCallback(\DataContainer $dc, $rowArr)
+    {
+        $this->import("BackendUser");
+        $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
+        $settings = $this->rmsHelper->getSettings(); 
+
+        //nötige Paramter ermitteln
+        $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
+        $strTable = \Input::get("table");
+        $contentId = $rowArr['id'];        
+
+        //wenn eins der nötigen Parameter fehlt -> hier abbrechen
+        if(!$userID || !$strTable || !$contentId) return;
+        
+        //hole nicht freigegebene Daten von dem Redakteur fuer diesen Content
+        $objStoredData = $this->Database->prepare("SELECT data FROM tl_rms WHERE ref_id=? AND ref_table=? AND ref_author=?")
+                                        ->limit(1)
+                                        ->execute
+                                        (
+                                            $contentId,
+                                            $strTable,
+                                            $userID
+                                        );
+
+
+        //wenn bereits eine nicht freigegebene Bearbeitung vorliegt
+        if ($objStoredData->numRows > 0)
+        {
+            $rmsArr = unserialize($objStoredData->data);
+            return $rmsArr;
+        }
+    }
 
     /**
     * overwrite table-data and backup in tmp-table if current BackendUser a low-level-redakteur
@@ -35,6 +73,7 @@ class rmsDefaultCallbacks extends \Backend
     */
     public function onEditCallback(\DataContainer $dc, $liveDataObj)
     {
+        // print_r($dc);
         $this->import("BackendUser");
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
         $settings = $this->rmsHelper->getSettings();

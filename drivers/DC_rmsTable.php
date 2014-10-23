@@ -433,6 +433,28 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 		{
 			return '';
 		}
+		// Call getrms_callback
+		if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback']))
+		{
+			foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'] as $callback)
+			{
+				if (is_array($callback))
+				{
+					$this->import($callback[0]);
+					$this->rmsArr = $this->$callback[0]->$callback[1]($this, $objRow);
+				}
+				elseif (is_callable($callback))
+				{
+					$this->rmsArr = $callback($this, $objRow);
+				}
+			}
+		}
+
+		if(is_array($this->rmsArr) && count($this->rmsArr) > 0)
+		{
+			foreach($this->rmsArr as $field =>$value) $objRow->{$field} = $value;
+			$this->overwriteRmsData = true;
+		}
 
 		$count = 1;
 		$return = '';
@@ -476,6 +498,8 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 
 			$value = deserialize($row[$i]);
 			$class = (($count++ % 2) == 0) ? ' class="tl_bg"' : '';
+
+
 
 			// Get the field value
 			if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$i]['foreignKey']))
@@ -4092,6 +4116,32 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 
 				for ($i=0, $c=count($row); $i<$c; $i++)
 				{
+					
+					// --- rms Beginn -----------------------------------
+					// Call getrms_listview_callback 
+					if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_listview_callback']))
+					{
+						foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_listview_callback'] as $callback)
+						{
+							if (is_array($callback))
+							{
+								$this->import($callback[0]);
+								$this->rmsArr = $this->$callback[0]->$callback[1]($this, $row[$i]);
+							}
+							elseif (is_callable($callback))
+							{
+								$this->rmsArr = $callback($this, $row[$i]);
+							}
+						}
+					}
+
+					if(is_array($this->rmsArr) && count($this->rmsArr) > 0)
+					{
+						foreach($this->rmsArr as $field =>$value) $row[$i][$field] = $value;
+						$this->overwriteRmsData = true;
+					}
+					// --- rms ENDE ------------------------------------
+
 					$this->current[] = $row[$i]['id'];
 					$imagePasteAfter = \Image::getHtml('pasteafter.gif', sprintf($GLOBALS['TL_LANG'][$this->strTable]['pasteafter'][1], $row[$i]['id']));
 					$imagePasteNew = \Image::getHtml('new.gif', sprintf($GLOBALS['TL_LANG'][$this->strTable]['pastenew'][1], $row[$i]['id']));

@@ -143,7 +143,6 @@ class rmsHelper extends \Backend
 				$protected = $this->rmsIsTableProtected($strTable);				
 		}                  
               
-
 	    /**
 	    * deprecated
 		*		
@@ -152,7 +151,7 @@ class rmsHelper extends \Backend
 
 	    if ($this->isMemberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
 	    {
-	    	
+
 			$GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] = 'rmsTable';
 
 			//falls keine separaten callbacks existieren die Standart-Callbacks aufrufen
@@ -160,10 +159,16 @@ class rmsHelper extends \Backend
 			$GLOBALS['TL_DCA'][$strTable]['config']['onrestore_callback'][] = (method_exists($strTable.'_rms', 'onRestoreCallback')) ? array($strTable.'_rms','onRestoreCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onRestoreCallback');
 			$GLOBALS['TL_DCA'][$strTable]['config']['oncut_callback'][] = (method_exists($strTable.'_rms', 'onCutCallback')) ? array($strTable.'_rms','onCutCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onCutCallback');
 
-			if (\Input::get("act") == "edit")
+			if (\Input::get("act") == "edit" || \Input::get("act") == "show")
 			{			    
+				// print 
 				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_callback'][] = (method_exists($strTable.'_rms', 'onEditCallback')) ? array($strTable.'_rms','onEditCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onEditCallback');
 				$GLOBALS['TL_DCA'][$strTable]['config']['onsubmit_callback'][] = (method_exists($strTable.'_rms', 'onSubmitCallback')) ?  array($strTable.'_rms','onSubmitCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onSubmitCallback');			
+			}
+			else
+			{
+				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_listview_callback'][] = (method_exists($strTable.'_rms', 'onListCallback')) ? array($strTable.'_rms','onListCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onListCallback');
+				
 			}
 	    }
 	}
@@ -179,6 +184,7 @@ class rmsHelper extends \Backend
 	//ToDo: rewrite this method and create a Hook for other modules
 	public function previewContentElement($objElement, $strBuffer)
 	{
+	  
 	    // return if this ignored field
 	    $ignoreTypedArr = array_map('trim',explode(',',$this->settings['ignore_content_types']));
 
