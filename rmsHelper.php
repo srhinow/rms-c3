@@ -123,14 +123,7 @@ class rmsHelper extends \Backend
 	public function handleBackendUserAccessControlls($strTable)
 	{
 
-	    if(TL_MODE != 'BE')	return;
-
-	    /**
-	    * deprecated
-		*
-		* $arrAllowedTables = $this->settings['release_tables'] ? deserialize($this->settings['release_tables']) : array();
-		* if(!in_array($strTable, $arrAllowedTables)) return;
-		*/
+	    if(TL_MODE != 'BE' || \Environment::get('isAjaxRequest'))	return;
 		
 		$protected = false;
 
@@ -142,13 +135,7 @@ class rmsHelper extends \Backend
 			default:
 				$protected = $this->rmsIsTableProtected($strTable);				
 		}                  
-              
-	    /**
-	    * deprecated
-		*		
-	    * $protected = ($strTable == 'tl_content' ) ? $this->rmsIsContentProtected() : true;
-		*/
-
+             
 	    if ($this->isMemberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
 	    {
 
@@ -161,7 +148,6 @@ class rmsHelper extends \Backend
 
 			if (\Input::get("act") == "edit" || \Input::get("act") == "show")
 			{			    
-				// print 
 				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_callback'][] = (method_exists($strTable.'_rms', 'onEditCallback')) ? array($strTable.'_rms','onEditCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onEditCallback');
 				$GLOBALS['TL_DCA'][$strTable]['config']['onsubmit_callback'][] = (method_exists($strTable.'_rms', 'onSubmitCallback')) ?  array($strTable.'_rms','onSubmitCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onSubmitCallback');			
 			}
