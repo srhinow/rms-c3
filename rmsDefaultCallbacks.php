@@ -73,7 +73,7 @@ class rmsDefaultCallbacks extends \Backend
     */
     public function onEditCallback(\DataContainer $dc, $liveDataObj)
     {
-        // print_r($dc);
+        
         $this->import("BackendUser");
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
         $settings = $this->rmsHelper->getSettings();

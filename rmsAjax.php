@@ -221,8 +221,9 @@ class rmsAjax extends \Backend
 					die('Bad Request');
 				}
 
-				if ($dc instanceof DC_rmsTable)
+				if ($dc instanceof \DC_rmsTable)
 				{
+					
 					if (\Input::get('act') == 'editAll')
 					{
 						$this->strAjaxId = preg_replace('/.*_([0-9a-zA-Z]+)$/', '$1', \Input::post('id'));
