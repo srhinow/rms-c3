@@ -144,7 +144,7 @@ class rmsDefaultCallbacks extends \Backend
     */
     public function onSubmitCallback(\DataContainer $dc)
     {
-
+        $this->import("BackendUser");
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
         $settings = $this->rmsHelper->getSettings();
 
