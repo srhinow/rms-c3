@@ -278,12 +278,17 @@ class rmsDefaultCallbacks extends \Backend
         $strTable = \Input::get("table");
         $intId = \Input::get("id");
 
-        $objStoredData = $this->Database->prepare("DELETE FROM tl_rms WHERE ref_id=? AND ref_table=?")
+        $objStoredData = $this->Database->prepare("DELETE FROM tl_rms WHERE ref_id=? AND ref_table=?")                                        
                                         ->execute
                                         (
                                             $intId,
                                             $strTable
                                         );
+
+        //bei neu angelegte Inhalte die origninalen Inhalte auch löschen. (#8)                                  
+        $this->Database->prepare("DELETE FROM ".$strTable." WHERE `id` = ? AND `rms_first_save`=?")
+        ->limit(1)
+        ->execute($intId,1);
     }
 
     /**
