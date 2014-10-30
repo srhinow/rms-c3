@@ -188,7 +188,7 @@ class rmsDefaultCallbacks extends \Backend
                         ->limit(1)
                         ->execute($intId,0);
 
-        if ((int) $isNewEntryObj->c == 1)
+        if ((int) $isNewEntryObj->c <= 1)
         {
             $data['tstamp'] = time();
             $data['rms_first_save'] = 1;
