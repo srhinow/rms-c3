@@ -304,8 +304,6 @@ class rmsHelper extends \Backend
 			else
 			//send Email from Super-Editor to editor  (answer)
 			{
-				if(!$lastEditorObj->email) return;
-
 				$text =  $dc->Input->post('rms_notice');
 				$text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
 
