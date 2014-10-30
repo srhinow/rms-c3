@@ -362,7 +362,15 @@ class rmsHelper extends \Backend
 				break;
 		    }
 
-		    $objUpdate = $this->Database->prepare("UPDATE ".$objData->ref_table." %s WHERE id=?")->set($arrData)->execute($objData->ref_id);
+			if (is_array($GLOBALS['TL_HOOKS']['rmsPublish']))
+			{
+				foreach ($GLOBALS['TL_HOOKS']['rmsPublish'] as $callback)
+				{
+					$callback($objData->ref_table, unserialize($objData->data));
+				}
+			}
+
+		    $this->Database->prepare("UPDATE ".$objData->ref_table." %s WHERE id=?")->set($arrData)->execute($objData->ref_id);
 
 		    $this->Database->prepare("DELETE FROM tl_rms WHERE id=?")->execute($dc->id);
         }
