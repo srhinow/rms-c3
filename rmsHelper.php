@@ -556,7 +556,7 @@ class rmsHelper extends \Backend
 	* @param string
 	* @return mixed
 	*/
-	protected function getMemberData($id, $field = '')
+	public function getMemberData($id, $field = '')
 	{
 		if((int)$id > 0) 
 		{
