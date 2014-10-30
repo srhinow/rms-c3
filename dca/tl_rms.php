@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_rms']['show_diff'],
 				'href'                => 'key=show_diff&popup=1',
-				'attributes'		  => 'onclick="Backend.openModalIframe({\'width\':765,\'title\':\'Unterschiede anzeigen\',\'url\':this.href});return false"',
+				'attributes'		  => 'onclick="Backend.openModalIframe({\'width\':765,\'title\':\'' . ($GLOBALS['TL_LANG']['tl_rms']['show_diff'][0]) . '\',\'url\':this.href});return false"',
 				'icon'                => 'diff.gif',
 				'button_callback'     => array('tl_rms', 'showDiff')
 			),			
