@@ -364,7 +364,8 @@ class rmsHelper extends \Backend
 			{
 				foreach ($GLOBALS['TL_HOOKS']['rmsPublish'] as $callback)
 				{
-					$callback($objData->ref_table, unserialize($objData->data));
+					$this->import($callback[0]);
+					$label = $this->$callback[0]->$callback[1]($objData->ref_table, unserialize($objData->data);
 				}
 			}
 
