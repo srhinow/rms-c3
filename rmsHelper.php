@@ -491,8 +491,10 @@ class rmsHelper extends \Backend
 		$dbObj = $this->getRootParentDBObj($id, $table, $ptable, $root_table);
 
 		// den dca der Eltern-Tabelle holen
-		$this->loadDataContainer($ptable);
-		
+		if (!is_null($ptable)) {
+			$this->loadDataContainer($ptable);
+		}
+
 		$jumpToUrl = '';
 
 		// wenn es ein normaler Inhalt einer Seite ist
