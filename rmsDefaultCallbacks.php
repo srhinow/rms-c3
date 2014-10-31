@@ -285,7 +285,7 @@ class rmsDefaultCallbacks extends \Backend
                                             $strTable
                                         );
 
-        //bei neu angelegte Inhalte die origninalen Inhalte auch löschen. (#8)                                  
+        //bei neu angelegte Inhalte die origninalen Inhalte auch löschen. #8)                                  
         $this->Database->prepare("DELETE FROM ".$strTable." WHERE `id` = ? AND `rms_first_save`=?")
         ->limit(1)
         ->execute($intId,1);
