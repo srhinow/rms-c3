@@ -555,11 +555,11 @@ class rmsHelper extends \Backend
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$rmsSectionSettings = $this->$callback[0]->$callback[1]($id, $table, $ptable);
+					$rmsSectionSettings = $this->$callback[0]->$callback[1]($rmsSectionSettings, $id, $table, $ptable);
 				}
 				elseif (is_callable($callback))
 				{
-					$rmsSectionSettings = $callback($id, $table, $ptable);
+					$rmsSectionSettings = $callback($rmsSectionSettings, $id, $table, $ptable);
 				}
 
 			}
