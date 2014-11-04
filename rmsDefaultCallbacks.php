@@ -40,7 +40,7 @@ class rmsDefaultCallbacks extends \Backend
 
         //nötige Paramter ermitteln
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table");
+        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $contentId = $rowArr['id'];        
 
         //wenn eins der nötigen Parameter fehlt -> hier abbrechen
@@ -81,7 +81,7 @@ class rmsDefaultCallbacks extends \Backend
 
         //nötige Paramter ermitteln
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table");
+        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $contentId = \Input::get("id");
 
         //wenn eins der nötigen Parameter fehlt -> hier abbrechen
@@ -178,6 +178,9 @@ class rmsDefaultCallbacks extends \Backend
                 $userID
             );
 
+        /***
+         * in data stehen irgendwie schon die neuen daten bei tl_cr_properties - WIESO?
+         */
         //wenn z.B. der Datensatz neu angelegt wurde
         if($tmpDataObj->numRows > 0) $data = unserialize($tmpDataObj->data);
         else $data = $newData;
@@ -275,7 +278,7 @@ class rmsDefaultCallbacks extends \Backend
     public function onDeleteCallback(\DataContainer $dc)
     {
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table");
+        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $intId = \Input::get("id");
 
         $objStoredData = $this->Database->prepare("DELETE FROM tl_rms WHERE ref_id=? AND ref_table=?")                                        
