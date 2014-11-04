@@ -273,7 +273,6 @@ class rmsHelper extends \Backend
 		$this->import("BackendUser");
 
 		$strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
-		$this->settings = $this->getSettings();      
 
 		$RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->activeRecord->ptable);
 
@@ -547,6 +546,24 @@ class rmsHelper extends \Backend
 			'master_email' => ((int) $dbObj->rms_master_member > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],			
 			'preview_jumpTo' => $jumpToUrl
 		);
+
+		// HOOK: add custom logic
+		if (isset($GLOBALS['TL_HOOKS']['getRmsSectionSettings']) && is_array($GLOBALS['TL_HOOKS']['getRmsSectionSettings']))
+		{
+			foreach ($GLOBALS['TL_HOOKS']['getRmsSectionSettings'] as $callback)
+			{
+				if (is_array($callback))
+				{
+					$this->import($callback[0]);
+					$rmsSectionSettings = $this->$callback[0]->$callback[1]($id, $table, $ptable);
+				}
+				elseif (is_callable($callback))
+				{
+					$rmsSectionSettings = $callback($id, $table, $ptable);
+				}
+
+			}
+		}
 
 		return $rmsSectionSettings;
 	}
