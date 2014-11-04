@@ -242,8 +242,8 @@ class rmsDefaultCallbacks extends \Backend
         //existiert schon eine Bearbeitung
         $objData = $this->Database->prepare("SELECT id FROM tl_rms WHERE ref_id=? AND ref_table=? AND ref_author=?")
                                     ->execute(
-                                        $this->Input->get("id"),
-                                        $this->Input->get("table"),
+                                        $intId,
+                                        $strTable,
                                         $userID );
 
         if ($objData->numRows == 1)
