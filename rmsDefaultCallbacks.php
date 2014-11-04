@@ -149,7 +149,7 @@ class rmsDefaultCallbacks extends \Backend
         $settings = $this->rmsHelper->getSettings();
 
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table");
+        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $intId = \Input::get("id");
 
         if(!$userID || !$strTable || !$intId) return;
