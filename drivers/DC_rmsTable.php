@@ -4548,6 +4548,31 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 
 			foreach ($result as $row)
 			{
+				// --- rms Beginn -----------------------------------
+				// Call getrms_listview_callback
+				if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_listview_callback']))
+				{
+					foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_listview_callback'] as $callback)
+					{
+						if (is_array($callback))
+						{
+							$this->import($callback[0]);
+							$this->rmsArr = $this->$callback[0]->$callback[1]($this, $row);
+						}
+						elseif (is_callable($callback))
+						{
+							$this->rmsArr = $callback($this, $row);
+						}
+					}
+				}
+
+				if(is_array($this->rmsArr) && count($this->rmsArr) > 0)
+				{
+					foreach($this->rmsArr as $field =>$value) $row[$field] = $value;
+					$this->overwriteRmsData = true;
+				}
+				// --- rms ENDE ------------------------------------
+
 				$args = array();
 				$this->current[] = $row['id'];
 				$showFields = $GLOBALS['TL_DCA'][$table]['list']['label']['fields'];
