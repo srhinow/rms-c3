@@ -311,7 +311,9 @@ class rmsHelper extends \Backend
 				$email->charset = 'utf-8';
 				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_answer'];
 				$email->text = $text;
-				$email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
+				if ($authorMail = $this->getMemberData(\Input::get('author'), 'email')) {
+					$email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
+				}
 			}
 	    }
 
