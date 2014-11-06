@@ -274,7 +274,7 @@ class rmsHelper extends \Backend
 
 		$strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
 
-		$RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->activeRecord->ptable);
+		$RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->parentTable);
 
 		$fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
 		$sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
