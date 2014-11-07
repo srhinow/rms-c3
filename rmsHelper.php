@@ -134,8 +134,12 @@ class rmsHelper extends \Backend
 			break;
 			default:
 				$protected = $this->rmsIsTableProtected($strTable);				
-		}                  
-             
+		}
+
+		if (\Input::get("act") != "edit" && \Input::get("act") != "show") {
+			$protected = $this->rmsIsTableProtected($GLOBALS['TL_DCA'][$strTable]['config']['ptable']);
+		}
+
 	    if ($this->isMemberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
 	    {
 
