@@ -168,6 +168,11 @@ class rmsDefaultCallbacks extends \Backend
             $newData[$fieldName] = $dc->activeRecord->{$fieldName};
         }
 
+        if ($strTable == 'tl_news') {
+            $newData['date'] = strtotime(date('Y-m-d', $dc->activeRecord->date) . ' ' . date('H:i:s', $dc->activeRecord->time));
+            $newData['time'] = $newData['date'];
+        }
+
         //hole gesicherte und freigegebene Daten von dem Redakteur für diesen Content
         $tmpDataObj = $this->Database->prepare("SELECT data FROM tl_rms_tmp WHERE ref_id=? AND ref_table=? AND ref_author=?")
             ->limit(1)
