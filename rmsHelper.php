@@ -689,6 +689,7 @@ class rmsHelper extends \Backend
 	 */	
 	protected function rmsIsTableProtected($strTable)
 	{
+		$id = \Input::get('id');
 		$return = false;
 
 		switch($strTable)
@@ -699,7 +700,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_page` `p` ON `p`.`id` = `a`.`pid`
 				WHERE `a`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 				
 				$rootPageObj = $this->getRootPage($curObj->pid);	
 				
@@ -716,7 +717,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_newsletter` `nl` ON `nlc`.`id` = `nl`.`pid`
 				WHERE `nl`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -729,7 +730,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc` WHERE `nlc`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -744,7 +745,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_faq` `faq` ON `faqc`.`id` = `faq`.`pid`
 				WHERE `faq`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -757,7 +758,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc` WHERE `faqc`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -772,7 +773,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_news` `n` ON `na`.`id` = `n`.`pid`
 				WHERE `n`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -785,7 +786,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na` WHERE `na`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -800,7 +801,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_calendar_events` `calev` ON `cal`.`id` = `calev`.`pid`
 				WHERE `calev`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -813,7 +814,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal` WHERE `cal`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
