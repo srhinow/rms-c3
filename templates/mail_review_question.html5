@@ -1,0 +1,16 @@
+<?php echo $GLOBALS['TL_LANG']['MSC']['rms_email_intro'][0] ?>
+
+
+<?php echo $GLOBALS['TL_LANG']['MSC']['rms_email_intro'][1] ?>
+
+
+<?php echo $this->text ?>
+
+
+<?php echo $this->link ?>
+
+
+<?php echo $GLOBALS['TL_LANG']['MSC']['rms_email_instruction'] ?>
+
+
+<?php echo $GLOBALS['TL_LANG']['MSC']['rms_email_closing'] ?>

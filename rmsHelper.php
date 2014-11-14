@@ -290,20 +290,21 @@ class rmsHelper extends \Backend
 			//mail from editor to Super-Editor (question)
 			if(!$this->isMemberOfMasters())
 			{
-				$text =  $dc->Input->post('rms_notice');
-				$text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
-
 				$sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
 				$sendToEmailsArr[] = $sendToEmail;
 				$sendToEmailsArr = array_unique($sendToEmailsArr);
 
 				$sendToEmails = implode(',',$sendToEmailsArr);
 
+				$objTemplate = new \FrontendTemplate('mail_review_question');
+				$objTemplate->text = $dc->Input->post('rms_notice');
+				$objTemplate->link = $this->Environment->url.$this->Environment->requestUri;
+
 				$email = new \Email();
 				$email->from = $this->BackendUser->email;
 				$email->charset = 'utf-8';
 				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
-				$email->text = $text;
+				$email->text = $objTemplate->parse();
 				$email->sendTo($sendToEmails);			    
 			}
 			else
