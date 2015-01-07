@@ -28,3 +28,7 @@ $GLOBALS['TL_LANG']['MSC']['rms_preview_jumpTo'] = array('Preview page','If this
 $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'] = 'release request';
 $GLOBALS['TL_LANG']['MSC']['rms_email_subject_answer'] = 'release request (reply)';
 
+$GLOBALS['TL_LANG']['MSC']['rms_email_intro'][0] = 'Dear Sir or Madam,';
+$GLOBALS['TL_LANG']['MSC']['rms_email_intro'][1] = 'please note that a new item was inserted / a present item was edited.';
+$GLOBALS['TL_LANG']['MSC']['rms_email_instruction'] = 'Please review the changes and release or refuse them.';
+$GLOBALS['TL_LANG']['MSC']['rms_email_closing'] = 'Best Regards';

@@ -130,6 +130,15 @@ class rmsVersions extends \Backend
 						}
 						unset($tmp);
 
+						// Convert already deserialized arrays to strings - TODO Why are they already deserialzed?
+						if (is_array($to[$k]))
+						{
+							$to[$k] = $this->implodeRecursive($to[$k], $blnIsBinary);
+						}
+						if (is_array($from[$k])) {
+							$from[$k] = $this->implodeRecursive($from[$k], $blnIsBinary);
+						}
+
 						// Convert binary UUIDs to their hex equivalents (see #6365)
 						if ($blnIsBinary && \Validator::isUuid($to[$k]))
 						{

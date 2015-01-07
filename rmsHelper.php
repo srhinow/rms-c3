@@ -134,8 +134,14 @@ class rmsHelper extends \Backend
 			break;
 			default:
 				$protected = $this->rmsIsTableProtected($strTable);				
-		}                  
-             
+		}
+
+		if (\Input::get("act") != "edit" && \Input::get("act") != "show") {
+			if (!empty($GLOBALS['TL_DCA'][$strTable]['config']['ptable'])) {
+				$protected = $this->rmsIsTableProtected($GLOBALS['TL_DCA'][$strTable]['config']['ptable']);
+			}
+		}
+
 	    if ($this->isMemberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
 	    {
 
@@ -274,7 +280,7 @@ class rmsHelper extends \Backend
 
 		$strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
 
-		$RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->activeRecord->ptable);
+		$RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->parentTable);
 
 		$fallbackEmail = $this->getMemberData($this->settings['fallback_master_member'], 'email');
 		$sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
@@ -284,20 +290,21 @@ class rmsHelper extends \Backend
 			//mail from editor to Super-Editor (question)
 			if(!$this->isMemberOfMasters())
 			{
-				$text =  $dc->Input->post('rms_notice');
-				$text .= "\nPfad: ".$this->Environment->url.$this->Environment->requestUri;
-
 				$sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
 				$sendToEmailsArr[] = $sendToEmail;
 				$sendToEmailsArr = array_unique($sendToEmailsArr);
 
 				$sendToEmails = implode(',',$sendToEmailsArr);
 
+				$objTemplate = new \FrontendTemplate('mail_review_question');
+				$objTemplate->text = $dc->Input->post('rms_notice');
+				$objTemplate->link = $this->Environment->url.$this->Environment->requestUri;
+
 				$email = new \Email();
 				$email->from = $this->BackendUser->email;
 				$email->charset = 'utf-8';
 				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
-				$email->text = $text;
+				$email->text = $objTemplate->parse();
 				$email->sendTo($sendToEmails);			    
 			}
 			else
@@ -311,7 +318,9 @@ class rmsHelper extends \Backend
 				$email->charset = 'utf-8';
 				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_answer'];
 				$email->text = $text;
-				$email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
+				if ($authorMail = $this->getMemberData(\Input::get('author'), 'email')) {
+					$email->sendTo($this->getMemberData(\Input::get('author'), 'email'));
+				}
 			}
 	    }
 
@@ -359,7 +368,16 @@ class rmsHelper extends \Backend
 				break;
 		    }
 
-		    $objUpdate = $this->Database->prepare("UPDATE ".$objData->ref_table." %s WHERE id=?")->set($arrData)->execute($objData->ref_id);
+			if (is_array($GLOBALS['TL_HOOKS']['rmsPublish']))
+			{
+				foreach ($GLOBALS['TL_HOOKS']['rmsPublish'] as $callback)
+				{
+					$this->import($callback[0]);
+					$label = $this->$callback[0]->$callback[1]($objData->ref_table, unserialize($objData->data));
+				}
+			}
+
+		    $this->Database->prepare("UPDATE ".$objData->ref_table." %s WHERE id=?")->set($arrData)->execute($objData->ref_id);
 
 		    $this->Database->prepare("DELETE FROM tl_rms WHERE id=?")->execute($dc->id);
         }
@@ -480,8 +498,10 @@ class rmsHelper extends \Backend
 		$dbObj = $this->getRootParentDBObj($id, $table, $ptable, $root_table);
 
 		// den dca der Eltern-Tabelle holen
-		$this->loadDataContainer($ptable);
-		
+		if (!is_null($ptable)) {
+			$this->loadDataContainer($ptable);
+		}
+
 		$jumpToUrl = '';
 
 		// wenn es ein normaler Inhalt einer Seite ist
@@ -544,11 +564,11 @@ class rmsHelper extends \Backend
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$rmsSectionSettings = $this->$callback[0]->$callback[1]($id, $table, $ptable);
+					$rmsSectionSettings = $this->$callback[0]->$callback[1]($rmsSectionSettings, $id, $table, $ptable);
 				}
 				elseif (is_callable($callback))
 				{
-					$rmsSectionSettings = $callback($id, $table, $ptable);
+					$rmsSectionSettings = $callback($rmsSectionSettings, $id, $table, $ptable);
 				}
 
 			}
@@ -563,7 +583,7 @@ class rmsHelper extends \Backend
 	* @param string
 	* @return mixed
 	*/
-	protected function getMemberData($id, $field = '')
+	public function getMemberData($id, $field = '')
 	{
 		if((int)$id > 0) 
 		{
@@ -676,6 +696,7 @@ class rmsHelper extends \Backend
 	 */	
 	protected function rmsIsTableProtected($strTable)
 	{
+		$id = \Input::get('id');
 		$return = false;
 
 		switch($strTable)
@@ -686,7 +707,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_page` `p` ON `p`.`id` = `a`.`pid`
 				WHERE `a`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 				
 				$rootPageObj = $this->getRootPage($curObj->pid);	
 				
@@ -703,7 +724,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_newsletter` `nl` ON `nlc`.`id` = `nl`.`pid`
 				WHERE `nl`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -716,7 +737,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc` WHERE `nlc`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -731,7 +752,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_faq` `faq` ON `faqc`.`id` = `faq`.`pid`
 				WHERE `faq`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -744,7 +765,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc` WHERE `faqc`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -759,7 +780,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_news` `n` ON `na`.`id` = `n`.`pid`
 				WHERE `n`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -772,7 +793,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na` WHERE `na`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -787,7 +808,7 @@ class rmsHelper extends \Backend
 				LEFT JOIN `tl_calendar_events` `calev` ON `cal`.`id` = `calev`.`pid`
 				WHERE `calev`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{
@@ -800,7 +821,7 @@ class rmsHelper extends \Backend
 
 				$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal` WHERE `cal`.`id`=?')
 						->limit(1)
-						->execute(\Input::get('id'));
+						->execute($id);
 
 				if($curObj->rms_protected == 1) 
 				{

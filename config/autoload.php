@@ -25,15 +25,15 @@ ClassLoader::addNamespaces(array
  */
 ClassLoader::addClasses(array
 (
-	'SvenRhinow\rms\rmsVersions'        => 'system/modules/rms/rmsVersions.php',
-	'SvenRhinow\rms\rmsAjax'			=> 'system/modules/rms/rmsAjax.php',
+	'SvenRhinow\rms\rmsVersions'        	=> 'system/modules/rms/rmsVersions.php',
+	'SvenRhinow\rms\rmsAjax'				=> 'system/modules/rms/rmsAjax.php',
 	// Modules
-	'Contao\ModuleNewsReaderRMS'        => 'system/modules/rms/modules/ModuleNewsReaderRMS.php',
-	'SvenRhinow\rms\rmsHelper'          => 'system/modules/rms/rmsHelper.php',
-	'SvenRhinow\rms\rmsDefaultCallbacks'=> 'system/modules/rms/rmsDefaultCallbacks.php',
+	'Contao\ModuleNewsReaderRMS'        	=> 'system/modules/rms/modules/ModuleNewsReaderRMS.php',
+	'SvenRhinow\rms\rmsHelper'          	=> 'system/modules/rms/rmsHelper.php',
+	'SvenRhinow\rms\rmsDefaultCallbacks'	=> 'system/modules/rms/rmsDefaultCallbacks.php',
 
 	// Drivers
-	'Contao\DC_rmsTable'                 => 'system/modules/rms/drivers/DC_rmsTable.php',
+	'Contao\DC_rmsTable'                 	=> 'system/modules/rms/drivers/DC_rmsTable.php',
 ));
 
 
@@ -42,5 +42,6 @@ ClassLoader::addClasses(array
  */
 TemplateLoader::addFiles(array
 (
-	'be_rmsdiff' => 'system/modules/rms/templates',
+	'be_rmsdiff' 						=> 'system/modules/rms/templates',
+	'mail_review_question' 				=> 'system/modules/rms/templates',
 ));

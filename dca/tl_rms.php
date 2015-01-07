@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_rms']['show_diff'],
 				'href'                => 'key=show_diff&popup=1',
-				'attributes'		  => 'onclick="Backend.openModalIframe({\'width\':765,\'title\':\'Unterschiede anzeigen\',\'url\':this.href});return false"',
+				'attributes'		  => 'onclick="Backend.openModalIframe({\'width\':765,\'title\':\'' . ($GLOBALS['TL_LANG']['tl_rms']['show_diff'][0]) . '\',\'url\':this.href});return false"',
 				'icon'                => 'diff.gif',
 				'button_callback'     => array('tl_rms', 'showDiff')
 			),			
@@ -256,7 +256,7 @@ class tl_rms extends Backend
 		$label  = '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['status'][0].':</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span>'.$ifFirstSave.'<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$GLOBALS['TL_LANG']['tl_rms']['sessions'][$row['do'].'_'.$row['ref_table']].'<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0].': </strong><a href="'.$row['preview_jumpTo'].'" target="_blank">'.$row['preview_jumpTo'].'</a><br>';
-		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_author'][0].':</strong> '.$userObj->name.' ('.$userObj->email.')<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_author'][0].':</strong> '.$userObj->name.' (<a href="mailto:' . $userObj->email . '">'.$userObj->email.'</a>)<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['last_edit'][0].':</strong> '.date($GLOBALS['TL_CONFIG']['datimFormat'],$row['tstamp']).'<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_notice'][0].':</strong> '.nl2br($row['ref_notice']);
 
@@ -298,10 +298,35 @@ class tl_rms extends Backend
 			$this->Database->prepare("UPDATE ".$ref_Table." SET `rms_new_edit`='' WHERE id=?")
 							->limit(1)
 							->execute($ref_id);
-			
-			//delete new empty elements
-			$this->Database->prepare('DELETE FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
-							->execute($ref_id, 1);
+
+
+			$objToDelete = $this->Database->prepare('SELECT count(*) c FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
+				->execute($ref_id, 1);
+
+			$objDeleted = false;
+			if ($objToDelete->c > 0) {
+				//delete new empty elements
+				$this->Database->prepare('DELETE FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
+					->execute($ref_id, 1);
+				$objDeleted = true;
+			}
+
+			if (is_array($GLOBALS['TL_HOOKS']['rmsRejectEdit']))
+			{
+				foreach ($GLOBALS['TL_HOOKS']['rmsRejectEdit'] as $callback)
+				{
+					if (is_array($callback))
+					{
+						$this->import($callback[0]);
+						$this->$callback[0]->$callback[1]($ref_Table, $ref_id, $objDeleted);
+					}
+					elseif (is_callable($callback))
+					{
+						$callback($this, false);
+					}
+				}
+			}
+
 		}
 	}
 

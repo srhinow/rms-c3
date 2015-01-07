@@ -27,3 +27,7 @@ $GLOBALS['TL_LANG']['MSC']['rms_preview_jumpTo'] = array('Freigabe-Vorschauseite
 
 $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'] = 'Freigabe-Aufforderung';
 $GLOBALS['TL_LANG']['MSC']['rms_email_subject_answer'] = 'Freigabe-Aufforderung (Antwort)';
+$GLOBALS['TL_LANG']['MSC']['rms_email_intro'][0] = 'Sehr geehrte Damen und Herren,';
+$GLOBALS['TL_LANG']['MSC']['rms_email_intro'][1] = 'ein Element wurde erzeugt / ein bestehendes Element bearbeitet.';
+$GLOBALS['TL_LANG']['MSC']['rms_email_instruction'] = 'Bitte prüfen Sie die Änderungen und geben Sie diese frei oder lehnen sie ab.';
+$GLOBALS['TL_LANG']['MSC']['rms_email_closing'] = 'Mit freundlichen Grüßen';
