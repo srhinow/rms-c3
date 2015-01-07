@@ -298,10 +298,35 @@ class tl_rms extends Backend
 			$this->Database->prepare("UPDATE ".$ref_Table." SET `rms_new_edit`='' WHERE id=?")
 							->limit(1)
 							->execute($ref_id);
-			
-			//delete new empty elements
-			$this->Database->prepare('DELETE FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
-							->execute($ref_id, 1);
+
+
+			$objToDelete = $this->Database->prepare('SELECT count(*) c FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
+				->execute($ref_id, 1);
+
+			$objDeleted = false;
+			if ($objToDelete->c > 0) {
+				//delete new empty elements
+				$this->Database->prepare('DELETE FROM '.$ref_Table.' WHERE `id`=? AND `rms_first_save`=?')
+					->execute($ref_id, 1);
+				$objDeleted = true;
+			}
+
+			if (is_array($GLOBALS['TL_HOOKS']['rmsRejectEdit']))
+			{
+				foreach ($GLOBALS['TL_HOOKS']['rmsRejectEdit'] as $callback)
+				{
+					if (is_array($callback))
+					{
+						$this->import($callback[0]);
+						$this->$callback[0]->$callback[1]($ref_Table, $ref_id, $objDeleted);
+					}
+					elseif (is_callable($callback))
+					{
+						$callback($this, false);
+					}
+				}
+			}
+
 		}
 	}
 
