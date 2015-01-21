@@ -87,7 +87,7 @@ class rmsHelper extends \Backend
 	    if(!$Database->tableExists('tl_rms_settings'))
 	    {
 	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
-	    	$this->Config->update('rms_active', false);
+	    	\Config::update('rms_active', false);
 	    	return array();
 	    }
 	    
