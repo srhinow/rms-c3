@@ -380,6 +380,15 @@ class rmsHelper extends \Backend
 		    $this->Database->prepare("UPDATE ".$objData->ref_table." %s WHERE id=?")->set($arrData)->execute($objData->ref_id);
 
 		    $this->Database->prepare("DELETE FROM tl_rms WHERE id=?")->execute($dc->id);
+
+            if (is_array($GLOBALS['TL_HOOKS']['rmsPublishAfter']))
+            {
+                foreach ($GLOBALS['TL_HOOKS']['rmsPublishAfter'] as $callback)
+                {
+                    $this->import($callback[0]);
+                    $label = $this->$callback[0]->$callback[1]($objData->ref_table, unserialize($objData->data));
+                }
+            }
         }
  		$this->redirect(str_replace('&key=acknowledge', '', $this->Environment->request));
 
