@@ -142,13 +142,12 @@ class rmsHelper extends \Backend
 			}
 		}
 
-	    if ($this->isMemberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
-	    {
+		if ($this->isMemberOfSlaves() && $protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
+		{
 
 			$GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] = 'rmsTable';
 
 			//falls keine separaten callbacks existieren die Standart-Callbacks aufrufen
-			$GLOBALS['TL_DCA'][$strTable]['config']['ondelete_callback'][] = (method_exists($strTable.'_rms', 'onDeleteCallback')) ? array($strTable.'_rms','onDeleteCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onDeleteCallback');
 			$GLOBALS['TL_DCA'][$strTable]['config']['onrestore_callback'][] = (method_exists($strTable.'_rms', 'onRestoreCallback')) ? array($strTable.'_rms','onRestoreCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onRestoreCallback');
 			$GLOBALS['TL_DCA'][$strTable]['config']['oncut_callback'][] = (method_exists($strTable.'_rms', 'onCutCallback')) ? array($strTable.'_rms','onCutCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onCutCallback');
 
@@ -162,7 +161,12 @@ class rmsHelper extends \Backend
 				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_listview_callback'][] = (method_exists($strTable.'_rms', 'onListCallback')) ? array($strTable.'_rms','onListCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onListCallback');
 				
 			}
-	    }
+	    	}
+		if ($protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
+		{
+			$GLOBALS['TL_DCA'][$strTable]['config']['ondelete_callback'][] = (method_exists($strTable.'_rms', 'onDeleteCallback')) ? array($strTable.'_rms','onDeleteCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onDeleteCallback');
+
+		}
 	}
 
 	/**
