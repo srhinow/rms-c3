@@ -40,7 +40,7 @@ class rmsDefaultCallbacks extends \Backend
 
         //nötige Paramter ermitteln
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
+        $strTable = (\Input::get("table")) ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $contentId = $rowArr['id'];        
 
         //wenn eins der nötigen Parameter fehlt -> hier abbrechen
@@ -81,7 +81,7 @@ class rmsDefaultCallbacks extends \Backend
 
         //nötige Paramter ermitteln
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
+        $strTable = (\Input::get("table")) ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $contentId = \Input::get("id");
 
         //wenn eins der nötigen Parameter fehlt -> hier abbrechen
@@ -149,7 +149,7 @@ class rmsDefaultCallbacks extends \Backend
         $settings = $this->rmsHelper->getSettings();
 
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
+        $strTable = (\Input::get("table")) ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $intId = \Input::get("id");
 
         if(!$userID || !$strTable || !$intId) return;
@@ -283,7 +283,7 @@ class rmsDefaultCallbacks extends \Backend
     public function onDeleteCallback(\DataContainer $dc)
     {
         $userID =  (\Input::get("author")) ? \Input::get("author") :  $this->BackendUser->id;
-        $strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
+        $strTable = (\Input::get("table")) ? \Input::get("table") : 'tl_'.$this->Input->get("do");
         $intId = \Input::get("id");
 
         $objStoredData = $this->Database->prepare("DELETE FROM tl_rms WHERE ref_id=? AND ref_table=?")                                        
