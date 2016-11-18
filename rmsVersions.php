@@ -65,7 +65,7 @@ class rmsVersions extends \Backend
 		}
 		else
 		{
-			// From			
+			// From
 			$from = $objReference->row();
 			$intFrom = \Input::get('ref_id');
 
@@ -80,20 +80,16 @@ class rmsVersions extends \Backend
 				\System::loadLanguageFile($this->rmsArr['ref_table']);
 				$this->loadDataContainer($this->rmsArr['ref_table']);
 
-				// Include the PhpDiff library
-				require_once TL_ROOT . '/system/modules/core/vendor/phpdiff/Diff.php';
-				require_once TL_ROOT . '/system/modules/core/vendor/phpdiff/Diff/Renderer/Html/Contao.php';
-
 				$arrOrder = array();
 
 				$arrFields = $GLOBALS['TL_DCA'][$this->rmsArr['ref_table']]['fields'];
-				
-				// if first save show text rather then different list				
+
+				// if first save show text rather then different list
 				$firstSave = ($from['rms_first_save'] == 1) ? true : false;
 
 				// Get the order fields
 				foreach ($arrFields as $i => $arrField)
-				{					
+				{
 
 					if (isset($arrField['eval']['orderField']))
 					{
@@ -189,11 +185,11 @@ class rmsVersions extends \Backend
 							foreach($from[$k] as $fk => $fv)
 							{
 								if(is_array($fv)) $from[$k][$fk] = serialize($fv);
-							}					
-						}	
+							}
+						}
 
-						$objDiff = new \Diff($from[$k], $to[$k]);											
-						$strBuffer .= $objDiff->Render(new \Diff_Renderer_Html_Contao(array('field'=>($arrFields[$k]['label'][0] ?: (isset($GLOBALS['TL_LANG']['MSC'][$k]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$k]) ? $GLOBALS['TL_LANG']['MSC'][$k][0] : $GLOBALS['TL_LANG']['MSC'][$k]) : $k)))));
+						$objDiff = new \Diff($from[$k], $to[$k]);
+						$strBuffer .= $objDiff->render(new \Contao\DiffRenderer(array('field'=>($arrFields[$k]['label'][0] ?: (isset($GLOBALS['TL_LANG']['MSC'][$k]) ? (is_array($GLOBALS['TL_LANG']['MSC'][$k]) ? $GLOBALS['TL_LANG']['MSC'][$k][0] : $GLOBALS['TL_LANG']['MSC'][$k]) : $k)))));
 					}
 				}
 			}

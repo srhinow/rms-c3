@@ -30,7 +30,7 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
     $GLOBALS['BE_MOD']['content']['calendar']['showPreview'] = array('\SvenRhinow\rms\rmsHelper', 'showPreviewInBrowser');
     $GLOBALS['BE_MOD']['content']['calendar']['stylesheet'] = 'system/modules/rms/assets/css/be.css';
     $GLOBALS['BE_MOD']['content']['newsletter']['showPreview'] = array('\SvenRhinow\rms\rmsHelper', 'showPreviewInBrowser');
-    $GLOBALS['BE_MOD']['content']['newsletter']['stylesheet'] = 'system/modules/rms/assets/css/be.css';
+    $GLOBALS['BE_MOD']['content']['newsletter']['stylesheet'] = 'system/modules/rms/assets/css/be_nl.css';
 
 
     $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('\SvenRhinow\rms\rmsHelper', 'handleBackendUserAccessControlls');

@@ -56,13 +56,13 @@ class rmsHelper extends \Backend
 
         // if not set -> set default values
 	    if(!$this->settings['control_group']) $this->settings['control_group'] = 0;
-	    
+
 	    // deaktiviere Freigabefunktion wenn der Schalter nicht existiert
-	    if(!$GLOBALS['TL_CONFIG']['rms_active']) 
+	    if(!$GLOBALS['TL_CONFIG']['rms_active'])
 	    {
 	    	$this->Config->update('rms_active', false);
 	    	$GLOBALS['TL_CONFIG']['rms_active'] = false;
-	    }        
+	    }
     }
 
     /**
@@ -90,7 +90,7 @@ class rmsHelper extends \Backend
 	    	\Config::update('rms_active', false);
 	    	return array();
 	    }
-	    
+
 	    $resObj = $Database->prepare('SELECT * FROM `tl_rms_settings`')
 				   ->limit(1)
 				   ->execute();
@@ -112,7 +112,7 @@ class rmsHelper extends \Backend
 	 */
 	 public function isMemberOfMasters()
 	 {
-	 	$this->import('BackendUser');	 	
+	 	$this->import('BackendUser');
 	 	return ($this->BackendUser->isMemberOf($this->settings['control_group']) || $this->BackendUser->isAdmin) ? true : false;
 	 }
 
@@ -124,7 +124,7 @@ class rmsHelper extends \Backend
 	{
 
 	    if(TL_MODE != 'BE' || \Environment::get('isAjaxRequest'))	return;
-		
+
 		$protected = false;
 
 		switch($strTable)
@@ -133,7 +133,7 @@ class rmsHelper extends \Backend
 				$protected = $this->rmsIsContentProtected($strTable);
 			break;
 			default:
-				$protected = $this->rmsIsTableProtected($strTable);				
+				$protected = $this->rmsIsTableProtected($strTable);
 		}
 
 		if (\Input::get("act") != "edit" && \Input::get("act") != "show") {
@@ -152,14 +152,14 @@ class rmsHelper extends \Backend
 			$GLOBALS['TL_DCA'][$strTable]['config']['oncut_callback'][] = (method_exists($strTable.'_rms', 'onCutCallback')) ? array($strTable.'_rms','onCutCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onCutCallback');
 
 			if (\Input::get("act") == "edit" || \Input::get("act") == "show")
-			{			    
+			{
 				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_callback'][] = (method_exists($strTable.'_rms', 'onEditCallback')) ? array($strTable.'_rms','onEditCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onEditCallback');
-				$GLOBALS['TL_DCA'][$strTable]['config']['onsubmit_callback'][] = (method_exists($strTable.'_rms', 'onSubmitCallback')) ?  array($strTable.'_rms','onSubmitCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onSubmitCallback');			
+				$GLOBALS['TL_DCA'][$strTable]['config']['onsubmit_callback'][] = (method_exists($strTable.'_rms', 'onSubmitCallback')) ?  array($strTable.'_rms','onSubmitCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onSubmitCallback');
 			}
 			else
 			{
 				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_listview_callback'][] = (method_exists($strTable.'_rms', 'onListCallback')) ? array($strTable.'_rms','onListCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onListCallback');
-				
+
 			}
 	    	}
 		if ($protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
@@ -180,7 +180,7 @@ class rmsHelper extends \Backend
 	//ToDo: rewrite this method and create a Hook for other modules
 	public function previewContentElement($objElement, $strBuffer)
 	{
-	  
+
 	    // return if this ignored field
 	    $ignoreTypedArr = array_map('trim',explode(',',$this->settings['ignore_content_types']));
 
@@ -238,7 +238,7 @@ class rmsHelper extends \Backend
 				$rmsDataArr = deserialize($objStoredData->data);
 
 				if(method_exists($sectionClass, $sectionMethod))
-				{ 	
+				{
 					$this->import($sectionClass);
 					$objTemplate = 	$this->$sectionClass->$sectionMethod($objTemplate, $rmsDataArr);
 				}
@@ -250,7 +250,7 @@ class rmsHelper extends \Backend
 				// force view
 				$objTemplate->published = 1; // news,newsletter
 				$objTemplate->invisible = 0; // content
-			}		
+			}
 		}
 	}
 
@@ -279,10 +279,10 @@ class rmsHelper extends \Backend
 	*/
 	public function sendEmailInfo($varValue, \DataContainer $dc)
 	{
-		$this->loadLanguageFile('tl_default');	
+		$this->loadLanguageFile('tl_default');
 		$this->import("BackendUser");
 
-		$strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.$this->Input->get("do");
+		$strTable = \Input::get("table") ? \Input::get("table") : 'tl_'.\Input::get("do");
 
 		$RmsSectionSettings = $this->getRmsSectionSettings($dc->id,	$strTable, $dc->parentTable);
 
@@ -290,7 +290,7 @@ class rmsHelper extends \Backend
 		$sendToEmail = ($RmsSectionSettings['master_email']) ? $RmsSectionSettings['master_email'] : $fallbackEmail;
 
 		if($varValue == 1 && !empty($strTable) && $RmsSectionSettings['rms_protected'])
-		{	
+		{
 			//mail from editor to Super-Editor (question)
 			if(!$this->isMemberOfMasters())
 			{
@@ -309,7 +309,7 @@ class rmsHelper extends \Backend
 				$email->charset = 'utf-8';
 				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
 				$email->text = $objTemplate->parse();
-				$email->sendTo($sendToEmails);			    
+				$email->sendTo($sendToEmails);
 			}
 			else
 			//send Email from Super-Editor to editor  (answer)
@@ -437,7 +437,7 @@ class rmsHelper extends \Backend
 					->limit(1)
 					->execute($pid);
 					// print_r($pageObj);
-			// return obj or recursive this method 
+			// return obj or recursive this method
 			return ($pageObj->type == 'root') ? $pageObj : $this->getRootPage($pageObj->pid);
 	    }
 	}
@@ -448,12 +448,12 @@ class rmsHelper extends \Backend
 	* @return string
 	*/
 	public function getRootParentTable($table,$ptable='')
-	{	
+	{
 		if($ptable == 'tl_article') return 'tl_page';
 
 		$this->loadDataContainer($table);
 		$pTable = $table;
-		
+
 		if( strlen($GLOBALS['TL_DCA'][$pTable]['config']['ptable']) > 0 )
 		{
 			$pTable = $this->getRootParentTable($GLOBALS['TL_DCA'][$pTable]['config']['ptable'], '');
@@ -489,7 +489,7 @@ class rmsHelper extends \Backend
 			{
 				$dbObj = $this->getRootParentDBObj($dbObj->id, $ptable, $GLOBALS['TL_DCA'][$ptable]['config']['ptable'], $rtable);
 			}
-		}	
+		}
 
 		return $dbObj;
 	}
@@ -499,7 +499,7 @@ class rmsHelper extends \Backend
 	* @param int
 	* @param string
 	* @param string
-	* @return array 
+	* @return array
 	*/
 	public function getRmsSectionSettings($id,$table,$ptable)
 	{
@@ -535,7 +535,7 @@ class rmsHelper extends \Backend
 			$jumpToID = ((int) $dbObj->rms_preview_jumpTo > 0 ) ? $dbObj->rms_preview_jumpTo : $dbObj->jumpTo;
 
 			if($jumpToID > 0)
-			{	         	
+			{
             	$pageObj = $this->Database->prepare('SELECT `id`,`alias` FROM `tl_page` WHERE `id`=?')->execute($jumpToID);
             	$jumpToUrl = $this->generateFrontendUrl($pageObj->row(), ($GLOBALS['TL_CONFIG']['useAutoItem'] ?  '/%s/do/preview' : '/items/%s/do/preview'));
 
@@ -560,12 +560,12 @@ class rmsHelper extends \Backend
 					$jumpToUrl = sprintf($jumpToUrl, $moduleObj->alias);
             	}
 			}
-		}	
+		}
 		// Bereich-Einstellungen als Array zusammenstellen
 		$rmsSectionSettings = array(
 			'rms_protected' =>	$dbObj->rms_protected,
 			'master_id'	=> $dbObj->rms_master_member,
-			'master_email' => ((int) $dbObj->rms_master_member > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],			
+			'master_email' => ((int) $dbObj->rms_master_member > 0 ) ? $this->getMemberData($dbObj->rms_master_member,'email') : $this->settings['sender_email'],
 			'preview_jumpTo' => $jumpToUrl
 		);
 
@@ -591,14 +591,14 @@ class rmsHelper extends \Backend
 	}
 
 	/**
-	* get any field from given user-id 
+	* get any field from given user-id
 	* @param int
 	* @param string
 	* @return mixed
 	*/
 	public function getMemberData($id, $field = '')
 	{
-		if((int)$id > 0) 
+		if((int)$id > 0)
 		{
 			$uObj = $this->Database->prepare('SELECT * FROM `tl_user` WHERE `id` = ?')->limit(1)->execute($id);
 
@@ -607,7 +607,7 @@ class rmsHelper extends \Backend
 				return $uObj->{$field};
 			}
 		}
-				
+
 	}
 
 	 /**
@@ -622,7 +622,7 @@ class rmsHelper extends \Backend
 		switch(\Input::get('do'))
 		{
 			case 'article':
-			
+
 				$protectedRootPages = $this->settings['whitelist_domains'] ? deserialize($this->settings['whitelist_domains']) : array();
 
 				$curObj = $this->Database->prepare('SELECT `p`.* FROM `tl_page` `p`
@@ -635,7 +635,7 @@ class rmsHelper extends \Backend
 				$rootPageObj = $this->getRootPage($curObj->pid);
 
 				// old and new filter
-				if(in_array($rootPageObj->id,$protectedRootPages) || $rootPageObj->rms_protected == 1) 
+				if(in_array($rootPageObj->id,$protectedRootPages) || $rootPageObj->rms_protected == 1)
 				{
 					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
 					$return = true;
@@ -651,10 +651,10 @@ class rmsHelper extends \Backend
 						->limit(1)
 						->execute(\Input::get('id'));
 
-				if($curObj->rms_protected == 1) 
+				if($curObj->rms_protected == 1)
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+					$return = true;
 				}
 			break;
 			case 'calendar':
@@ -666,11 +666,11 @@ class rmsHelper extends \Backend
 						->limit(1)
 						->execute(\Input::get('id'));
 
-				if($curObj->rms_protected == 1) 
+				if($curObj->rms_protected == 1)
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}		
+					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+					$return = true;
+				}
 
 			break;
 			default:
@@ -706,7 +706,7 @@ class rmsHelper extends \Backend
 	 * testet auf diverse Tabellen ob diese als geschützt markiert wurden
 	 * @param string
 	 * @return bool
-	 */	
+	 */
 	protected function rmsIsTableProtected($strTable)
 	{
 		$id = \Input::get('id');
@@ -715,136 +715,144 @@ class rmsHelper extends \Backend
 		switch($strTable)
 		{
 			case 'tl_article':
-				
+			
 				$curObj = $this->Database->prepare('SELECT `p`.* FROM `tl_article` `a`
 				LEFT JOIN `tl_page` `p` ON `p`.`id` = `a`.`pid`
 				WHERE `a`.`id`=?')
 						->limit(1)
 						->execute($id);
-				
-				$rootPageObj = $this->getRootPage($curObj->pid);	
-				
-				if($rootPageObj->rms_protected == 1) 
+
+				$rootPageObj = $this->getRootPage($curObj->pid);
+
+				if($rootPageObj->rms_protected == 1)
 				{
-					$this->settings['sender_email'] = $this->getMemberData($rootPageObj->rms_master_member,'email');				
-					$return = true;						
+					$this->settings['sender_email'] = $this->getMemberData($rootPageObj->rms_master_member,'email');
+					$return = true;
 				}
 
 			break;
 			case 'tl_newsletter':
-
-				$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc`
-				LEFT JOIN `tl_newsletter` `nl` ON `nlc`.`id` = `nl`.`pid`
-				WHERE `nl`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/newsletter/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc`
+					LEFT JOIN `tl_newsletter` `nl` ON `nlc`.`id` = `nl`.`pid`
+					WHERE `nl`.`id`=?')
+							->limit(1)
+							->execute($id);
 
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
 			break;
 			case 'tl_newsletter_channel':
-
-				$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc` WHERE `nlc`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/newsletter/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `nlc`.* FROM `tl_newsletter_channel` `nlc` WHERE `nlc`.`id`=?')
+							->limit(1)
+							->execute($id);
 
-			break;			
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
+			break;
 			case 'tl_faq':
-
-				$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc`
-				LEFT JOIN `tl_faq` `faq` ON `faqc`.`id` = `faq`.`pid`
-				WHERE `faq`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/faq/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc`
+					LEFT JOIN `tl_faq` `faq` ON `faqc`.`id` = `faq`.`pid`
+					WHERE `faq`.`id`=?')
+							->limit(1)
+							->execute($id);
 
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
 			break;
 			case 'tl_faq_category':
-
-				$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc` WHERE `faqc`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/faq/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `faqc`.* FROM `tl_faq_category` `faqc` WHERE `faqc`.`id`=?')
+							->limit(1)
+							->execute($id);
 
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
 			break;
 			case 'tl_news':
-
-				$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na`
-				LEFT JOIN `tl_news` `n` ON `na`.`id` = `n`.`pid`
-				WHERE `n`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/news/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na`
+					LEFT JOIN `tl_news` `n` ON `na`.`id` = `n`.`pid`
+					WHERE `n`.`id`=?')
+							->limit(1)
+							->execute($id);
 
-			break;	
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
+			break;
 			case 'tl_news_archive':
-
-				$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na` WHERE `na`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/news/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `na`.* FROM `tl_news_archive` `na` WHERE `na`.`id`=?')
+							->limit(1)
+							->execute($id);
 
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
 			break;
 			case 'tl_calendar_events':
-
-				$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal`
-				LEFT JOIN `tl_calendar_events` `calev` ON `cal`.`id` = `calev`.`pid`
-				WHERE `calev`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/calendar/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal`
+					LEFT JOIN `tl_calendar_events` `calev` ON `cal`.`id` = `calev`.`pid`
+					WHERE `calev`.`id`=?')
+							->limit(1)
+							->execute($id);
 
-			break;	
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
+			break;
 			case 'tl_calendar':
-
-				$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal` WHERE `cal`.`id`=?')
-						->limit(1)
-						->execute($id);
-
-				if($curObj->rms_protected == 1) 
+				if(!file_exists(TL_ROOT . '/system/modules/calendar/.skip') ) // nur wenn das Modul in den Einstellungen von Contao nicht deaktiviert wurde
 				{
-					$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');				
-					$return = true;						
-				}	
+					$curObj = $this->Database->prepare('SELECT `cal`.* FROM `tl_calendar` `cal` WHERE `cal`.`id`=?')
+							->limit(1)
+							->execute($id);
 
-			break;								
+					if($curObj->rms_protected == 1)
+					{
+						$this->settings['sender_email'] = $this->getMemberData($curObj->rms_master_member,'email');
+						$return = true;
+					}
+				}
+			break;
 			default:
-				
+
 				// HOOK: add custom logic
 				if (isset($GLOBALS['TL_HOOKS']['rmsIsTableProtected']) && is_array($GLOBALS['TL_HOOKS']['rmsIsTableProtected']))
 				{
@@ -865,7 +873,7 @@ class rmsHelper extends \Backend
 							return $status;
 						}
 					}
-				}			
+				}
 		}
 		return $return;
 	}

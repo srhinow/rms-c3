@@ -64,7 +64,6 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['rms_ref_table'] = array
 	'sql'					  => "char(55) NOT NULL default ''",
 	'ignoreDiff'			=> true,
 );
-
 $GLOBALS['TL_DCA']['tl_content']['fields']['rms_notice'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['MSC']['rms_notice'],
