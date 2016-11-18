@@ -1,0 +1,25 @@
+@import '/system/modules/newsletter/assets/style.css';
+@import '/system/modules/newsletterFromNews/assets/be.css';
+
+.browser_preview {
+    padding-left: 18px;
+    background: url('page.gif') no-repeat left center;
+}
+.status_0 {
+    position: relative;
+    top: 1px;
+    left: 5px;
+    padding: 1px 5px;
+    color: #fff;
+    border-radius: 2px;
+    background-color: red;
+}
+.status_1 {
+    position: relative;
+    top: 1px;
+    left: 5px;
+    padding: 1px 5px;
+    color: #fff;
+    border-radius: 2px;
+    background-color: green;
+}
