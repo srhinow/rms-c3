@@ -114,14 +114,6 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
 		),
-<<<<<<< HEAD
-=======
-		'pid' => array
-		(
-			'sql'                     => "int(10) unsigned NOT NULL default '0'",
-			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
-		),
->>>>>>> 23fcec39d7df41282ed34cc03928129dc451afc0
 		'tstamp' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_rms']['tstamp'],
