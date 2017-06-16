@@ -30,7 +30,7 @@ $GLOBALS['TL_LANG']['tl_rms']['status']     = array('Status', 'zeigt an ob diese
 $GLOBALS['TL_LANG']['tl_rms']['region'][0]   =  'Bereich';
 $GLOBALS['TL_LANG']['tl_rms']['preview_link'][0]   =  'Vorschau-Link';
 $GLOBALS['TL_LANG']['tl_rms']['last_edit'][0]   =  'letzte Bearbeitung';
-$GLOBALS['TL_LANG']['tl_rms']['status_options'] = array('0'=>'unbearbeitet','1'=>'bearbeitet');
+$GLOBALS['TL_LANG']['tl_rms']['status_options'] = array('0'=>'Zur Freigabe','1'=>'zurückgegeben','2'=>'In Bearbeitung');
 
 /**
  * Buttons
