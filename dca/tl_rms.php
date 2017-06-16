@@ -116,7 +116,6 @@ $GLOBALS['TL_DCA']['tl_rms'] = array
 		),
 		'pid' => array
 		(
-			'foreignKey'              => 'tl_news_archive.title',
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
 			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
 		),
@@ -254,7 +253,7 @@ class tl_rms extends Backend
 		$ifFirstSave = ($refObj->rms_first_save == 1) ? '<span style="padding:0 10px; font-weight:bold;">'.$GLOBALS['TL_LANG']['tl_rms']['info_new_edit'].'</span>': '';
 
 		$label  = '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['status'][0].':</strong><span class="status_'.$row['status'].'"> '.$GLOBALS['TL_LANG']['tl_rms']['status_options'][$row['status']].'</span>'.$ifFirstSave.'<br>';
-		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$GLOBALS['TL_LANG']['tl_rms']['sessions'][$row['do'].'_'.$row['ref_table']].'<br>';
+		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['region'][0].':</strong> '.$GLOBALS['TL_LANG']['tl_rms']['sessions'][$row['do'].'_'.$row['ref_table']].' (ID:'.$row['ref_id'].') <br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['preview_link'][0].': </strong><a href="'.$row['preview_jumpTo'].'" target="_blank">'.$row['preview_jumpTo'].'</a><br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['ref_author'][0].':</strong> '.$userObj->name.' (<a href="mailto:' . $userObj->email . '">'.$userObj->email.'</a>)<br>';
 		$label .= '<strong>'.$GLOBALS['TL_LANG']['tl_rms']['last_edit'][0].':</strong> '.date($GLOBALS['TL_CONFIG']['datimFormat'],$row['tstamp']).'<br>';
