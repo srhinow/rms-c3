@@ -28,7 +28,7 @@
   "extra": {
     "contao": {
       "sources": {
-        "system/modules/rms": "system/modules/rms"
+        "": "system/modules/rms"
       }
     }
   }
