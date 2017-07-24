@@ -236,7 +236,7 @@ class rmsVersions extends \Backend
 		}
 		elseif (!is_array(current($var)))
 		{
-			return implode(', ', ($binary ? array_map('String::binToUuid', $var) : $var));
+			return implode(', ', ($binary ? array_map('StringUtil::binToUuid', $var) : $var));
 		}
 		else
 		{
