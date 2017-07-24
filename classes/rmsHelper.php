@@ -297,12 +297,11 @@ class rmsHelper extends \Backend
 				$sendToEmailsArr = (strlen(trim($this->settings['extent_emailto'])) > 0) ? array_map('trim',explode(',',$this->settings['extent_emailto'])) : array();
 				$sendToEmailsArr[] = $sendToEmail;
 				$sendToEmailsArr = array_unique($sendToEmailsArr);
-
 				$sendToEmails = implode(',',$sendToEmailsArr);
 
 				$objTemplate = new \FrontendTemplate('mail_review_question');
 				$objTemplate->text = $dc->Input->post('rms_notice');
-				$objTemplate->link = $this->Environment->url.$this->Environment->requestUri;
+				$objTemplate->link = $this->Environment->url.'/'.$this->addToUrl('&author='.$this->BackendUser->id);
 
 				$email = new \Email();
 				$email->from = $this->BackendUser->email;
