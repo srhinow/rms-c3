@@ -138,11 +138,11 @@ class rmsVersions extends \Backend
 						// Convert binary UUIDs to their hex equivalents (see #6365)
 						if ($blnIsBinary && \Validator::isUuid($to[$k]))
 						{
-							$to[$k] = \String::binToUuid($to[$k]);
+							$to[$k] = \StringUtil::binToUuid($to[$k]);
 						}
 						if ($blnIsBinary && \Validator::isUuid($from[$k]))
 						{
-							$to[$k] = \String::binToUuid($from[$k]);
+							$to[$k] = \StringUtil::binToUuid($from[$k]);
 						}
 
 						// Convert date fields
@@ -232,7 +232,7 @@ class rmsVersions extends \Backend
 	{
 		if (!is_array($var))
 		{
-			return $binary ? \String::binToUuid($var) : $var;
+			return $binary ? \StringUtil::binToUuid($var) : $var;
 		}
 		elseif (!is_array(current($var)))
 		{
