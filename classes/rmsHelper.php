@@ -50,7 +50,6 @@ class rmsHelper extends \Backend
 
     	// Import
         $this->import("BackendUser","User");
-        $this->import("String");
 
         $this->settings = self::getSettings();
 
