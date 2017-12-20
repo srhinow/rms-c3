@@ -14,26 +14,20 @@
 /**
  * set namespace
  */
- namespace SvenRhinow\rms;
+namespace SvenRhinow\rms;
 
 /**
  * Class rmsHelper
  *
- * @copyright  Sven Rhinow 2004-2014
+ * @copyright  Sven Rhinow 2004-2017
  * @author     Sven Rhinow <kservice@sr-tag.de>
  * @package    rms
  */
 
 class rmsHelper extends \Backend
 {
-    /* -------------------------------------------------------------------------
-     * Vars
-     */
-
     // instance
     protected static $instance = null;
-
-
 
 	/**
 	* hold rms settings as array

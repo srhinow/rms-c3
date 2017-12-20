@@ -19,7 +19,7 @@
  * Class rmsAjax
  *
  * Provide methods to handle Ajax requests.
- * @copyright  Leo Feyer 2005-2014
+ * @copyright  Leo Feyer 2005-2017
  * @author     Leo Feyer <https://contao.org>
  * @package    Core
  */
