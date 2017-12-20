@@ -210,7 +210,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$this->$callback[0]->$callback[1]($this);
+					$this->{$callback[0]}->{$callback[1]}($this);
 				}
 				elseif (is_callable($callback))
 				{
@@ -441,7 +441,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$this->rmsArr = $this->$callback[0]->$callback[1]($this, $objRow);
+					$this->rmsArr = $this->{$callback[0]}->{$callback[1]}($this, $objRow);
 				}
 				elseif (is_callable($callback))
 				{
@@ -742,7 +742,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 						if (is_array($callback))
 						{
 							$this->import($callback[0]);
-							$this->$callback[0]->$callback[1]($this->strTable, $insertID, $this->set, $this);
+							$this->{$callback[0]}->{$callback[1]}($this->strTable, $insertID, $this->set, $this);
 						}
 						elseif (is_callable($callback))
 						{
@@ -835,7 +835,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$this->$callback[0]->$callback[1]($this);
+					$this->{$callback[0]}->{$callback[1]}($this);
 				}
 				elseif (is_callable($callback))
 				{
@@ -1033,7 +1033,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 						if (is_array($callback))
 						{
 							$this->import($callback[0]);
-							$this->$callback[0]->$callback[1]($insertID, $this);
+							$this->{$callback[0]}->{$callback[1]}($insertID, $this);
 						}
 						elseif (is_callable($callback))
 						{
@@ -1524,7 +1524,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 					if (is_array($callback))
 					{
 						$this->import($callback[0]);
-						$this->$callback[0]->$callback[1]($this, $objUndoStmt->insertId);
+						$this->{$callback[0]}->{$callback[1]}($this, $objUndoStmt->insertId);
 					}
 					elseif (is_callable($callback))
 					{
@@ -1739,7 +1739,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 	 * @param integer
 	 * @return string
 	 */
-	public function edit($intID=null, $ajaxId=null)
+	public function edit($intId=null, $ajaxId=null)
 	{
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable'])
 		{
@@ -1747,10 +1747,10 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		if ($intID != '')
-		{
-			$this->intId = $intID;
-		}
+        if ($intId != '')
+        {
+            $this->intId = $intId;
+        }
 
 		$return = '';
 		$this->values[] = $this->intId;
@@ -1784,21 +1784,18 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 		}
 
 		// Call getrms_callback
-		if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
-					$this->import($callback[0]);
-					$this->rmsArr = $this->$callback[0]->$callback[1]($this, $objRow);
-				}
-				elseif (is_callable($callback))
-				{
-					$this->rmsArr = $callback($this, $objRow);
-				}
-			}
-		}
+        if (\Input::post('FORM_SUBMIT') != $this->strTable) {
+            if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'])) {
+                foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'] as $callback) {
+                    if (is_array($callback)) {
+                        $this->import($callback[0]);
+                        $this->rmsArr = $this->{$callback[0]}->{$callback[1]}($this, $objRow);
+                    } elseif (is_callable($callback)) {
+                        $this->rmsArr = $callback($this, $objRow);
+                    }
+                }
+            }
+        }
 
 		if(is_array($this->rmsArr) && count($this->rmsArr) > 0)
 		{
@@ -1929,7 +1926,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 							if (is_array($callback))
 							{
 								$this->import($callback[0]);
-								$this->varValue = $this->$callback[0]->$callback[1]($this->varValue, $this);
+								$this->varValue = $this->{$callback[0]}->{$callback[1]}($this->varValue, $this);
 							}
 							elseif (is_callable($callback))
 							{
@@ -1991,7 +1988,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$arrButtons = $this->$callback[0]->$callback[1]($arrButtons, $this);
+					$arrButtons = $this->{$callback[0]}->{$callback[1]}($arrButtons, $this);
 				}
 				elseif (is_callable($callback))
 				{
@@ -2049,7 +2046,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 					if (is_array($callback))
 					{
 						$this->import($callback[0]);
-						$this->$callback[0]->$callback[1]($this);
+						$this->{$callback[0]}->{$callback[1]}($this);
 					}
 					elseif (is_callable($callback))
 					{
@@ -2071,7 +2068,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 						if (is_array($callback))
 						{
 							$this->import($callback[0]);
-							$this->$callback[0]->$callback[1]($this->strTable, $this->intId, $this);
+							$this->{$callback[0]}->{$callback[1]}($this->strTable, $this->intId, $this);
 						}
 						elseif (is_callable($callback))
 						{
@@ -2269,21 +2266,19 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 										 ->execute($this->intId);
 
 				// Call getrms_callback
-				if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback']))
-				{
-					foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'] as $callback)
-					{
-						if (is_array($callback))
-						{
-							$this->import($callback[0]);
-							$this->rmsArr = $this->$callback[0]->$callback[1]($this, $objRow);
-						}
-						elseif (is_callable($callback))
-						{
-							$this->rmsArr = $callback($this, $objRow);
-						}
-					}
-				}
+                // Save record
+                if (\Input::post('FORM_SUBMIT') != $this->strTable) {
+                    if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'])) {
+                        foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'] as $callback) {
+                            if (is_array($callback)) {
+                                $this->import($callback[0]);
+                                $this->rmsArr = $this->{$callback[0]}->{$callback[1]}($this, $objRow);
+                            } elseif (is_callable($callback)) {
+                                $this->rmsArr = $callback($this, $objRow);
+                            }
+                        }
+                    }
+                }
 
 				if(is_array($this->rmsArr) && count($this->rmsArr) > 0)
 				{
@@ -2360,7 +2355,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 							if (is_array($callback))
 							{
 								$this->import($callback[0]);
-								$this->varValue = $this->$callback[0]->$callback[1]($this->varValue, $this);
+								$this->varValue = $this->{$callback[0]}->{$callback[1]}($this->varValue, $this);
 							}
 							elseif (is_callable($callback))
 							{
@@ -2392,7 +2387,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 							if (is_array($callback))
 							{
 								$this->import($callback[0]);
-								$this->$callback[0]->$callback[1]($this);
+								$this->{$callback[0]}->{$callback[1]}($this);
 							}
 							elseif (is_callable($callback))
 							{
@@ -2414,7 +2409,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 								if (is_array($callback))
 								{
 									$this->import($callback[0]);
-									$this->$callback[0]->$callback[1]($this->strTable, $this->intId, $this);
+									$this->{$callback[0]}->{$callback[1]}($this->strTable, $this->intId, $this);
 								}
 								elseif (is_callable($callback))
 								{
@@ -2453,7 +2448,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 					if (is_array($callback))
 					{
 						$this->import($callback[0]);
-						$arrButtons = $this->$callback[0]->$callback[1]($arrButtons, $this);
+						$arrButtons = $this->{$callback[0]}->{$callback[1]}($arrButtons, $this);
 					}
 					elseif (is_callable($callback))
 					{
@@ -2680,7 +2675,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 								if (is_array($callback))
 								{
 									$this->import($callback[0]);
-									$this->$callback[0]->$callback[1]($this);
+									$this->{$callback[0]}->{$callback[1]}($this);
 								}
 								elseif (is_callable($callback))
 								{
@@ -2702,7 +2697,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 									if (is_array($callback))
 									{
 										$this->import($callback[0]);
-										$this->$callback[0]->$callback[1]($this->strTable, $this->intId, $this);
+										$this->{$callback[0]}->{$callback[1]}($this->strTable, $this->intId, $this);
 									}
 									elseif (is_callable($callback))
 									{
@@ -2782,7 +2777,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 					if (is_array($callback))
 					{
 						$this->import($callback[0]);
-						$arrButtons = $this->$callback[0]->$callback[1]($arrButtons, $this);
+						$arrButtons = $this->{$callback[0]}->{$callback[1]}($arrButtons, $this);
 					}
 					elseif (is_callable($callback))
 					{
@@ -2994,7 +2989,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$varValue = $this->$callback[0]->$callback[1]($varValue, $this);
+					$varValue = $this->{$callback[0]}->{$callback[1]}($varValue, $this);
 				}
 				elseif (is_callable($callback))
 				{
@@ -3181,7 +3176,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 				if (is_array($callback))
 				{
 					$this->import($callback[0]);
-					$status = $this->$callback[0]->$callback[1]($this->strTable, $new_records[$this->strTable], $ptable, $ctable);
+					$status = $this->{$callback[0]}->{$callback[1]}($this->strTable, $new_records[$this->strTable], $ptable, $ctable);
 				}
 				elseif (is_callable($callback))
 				{
@@ -3496,7 +3491,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 					if (is_array($callback))
 					{
 						$this->import($callback[0]);
-						$arrButtons = $this->$callback[0]->$callback[1]($arrButtons, $this);
+						$arrButtons = $this->{$callback[0]}->{$callback[1]}($arrButtons, $this);
 					}
 					elseif (is_callable($callback))
 					{
@@ -4126,7 +4121,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 							if (is_array($callback))
 							{
 								$this->import($callback[0]);
-								$this->rmsArr = $this->$callback[0]->$callback[1]($this, $row[$i]);
+								$this->rmsArr = $this->{$callback[0]}->{$callback[1]}($this, $row[$i]);
 							}
 							elseif (is_callable($callback))
 							{
@@ -4323,7 +4318,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 					if (is_array($callback))
 					{
 						$this->import($callback[0]);
-						$arrButtons = $this->$callback[0]->$callback[1]($arrButtons, $this);
+						$arrButtons = $this->{$callback[0]}->{$callback[1]}($arrButtons, $this);
 					}
 					elseif (is_callable($callback))
 					{
@@ -4557,7 +4552,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 						if (is_array($callback))
 						{
 							$this->import($callback[0]);
-							$this->rmsArr = $this->$callback[0]->$callback[1]($this, $row);
+							$this->rmsArr = $this->{$callback[0]}->{$callback[1]}($this, $row);
 						}
 						elseif (is_callable($callback))
 						{
@@ -4766,7 +4761,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 						if (is_array($callback))
 						{
 							$this->import($callback[0]);
-							$arrButtons = $this->$callback[0]->$callback[1]($arrButtons, $this);
+							$arrButtons = $this->{$callback[0]}->{$callback[1]}($arrButtons, $this);
 						}
 						elseif (is_callable($callback))
 						{
