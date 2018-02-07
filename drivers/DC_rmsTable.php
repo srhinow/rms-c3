@@ -205,7 +205,8 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 		// Call onload_callback (e.g. to check permissions)
 		if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['onload_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['onload_callback'] as $callback)
+
+		    foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['onload_callback'] as $callback)
 			{
 				if (is_array($callback))
 				{
@@ -319,6 +320,7 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 	 */
 	public function showAll()
 	{
+
 		$return = '';
 		$this->limit = '';
 		$this->bid = 'tl_buttons';
@@ -1785,11 +1787,15 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 
 		// Call getrms_callback
         if (\Input::post('FORM_SUBMIT') != $this->strTable) {
+
             if (is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'])) {
+
                 foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['getrms_callback'] as $callback) {
+
                     if (is_array($callback)) {
                         $this->import($callback[0]);
                         $this->rmsArr = $this->{$callback[0]}->{$callback[1]}($this, $objRow);
+
                     } elseif (is_callable($callback)) {
                         $this->rmsArr = $callback($this, $objRow);
                     }
@@ -4350,7 +4356,8 @@ class DC_rmsTable extends \DataContainer implements \listable, \editable
 	 */
 	protected function listView()
 	{
-		$return = '';
+
+	    $return = '';
 		$table = ($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] == 6) ? $this->ptable : $this->strTable;
 		$orderBy = $GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['fields'];
 		$firstOrderBy = preg_replace('/\s+.*$/', '', $orderBy[0]);
