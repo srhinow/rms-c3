@@ -37,7 +37,9 @@ if($GLOBALS['TL_CONFIG']['rms_active'])
     $GLOBALS['TL_HOOKS']['getContentElement'][] = array('\SvenRhinow\rms\rmsHelper', 'previewContentElement');
     $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('\SvenRhinow\rms\rmsHelper', 'modifyForPreview');
     $GLOBALS['TL_HOOKS']['executePostActions'][] = array('\SvenRhinow\rms\rmsAjax', 'executePostActions');
-    
+
+    // um die bearbeiteten Elementgenerator-Felder zu laden
+    $GLOBALS['TL_HOOKS']['rewriteDmaFields'][] = array('\SvenRhinow\rms\rmsHelper', 'rewriteDmaFields');
 }
 
 $GLOBALS['FE_MOD']['news']['newsreader_rms'] = 'ModuleNewsReaderRMS';
