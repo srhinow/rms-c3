@@ -56,13 +56,14 @@ class rmsDefaultCallbacks extends \Backend
                                             $userID
                                         );
 
-
         //wenn bereits eine nicht freigegebene Bearbeitung vorliegt
         if ($objStoredData->numRows > 0)
         {
             $rmsArr = unserialize($objStoredData->data);
+
             return $rmsArr;
         }
+        return $rowArr;
     }
 
     /**
@@ -73,7 +74,6 @@ class rmsDefaultCallbacks extends \Backend
     */
     public function onEditCallback(\DataContainer $dc, $liveDataObj)
     {
-        
         $this->import("BackendUser");
         $this->import('SvenRhinow\rms\rmsHelper', 'rmsHelper');
         $settings = $this->rmsHelper->getSettings();
@@ -88,7 +88,8 @@ class rmsDefaultCallbacks extends \Backend
         if(!$userID || !$strTable || !$contentId) return;
 
         // falls es eine tl_content ist und der Datentyp ignoriert werden soll -> hier abbrechen
-        $ignoreTypedArr = array_map('trim',explode(',',$settings['ignore_content_types']));             
+        $ignoreTypedArr = array_map('trim',explode(',',$settings['ignore_content_types']));
+
         if($strTable == 'tl_content' && is_array($ignoreTypedArr) && in_array($liveDataArr['type'], $ignoreTypedArr)) return;
 
         //loesche evtl alte Datensätze zu diesem Element aus der tl_rms_tmp 
@@ -206,7 +207,13 @@ class rmsDefaultCallbacks extends \Backend
         $this->Database->prepare("UPDATE ".$strTable." %s WHERE id=?")->set($data)->execute($intId);
 
         //status
-        $status = $this->rmsHelper->isMemberOfMasters() ?  1 : 0;
+        if($_SESSION['send_rms_info'])
+        {
+            $status = ($this->rmsHelper->isMemberOfMasters()) ?  1 : 0; # '1'=>'zurückgegeben', '0'=>'Zur Freigabe'
+        }
+        else{
+            $status = ($this->rmsHelper->isMemberOfMasters()) ?  1 : 2; # '1'=>'zurückgegeben', '2'=>'In Bearbeitung'
+        }
 
         //overwrite with new-data
         $newRmsData = ($data['type'] == $newData['type']) ? array_merge($data, $newData) : $newData;
