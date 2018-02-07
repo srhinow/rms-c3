@@ -16,6 +16,9 @@
  */
 namespace SvenRhinow\rms;
 
+use Contao\BackendUser;
+use Contao\Database;
+
 /**
  * Class rmsHelper
  *
@@ -119,12 +122,12 @@ class rmsHelper extends \Backend
 	    if(TL_MODE != 'BE' || \Environment::get('isAjaxRequest'))	return;
 
 		$protected = false;
-
+        #print_r($GLOBALS['TL_DCA']['tl_content']['config']['onload_callback']);
 		switch($strTable)
 		{
 			case 'tl_content':
 				$protected = $this->rmsIsContentProtected($strTable);
-			break;
+			    break;
 			default:
 				$protected = $this->rmsIsTableProtected($strTable);
 		}
@@ -151,11 +154,11 @@ class rmsHelper extends \Backend
 			}
 			else
 			{
-				$GLOBALS['TL_DCA'][$strTable]['config']['getrms_listview_callback'][] = (method_exists($strTable.'_rms', 'onListCallback')) ? array($strTable.'_rms','onListCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onListCallback');
-
+			    $GLOBALS['TL_DCA'][$strTable]['config']['getrms_listview_callback'][] = (method_exists($strTable.'_rms', 'onListCallback')) ? array($strTable.'_rms','onListCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onListCallback');
 			}
-	    	}
-		if ($protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
+        }
+
+        if ($protected && ($GLOBALS['TL_CONFIG']['rms_active'])  || \Input::get("author"))
 		{
 			$GLOBALS['TL_DCA'][$strTable]['config']['ondelete_callback'][] = (method_exists($strTable.'_rms', 'onDeleteCallback')) ? array($strTable.'_rms','onDeleteCallback') : array('SvenRhinow\rms\rmsDefaultCallbacks','onDeleteCallback');
 
@@ -302,6 +305,8 @@ class rmsHelper extends \Backend
 				$email->subject = $GLOBALS['TL_LANG']['MSC']['rms_email_subject_question'];
 				$email->text = $objTemplate->parse();
 				$email->sendTo($sendToEmails);
+
+                $_SESSION['send_rms_info'] = 1;
 			}
 			else
 			//send Email from Super-Editor to editor  (answer)
@@ -675,16 +680,16 @@ class rmsHelper extends \Backend
 						if (is_array($callback))
 						{
 							$this->import($callback[0]);
-							$status = $this->$callback[0]->$callback[1]($strTable);
+                            $isprotected = $this->$callback[0]->$callback[1]($strTable);
 						}
 						elseif (is_callable($callback))
 						{
-							$status = $callback($strTable);
+                            $isprotected = $callback($strTable);
 						}
 
-						if (is_bool($status))
+						if (is_bool($isprotected))
 						{
-							return $status;
+							return $isprotected;
 						}
 					}
 				}
@@ -853,20 +858,46 @@ class rmsHelper extends \Backend
 						if (is_array($callback))
 						{
 							$this->import($callback[0]);
-							$status = $this->$callback[0]->$callback[1]($strTable);
+							$isprotected = $this->$callback[0]->$callback[1]($strTable);
 						}
 						elseif (is_callable($callback))
 						{
-							$status = $callback($strTable);
+                            $isprotected = $callback($strTable);
 						}
 
-						if (is_bool($status))
+						if (is_bool($isprotected))
 						{
-							return $status;
+							return $isprotected;
 						}
 					}
 				}
 		}
 		return $return;
 	}
+
+    /**
+     * Gibt ein array mit bearbeiteten aber noch nicht freigebenen Daten aus dem Feld dma_data zurueck
+     * @param string $strTable
+     * @param object $dc
+     * @return array $fields
+     *
+     */
+	public function rewriteDmaFields($strTable='', $dc) {
+
+        $fields = array();
+	    $user = BackendUser::getInstance();
+        $author = (int) \Input::get('author');
+        $userId = ($author > 0)? $author : $user->id;
+
+        $objRmsResult = Database::getInstance()
+            ->prepare("SELECT `data` FROM `tl_rms` WHERE `ref_table`=? AND `ref_id`=? AND `ref_author`=?")
+            ->execute($strTable, $dc->id, $userId);
+
+        if(is_object($objRmsResult)) {
+            $arrRmsResult = unserialize($objRmsResult->data);
+            $fields = $arrRmsResult['dma_eg_data'];
+        }
+
+	    return $fields;
+    }
 }
